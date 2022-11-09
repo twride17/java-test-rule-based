@@ -44,40 +44,105 @@ public class TestRunner {
 
         List<File> classFiles = searchFiles(new File(path), new ArrayList<>());
         for(File file: classFiles) {
-            showClassDetails("test.java." + file.getName().substring(0, file.getName().indexOf(".")));
+            readTestClass("test.java." + file.getName().substring(0, file.getName().indexOf(".")));
         }
     }
 
-    private static void showClassDetails(String className) {
+    // Examine class:
+    //   - look at fields
+    //   - look at declared methods (only public):
+    //     - look at return types (ie: void may mean use field)
+    //   - identify if tests called sequentially or all at once (based on num of fields) ???
+
+    private static void readTestClass(String className) {
         try {
             Class<?> cls = Class.forName(className);
-            Method[] methods = cls.getDeclaredMethods();
-            for(Method method: methods) {
-                System.out.println(method.getName());
-                try {
-                    // Temporary, used for testing with main methods
-                    if (method.getParameterCount() == 1) {
-                        method.invoke(cls.newInstance(), new Object[]{new String[] {}});
-                    } else {
-                        method.invoke(cls.newInstance());
-                    }
-                } catch(IllegalArgumentException e) {
-                    System.out.println("Wrong arguments for " + method.getName());
-                    for(Type type: method.getParameterTypes()) {
-                        System.out.println(type.getTypeName());
-                    }
-                }
-                System.out.println("************");
+            Field[] fields = cls.getFields();
+
+            if(fields.length == 0) {
+                // No fields = returning functions
+                readFromMethods(cls);
             }
-        } catch(ClassNotFoundException e) {
-            System.out.println("Couldn't find class: " + className);
+            else if(fields.length == 1) {
+                Class<?> type = fields[0].getType();
+                if(type.isArray() && type == Class.forName("java.lang.String")) {
+                    // Single String[] field = call methods then get array
+                    // TODO Allow for collections
+                    readFromArrayField(cls, fields[0]);
+                }
+                else if(type == Class.forName("java.lang.String")) {
+                    // Single String field = get rule set after each method call
+                    readFieldAfterEachMethodCall(cls, fields[0]);
+                }
+            }
+            else {
+                // Multiple String fields = run methods then get values for each
+                readMultipleFields(cls, fields);
+            }
+        }
+        catch (ClassNotFoundException ex) { }
+    }
+
+    private static void readMultipleFields(Class<?> cls, Field[] fields) {
+        Method[] methods = cls.getMethods();
+        for(Method method: methods) {
+            invokeMethod(cls, method);
+        }
+
+        for(Field field: fields) {
+            readFromField(cls, field);
+        }
+    }
+
+    private static void readFromMethods(Class<?> cls) {
+        Method[] methods = cls.getMethods();
+        for(Method method: methods) {
+            readFromMethod(cls, method);
+        }
+    }
+
+    private static void readFromMethod(Class<?> cls, Method Method) {
+
+    }
+
+    private static void readFromField(Class<?> cls, Field field) {
+
+    }
+
+    private static void readFromArrayField(Class<?> cls, Field field) {
+
+    }
+
+    private static void readFieldAfterEachMethodCall(Class<?> cls, Field field) {
+        Method[] methods = cls.getMethods();
+        for(Method method: methods) {
+            invokeMethod(cls, method);
+            readFromField(cls, field);
+        }
+    }
+
+    private static void invokeMethod(Class<?> currentClass, Method method) {
+        System.out.println(method.getName());
+        try {
+            // Temporary, used for testing with main methods
+            if (method.getParameterCount() == 1) {
+                method.invoke(currentClass.newInstance(), new Object[]{new String[] {}});
+            } else {
+                method.invoke(currentClass.newInstance());
+            }
+        } catch(IllegalArgumentException e) {
+            System.out.println("Wrong arguments for " + method.getName());
+            for(Type type: method.getParameterTypes()) {
+                System.out.println(type.getTypeName());
+            }
         } catch (InstantiationException e) {
-            System.out.println("Couldn't instantiate " + className);
+            System.out.println("Couldn't instantiate " + currentClass.getName());
         } catch (IllegalAccessException e) {
             System.out.println("Couldn't access the method");
         } catch (InvocationTargetException e) {
             System.out.println("Couldn't invoke method");
         }
+        System.out.println("************");
     }
 
     private static List<File> searchFiles(File topLevelFile, List<File> files) {
