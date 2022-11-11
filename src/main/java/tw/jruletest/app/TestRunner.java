@@ -53,8 +53,16 @@ public class TestRunner {
             Class<?> cls = Class.forName(className);
             Object classInstance = cls.newInstance();
 
-            readFromMethods(cls, classInstance);
-            readFields(cls, classInstance);
+            Method[] methods = cls.getDeclaredMethods();
+            Field[] fields = cls.getDeclaredFields();
+
+            if((fields.length == 1) && (methods.length > 1)) {
+                readFieldAfterMethod(classInstance, fields[0], methods);
+            }
+            else {
+                readFromMethods(classInstance, methods);
+                readFields(classInstance, fields);
+            }
         }
         catch (ClassNotFoundException ex) {
             System.out.println("Couldn't find class: " + className);
@@ -63,15 +71,20 @@ public class TestRunner {
         }
     }
 
-    private static void readFields(Class<?> cls, Object instance) {
-        Field[] fields = cls.getDeclaredFields();
+    private static void readFieldAfterMethod(Object instance, Field field, Method[] methods) {
+        for(Method method: methods) {
+            readFromMethod(instance, method);
+            readFromField(instance, field);
+        }
+    }
+
+    private static void readFields(Object instance, Field[] fields) {
         for(Field field: fields) {
             readFromField(instance, field);
         }
     }
 
-    private static void readFromMethods(Class<?> cls, Object instance) {
-        Method[] methods = cls.getDeclaredMethods();
+    private static void readFromMethods(Object instance, Method[] methods) {
         for(Method method: methods) {
             readFromMethod(instance, method);
         }
@@ -92,8 +105,8 @@ public class TestRunner {
                 ruleSets.add((String) field.get(instance));
             }
         } catch(IllegalAccessException e) {
-            System.out.println("Wrong");
-        } catch(ClassCastException e) {}
+            System.out.println("Cannot access field: " + field.getName());
+        }
     }
 
     private static void readFromArrayField(Object instance, Field field) {
