@@ -19,6 +19,8 @@ public class TestRunner {
 
     private static String path;
 
+    private static ArrayList<String> ruleSets = new ArrayList<>();
+
     public static void main(String[] args) {
         if(args.length == 0) {
             // assuming JAR in same place as source
@@ -34,8 +36,6 @@ public class TestRunner {
 
         try {
             runCommand("javac -cp src " + path + "/test/java/*.java");
-            runCommand("java -cp src test/java/Test");
-            runCommand("java -cp src test/java/Test2");
         } catch(IOException | InterruptedException e) {
             System.out.println("Couldn't run.");
         } catch (Exception e) {
@@ -48,101 +48,81 @@ public class TestRunner {
         }
     }
 
-    // Examine class:
-    //   - look at fields
-    //   - look at declared methods (only public):
-    //     - look at return types (ie: void may mean use field)
-    //   - identify if tests called sequentially or all at once (based on num of fields) ???
-
     private static void readTestClass(String className) {
         try {
             Class<?> cls = Class.forName(className);
-            Field[] fields = cls.getFields();
+            Object classInstance = cls.newInstance();
 
-            if(fields.length == 0) {
-                // No fields = returning functions
-                readFromMethods(cls);
-            }
-            else if(fields.length == 1) {
-                Class<?> type = fields[0].getType();
-                if(type.isArray() && type == Class.forName("java.lang.String")) {
-                    // Single String[] field = call methods then get array
-                    // TODO Allow for collections
-                    readFromArrayField(cls, fields[0]);
-                }
-                else if(type == Class.forName("java.lang.String")) {
-                    // Single String field = get rule set after each method call
-                    readFieldAfterEachMethodCall(cls, fields[0]);
-                }
-            }
-            else {
-                // Multiple String fields = run methods then get values for each
-                readMultipleFields(cls, fields);
-            }
+            readFromMethods(cls, classInstance);
+            readFields(cls, classInstance);
         }
-        catch (ClassNotFoundException ex) { }
+        catch (ClassNotFoundException ex) {
+            System.out.println("Couldn't find class: " + className);
+        } catch (InstantiationException | IllegalAccessException e) {
+            System.out.println("Couldn't instantiate " + className);
+        }
     }
 
-    private static void readMultipleFields(Class<?> cls, Field[] fields) {
-        Method[] methods = cls.getMethods();
-        for(Method method: methods) {
-            invokeMethod(cls, method);
-        }
-
+    private static void readFields(Class<?> cls, Object instance) {
+        Field[] fields = cls.getDeclaredFields();
         for(Field field: fields) {
-            readFromField(cls, field);
+            readFromField(instance, field);
         }
     }
 
-    private static void readFromMethods(Class<?> cls) {
-        Method[] methods = cls.getMethods();
+    private static void readFromMethods(Class<?> cls, Object instance) {
+        Method[] methods = cls.getDeclaredMethods();
         for(Method method: methods) {
-            readFromMethod(cls, method);
+            readFromMethod(instance, method);
         }
     }
 
-    private static void readFromMethod(Class<?> cls, Method Method) {
-
-    }
-
-    private static void readFromField(Class<?> cls, Field field) {
-
-    }
-
-    private static void readFromArrayField(Class<?> cls, Field field) {
-
-    }
-
-    private static void readFieldAfterEachMethodCall(Class<?> cls, Field field) {
-        Method[] methods = cls.getMethods();
-        for(Method method: methods) {
-            invokeMethod(cls, method);
-            readFromField(cls, field);
+    private static void readFromMethod(Object instance, Method method) {
+        String result = callMethod(instance, method);
+        if(result != null) {
+            ruleSets.add(result);
         }
     }
 
-    private static void invokeMethod(Class<?> currentClass, Method method) {
-        System.out.println(method.getName());
+    private static void readFromField(Object instance, Field field) {
         try {
-            // Temporary, used for testing with main methods
-            if (method.getParameterCount() == 1) {
-                method.invoke(currentClass.newInstance(), new Object[]{new String[] {}});
+            if(field.getType().isArray()) {
+                readFromArrayField(instance, field);
             } else {
-                method.invoke(currentClass.newInstance());
+                ruleSets.add((String) field.get(instance));
             }
+        } catch(IllegalAccessException e) {
+            System.out.println("Wrong");
+        } catch(ClassCastException e) {}
+    }
+
+    private static void readFromArrayField(Object instance, Field field) {
+        try {
+            Object[] set = (Object[])field.get(instance);
+            String ruleSet = "";
+            for(Object rule: set) {
+                ruleSet += rule + " ";
+            }
+            ruleSets.add(ruleSet);
+        } catch(IllegalAccessException e) {
+            System.out.println("Cannot access the field " + field.getName());
+        }
+    }
+
+    private static String callMethod(Object instance, Method method) {
+        try {
+            return (String)method.invoke(instance);
         } catch(IllegalArgumentException e) {
             System.out.println("Wrong arguments for " + method.getName());
             for(Type type: method.getParameterTypes()) {
                 System.out.println(type.getTypeName());
             }
-        } catch (InstantiationException e) {
-            System.out.println("Couldn't instantiate " + currentClass.getName());
         } catch (IllegalAccessException e) {
             System.out.println("Couldn't access the method");
         } catch (InvocationTargetException e) {
             System.out.println("Couldn't invoke method");
         }
-        System.out.println("************");
+        return null;
     }
 
     private static List<File> searchFiles(File topLevelFile, List<File> files) {
