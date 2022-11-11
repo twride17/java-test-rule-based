@@ -1,10 +1,12 @@
-package main.java.tw.jruletest.rules;
+package main.java.tw.jruletest.parse.rules;
 
-public class Rule {
+public interface Rule {
 
     /**
      * @author Toby Wride
      *
      * Defines the commands to be injected into test suite based on a given rule
      */
+
+    public String decodeRule(String rule);
 }
