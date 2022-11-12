@@ -8,5 +8,5 @@ public interface Rule {
      * Defines the commands to be injected into test suite based on a given rule
      */
 
-    public String decodeRule(String rule);
+    String decodeRule(String rule);
 }
