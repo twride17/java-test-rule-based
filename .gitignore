@@ -28,4 +28,4 @@ src/META-INF/
 JavaRuleBasedTesting.iml
 
 #TEMPORARY, test classes currently for use in making sure runner works
-src/test/
+src/test/java/examples
