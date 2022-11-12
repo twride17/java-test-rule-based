@@ -17,7 +17,7 @@ public class MethodCallRule implements Rule {
         String code = ruleTerms[0] + "(";
         // TODO use reflection to find number of arguments
         // Avoid using rule in case written incorrectly
-        if(ruleTerms.length == 1) {
+        if(ruleTerms.length != 1) {
             code += new MethodArgumentRule().decodeRule(rule.substring(rule.indexOf("with")));
         }
         return code + ");";
