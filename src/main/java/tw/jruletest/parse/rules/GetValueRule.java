@@ -12,7 +12,13 @@ public class GetValueRule implements Rule {
         terms.remove("of");
         // Expect class name and field next
         // TODO Find field type, add as identifier
-        String code = "int value = " + terms.get(0) + ";";
-        return code;
+
+        // TODO Use reflection to find if method or variable
+        if(!terms.get(0).contains(".")) {
+            return "int value = " + terms.get(0) + ";";
+        }
+        else {
+            return "int value = " + new MethodCallRule().decodeRule(rule.substring(rule.indexOf(terms.get(0))));
+        }
     }
 }
