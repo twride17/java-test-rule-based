@@ -4,10 +4,8 @@ import main.java.tw.jruletest.parse.rules.GetValueRule;
 import main.java.tw.jruletest.parse.rules.MethodCallRule;
 import main.java.tw.jruletest.parse.rules.Rule;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
+
 
 public class Parser {
 
@@ -20,6 +18,7 @@ public class Parser {
     private static Rule ruleHandler;
 
     private static final String[] KEYWORDS = {"Call", "Get"};
+    private static final HashMap<String, Rule> KEYWORD_HANDLERS = mapKeywordsToHandlers();
 
     public static String parseRule(String rule) {
         String codeBlock = "";
@@ -27,15 +26,9 @@ public class Parser {
         // Currently sequential commands
         // TODO deal with different control flows
         for(String segment: ruleSegments) {
-            switch(segment.split(" ")[0]) {
-                case "Call":
-                    ruleHandler = new MethodCallRule();
-                    break;
-                case "Get":
-                    ruleHandler = new GetValueRule();
-                    break;
-            }
-            codeBlock += ruleHandler.decodeRule(segment.substring(segment.indexOf(" ")+1)) + "\n";
+            String keyword = segment.split(" ")[0];
+            String remains = segment.substring(segment.indexOf(" ")+1);
+            codeBlock += KEYWORD_HANDLERS.get(keyword).decodeRule(remains) + "\n";
         }
         return codeBlock;
     }
@@ -56,5 +49,22 @@ public class Parser {
         }
         subRules.add(rule.substring(indices[indices.length-1]).trim());
         return subRules;
+    }
+
+    private static HashMap<String, Rule> mapKeywordsToHandlers() {
+        HashMap<String, Rule> keywordHandlers = new HashMap<>();
+        for(String keyword: KEYWORDS) {
+            Rule handler = null;
+            switch (keyword) {
+                case "Get":
+                    handler = new GetValueRule();
+                    break;
+                case "Call":
+                    handler = new MethodCallRule();
+                    break;
+            }
+            keywordHandlers.put(keyword, handler);
+        }
+        return keywordHandlers;
     }
 }
