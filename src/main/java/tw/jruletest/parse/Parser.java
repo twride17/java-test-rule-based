@@ -27,7 +27,7 @@ public class Parser {
         // TODO deal with different control flows
         for(String segment: ruleSegments) {
             String keyword = segment.split(" ")[0];
-            String remains = segment.substring(segment.indexOf(" ")+1);
+            String remains = segment.substring(segment.indexOf(" "));
             codeBlock += KEYWORD_HANDLERS.get(keyword).decodeRule(remains) + "\n";
         }
         return codeBlock;
