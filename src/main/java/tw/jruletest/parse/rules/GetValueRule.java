@@ -1,5 +1,7 @@
 package main.java.tw.jruletest.parse.rules;
 
+import main.java.tw.jruletest.analyzers.JavaClassAnalyzer;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -14,11 +16,14 @@ public class GetValueRule implements Rule {
         // TODO Find field type, add as identifier
 
         // TODO Use reflection to find if method or variable
-        if(!terms.get(0).contains(".")) {
+        if(JavaClassAnalyzer.isField(terms.get(0))) {
             return "int value = " + terms.get(0) + ";";
         }
-        else {
+        else if (JavaClassAnalyzer.isMethodCall(terms.get(0))) {
             return "int value = " + new MethodCallRule().decodeRule(rule.substring(rule.indexOf(terms.get(0))));
+        }
+        else {
+            return "Invalid rule: " + rule;
         }
     }
 }
