@@ -1,5 +1,7 @@
 # Compiled class file
-*.class
+src/main/*.class
+src/main/test/java/parse/*.class
+src/main/test/java/testprograms/*.class
 
 # Log file
 *.log
@@ -26,7 +28,3 @@ hs_err_pid*
 /out/
 src/META-INF/
 JavaRuleBasedTesting.iml
-
-#TEMPORARY, test classes currently for use in making sure runner works
-
-src/test/java/examples

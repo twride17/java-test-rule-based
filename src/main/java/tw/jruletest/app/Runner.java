@@ -12,7 +12,7 @@ import java.util.List;
  * Initiates parsing of test cases, compilation and execution of test suites
  */
 
-public class TestRunner {
+public class Runner {
 
     // Run with java -jar {JAR-FILE}
     // Use framework classes to create own runner
@@ -138,7 +138,7 @@ public class TestRunner {
         return null;
     }
 
-    private static List<File> searchFiles(File topLevelFile, List<File> files) {
+    public static List<File> searchFiles(File topLevelFile, List<File> files) {
         File[] fileList = topLevelFile.listFiles();
         for (File file : fileList) {
             if (file.isFile() && file.getName().endsWith(".class")) {
@@ -151,12 +151,12 @@ public class TestRunner {
         return files;
     }
 
-    private static void runCommand(String command) throws Exception {
+    public static void runCommand(String command) throws Exception {
         Process process = Runtime.getRuntime().exec(command);
-        //displayOutput(command + " stdout:", process.getInputStream());
-        //displayOutput(command + " stderr:", process.getErrorStream());
+        displayOutput(command + " stdout:", process.getInputStream());
+        displayOutput(command + " stderr:", process.getErrorStream());
         process.waitFor();
-        //System.out.println(command + " exitValue() " + process.exitValue());
+        System.out.println(command + " exitValue() " + process.exitValue());
     }
 
     private static void displayOutput(String command, InputStream input) throws IOException {
