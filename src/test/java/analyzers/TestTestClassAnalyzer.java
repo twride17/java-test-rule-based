@@ -16,7 +16,7 @@ public class TestTestClassAnalyzer {
     private final String[][] EXPECTED_RULES = {{"Call method Example.exampleMethod with 12\nGet value of Example.x"},
                                                 {"Call Test.method with arguments: 1 Call Test.method with arguments: 2 Get value of Test.x "},
                                                 {"Get value of Class.field", "Get value of Class.method", "Get value of Class.field"},
-                                                {"Call Test.setValue with -10", "Get value of Test.x", "Call Test.setValue with 10",
+                                                {"Call Test.setValue with 10", "Get value of Test.x", "Call Test.setValue with -10",
                                                         "Get value of Test.x"},
                                                 {"Get value of Class.field", "Get value of Class.method", "Get value of Class.field"},
                                                 {"Call Class.method", "Call Test.setValue with 2000", "Get value of Test.x",

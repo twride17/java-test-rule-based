@@ -2,28 +2,29 @@ package main.java.tw.jruletest.analyzers;
 
 import main.java.tw.jruletest.app.Runner;
 
-import java.io.File;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Map;
 
 public class TestClassAnalyzer {
 
     public static void extractRules(List<File> testFiles) {
         for(File file: testFiles) {
-            readTestClass("test.java.examples." + file.getName().substring(0, file.getName().indexOf(".")));
+            readTestClass("test.java.examples." + file.getName().substring(0, file.getName().indexOf(".")), file);
         }
     }
 
-    private static void readTestClass(String className) {
+    private static void readTestClass(String className, File file) {
         try {
             Class<?> cls = Class.forName(className);
             Object classInstance = cls.newInstance();
 
-            Method[] methods = cls.getDeclaredMethods();
-            Field[] fields = cls.getDeclaredFields();
+            Method[] methods = orderMethods(cls.getDeclaredMethods(), file);
+            Field[] fields = orderFields(cls.getDeclaredFields(),file);
 
             if((fields.length == 1) && (methods.length > 1)) {
                 readFieldAfterMethod(classInstance, fields[0], methods);
@@ -105,5 +106,69 @@ public class TestClassAnalyzer {
             System.out.println("Couldn't invoke method");
         }
         return null;
+    }
+
+    private static Method[] orderMethods(Method[] methods, File file) {
+        Method[] orderedMethods = new Method[methods.length];
+        int methodsFound = 0;
+        try {
+            BufferedReader javaReader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+            while(true) {
+                String[] terms = javaReader.readLine().split(" ");
+                for(String term: terms) {
+                    if(!term.isEmpty()) {
+                        for(Method method: methods) {
+                            if(matches(method.getName(), term)){
+                                orderedMethods[methodsFound] = method;
+                                methodsFound ++;
+                            }
+                        }
+                    }
+                }
+            }
+        } catch(IOException e) {
+            e.printStackTrace();
+        } catch(NullPointerException e) {}
+        return orderedMethods;
+    }
+
+    private static Field[] orderFields(Field[] fields, File file) {
+        Field[] orderedFields = new Field[fields.length];
+        int fieldsFound = 0;
+        try {
+            BufferedReader javaReader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+            while(fieldsFound < orderedFields.length) {
+                String[] terms = javaReader.readLine().split(" ");
+                for(String term: terms) {
+                    if(!term.isEmpty()) {
+                        for(Field field: fields) {
+                            if(matches(field.getName(), term)) {
+                                orderedFields[fieldsFound] = field;
+                                fieldsFound++;
+                            }
+                        }
+                    }
+                }
+            }
+        } catch(IOException e) {
+            e.printStackTrace();
+        } catch(NullPointerException e) {}
+        return orderedFields;
+    }
+
+    private static boolean matches(String name, String code) {
+        if(name.contains(".")) {
+            name = name.substring(name.lastIndexOf("."));
+        }
+
+        if(code.contains("(")) {
+            return name.equals(code.substring(0, code.indexOf("(")));
+        }
+        else if(code.contains(";")){
+            return name.equals(code.substring(0, code.indexOf(";")));
+        }
+        else {
+            return name.equals(code);
+        }
     }
 }
