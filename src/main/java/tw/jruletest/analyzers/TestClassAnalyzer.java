@@ -13,7 +13,7 @@ public class TestClassAnalyzer {
 
     public static void extractRules(List<File> testFiles) {
         for(File file: testFiles) {
-            readTestClass("test.java." + file.getName().substring(0, file.getName().indexOf(".")));
+            readTestClass("test.java.examples." + file.getName().substring(0, file.getName().indexOf(".")));
         }
     }
 

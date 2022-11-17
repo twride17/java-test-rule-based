@@ -10,8 +10,8 @@ import java.util.List;
 
 public class TestRunner {
 
-    private final ArrayList<String> CLASSES = new ArrayList<>(Arrays.asList("TestClass1.class","TestClass2.class","TestClass3.class",
-                                                                            "TestClass4.class","TestClass5.class","TestClass6.class"));
+    private final ArrayList<String> FILES = new ArrayList<>(Arrays.asList("TestClass1.java","TestClass2.java","TestClass3.java",
+                                                                            "TestClass4.java","TestClass5.java","TestClass6.java"));
 
     @Test
     public void testClassFileSearch() {
@@ -19,7 +19,7 @@ public class TestRunner {
         List<File> files = Runner.searchFiles(topFile, new ArrayList<>());
         Assert.assertEquals(6, files.size());
         for(File file: files) {
-            Assert.assertTrue(CLASSES.contains(file.getName()));
+            Assert.assertTrue(FILES.contains(file.getName()));
         }
     }
 }

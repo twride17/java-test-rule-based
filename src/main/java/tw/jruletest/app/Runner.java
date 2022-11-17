@@ -33,16 +33,16 @@ public class Runner {
             System.out.println("args given");
             path = args[0];
         }
-        path += "\\src";
+        path += "\\src\\test\\java\\examples";
         System.out.println(path);
 
-        try {
-            runCommand("javac -cp src " + path + "/test/java/*.java");
-        } catch(IOException | InterruptedException e) {
-            System.out.println("Couldn't run.");
-        } catch (Exception e) {
-            System.out.println("Failed");
-        }
+//        try {
+//            runCommand("javac -cp src " + path + "\\*.java");
+//        } catch(IOException | InterruptedException e) {
+//            System.out.println("Couldn't run.");
+//        } catch (Exception e) {
+//            System.out.println("Failed");
+//        }
 
         List<File> classFiles = searchFiles(new File(path), new ArrayList<>());
         TestClassAnalyzer.extractRules(classFiles);
@@ -55,7 +55,7 @@ public class Runner {
     public static List<File> searchFiles(File topLevelFile, List<File> files) {
         File[] fileList = topLevelFile.listFiles();
         for (File file : fileList) {
-            if (file.isFile() && file.getName().endsWith(".class")) {
+            if (file.isFile() && file.getName().endsWith(".java")) {
                 files.add(file);
             }
             else if (file.isDirectory()) {
@@ -68,5 +68,9 @@ public class Runner {
     public static void runCommand(String command) throws Exception {
         Process process = Runtime.getRuntime().exec(command);
         process.waitFor();
+    }
+
+    public static ArrayList<String> getRuleSets() {
+        return ruleSets;
     }
 }
