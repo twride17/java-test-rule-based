@@ -1,6 +1,8 @@
 package main.java.tw.jruletest.app;
 
 import main.java.tw.jruletest.analyzers.TestClassAnalyzer;
+import main.java.tw.jruletest.generators.TestSuiteGenerator;
+import main.java.tw.jruletest.parse.Parser;
 
 import java.io.*;
 import java.lang.reflect.*;
@@ -34,18 +36,24 @@ public class Runner {
             path = args[0];
         }
         path += "\\src\\test\\java\\examples";
-        System.out.println(path);
-
-//        try {
-//            runCommand("javac -cp src " + path + "\\*.java");
-//        } catch(IOException | InterruptedException e) {
-//            System.out.println("Couldn't run.");
-//        } catch (Exception e) {
-//            System.out.println("Failed");
-//        }
+        // System.out.println(path);
 
         List<File> classFiles = searchFiles(new File(path), new ArrayList<>());
         TestClassAnalyzer.extractRules(classFiles);
+
+        int x = 1;
+        for(String ruleSet: ruleSets) {
+            List<String> codeBlocks = new ArrayList<>();
+            String code = "";
+            for(String rule: ruleSet.split("\n")) {
+                System.out.println(rule);
+                code += Parser.parseRule(rule);
+            }
+            System.out.println();
+            codeBlocks.add(code);
+            TestSuiteGenerator.writeSuiteToFile(codeBlocks, "Test" + x + ".txt");
+            x++;
+        }
     }
 
     public static void addRuleSet(String set) {
@@ -63,11 +71,6 @@ public class Runner {
             }
         }
         return files;
-    }
-
-    public static void runCommand(String command) throws Exception {
-        Process process = Runtime.getRuntime().exec(command);
-        process.waitFor();
     }
 
     public static ArrayList<String> getRuleSets() {

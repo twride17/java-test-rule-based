@@ -7,10 +7,16 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.nio.file.Files;
 import java.util.List;
-import java.util.Map;
 
 public class TestClassAnalyzer {
+
+    /**
+     * Obtains the rules defined in each of the files provided and passes them to the Runner class
+     *
+     * @param testFiles: list of files from which to extract the rules
+     * */
 
     public static void extractRules(List<File> testFiles) {
         for(File file: testFiles) {
@@ -24,7 +30,7 @@ public class TestClassAnalyzer {
             Object classInstance = cls.newInstance();
 
             Method[] methods = orderMethods(cls.getDeclaredMethods(), file);
-            Field[] fields = orderFields(cls.getDeclaredFields(),file);
+            Field[] fields = orderFields(cls.getDeclaredFields(), file);
 
             if((fields.length == 1) && (methods.length > 1)) {
                 readFieldAfterMethod(classInstance, fields[0], methods);
@@ -112,8 +118,8 @@ public class TestClassAnalyzer {
         Method[] orderedMethods = new Method[methods.length];
         int methodsFound = 0;
         try {
-            BufferedReader javaReader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
-            while(true) {
+            BufferedReader javaReader = new BufferedReader(new InputStreamReader(Files.newInputStream(file.toPath())));
+            while(methodsFound < orderedMethods.length) {
                 String[] terms = javaReader.readLine().split(" ");
                 for(String term: terms) {
                     if(!term.isEmpty()) {
@@ -136,7 +142,7 @@ public class TestClassAnalyzer {
         Field[] orderedFields = new Field[fields.length];
         int fieldsFound = 0;
         try {
-            BufferedReader javaReader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+            BufferedReader javaReader = new BufferedReader(new InputStreamReader(Files.newInputStream(file.toPath())));
             while(fieldsFound < orderedFields.length) {
                 String[] terms = javaReader.readLine().split(" ");
                 for(String term: terms) {

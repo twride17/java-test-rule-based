@@ -15,7 +15,7 @@ public class Parser {
      * Parses the rules from a test case
      */
 
-    private static Rule ruleHandler;
+    // private static Rule ruleHandler;
 
     private static final String[] KEYWORDS = {"Call", "Get"};
     private static final HashMap<String, Rule> KEYWORD_HANDLERS = mapKeywordsToHandlers();
