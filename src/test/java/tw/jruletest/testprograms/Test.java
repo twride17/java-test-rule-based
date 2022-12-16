@@ -1,4 +1,4 @@
-package test.java.testprograms;
+package tw.jruletest.testprograms;
 
 public class Test {
     public static int x;

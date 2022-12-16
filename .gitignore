@@ -1,7 +1,7 @@
-# Compiled class file
+# Compiled class files
 src/main/*.class
-src/main/test/java/parse/*.class
-src/main/test/java/testprograms/*.class
+src/test/java/tw/jruletest/examples/*.class
+src/test/java/tw/jruletest/testprograms/*.class
 
 # Log file
 *.log

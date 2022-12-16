@@ -1,6 +1,6 @@
-package test.java;
+package tw.jruletest;
 
-import main.java.tw.jruletest.app.Runner;
+import tw.jruletest.app.Runner;
 import org.junit.*;
 
 import java.io.File;
@@ -15,7 +15,7 @@ public class TestRunner {
 
     @Test
     public void testClassFileSearch() {
-        File topFile = new File(System.getProperty("user.dir") + "/src/test/java/examples");
+        File topFile = new File(System.getProperty("user.dir") + "/src/test/java/tw/jruletest/examples");
         List<File> files = Runner.searchFiles(topFile, new ArrayList<>());
         Assert.assertEquals(6, files.size());
         for(File file: files) {

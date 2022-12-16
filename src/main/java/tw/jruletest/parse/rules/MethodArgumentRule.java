@@ -1,7 +1,4 @@
-package main.java.tw.jruletest.parse.rules;
-
-import java.util.ArrayList;
-import java.util.Arrays;
+package tw.jruletest.parse.rules;
 
 public class MethodArgumentRule implements Rule {
 

@@ -1,6 +1,6 @@
-package main.java.tw.jruletest.parse.rules;
+package tw.jruletest.parse.rules;
 
-import main.java.tw.jruletest.analyzers.JavaClassAnalyzer;
+import tw.jruletest.analyzers.JavaClassAnalyzer;
 
 import java.util.ArrayList;
 import java.util.Arrays;

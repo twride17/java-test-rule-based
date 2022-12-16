@@ -1,6 +1,6 @@
-package test.java.parse.rules;
+package tw.jruletest.parse.rules;
 
-import main.java.tw.jruletest.parse.rules.MethodArgumentRule;
+import tw.jruletest.parse.rules.MethodArgumentRule;
 import org.junit.*;
 
 public class TestMethodArgumentRule {

@@ -1,11 +1,7 @@
-package test.java.parse.rules;
+package tw.jruletest.parse.rules;
 
-import main.java.tw.jruletest.parse.rules.GetValueRule;
+import tw.jruletest.parse.rules.GetValueRule;
 import org.junit.*;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 public class TestGetValueRule {
     @Test

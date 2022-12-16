@@ -1,11 +1,7 @@
-package test.java.parse;
+package tw.jruletest.parse;
 
-import main.java.tw.jruletest.parse.Parser;
+import tw.jruletest.parse.Parser;
 import org.junit.*;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 public class TestParser {
 

@@ -1,4 +1,4 @@
-package main.java.tw.jruletest.parse.rules;
+package tw.jruletest.parse.rules;
 
 public interface Rule {
 

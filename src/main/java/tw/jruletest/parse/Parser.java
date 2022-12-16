@@ -1,8 +1,6 @@
-package main.java.tw.jruletest.parse;
+package tw.jruletest.parse;
 
-import main.java.tw.jruletest.parse.rules.GetValueRule;
-import main.java.tw.jruletest.parse.rules.MethodCallRule;
-import main.java.tw.jruletest.parse.rules.Rule;
+import tw.jruletest.parse.rules.*;
 
 import java.util.*;
 
@@ -19,6 +17,14 @@ public class Parser {
 
     private static final String[] KEYWORDS = {"Call", "Get"};
     private static final HashMap<String, Rule> KEYWORD_HANDLERS = mapKeywordsToHandlers();
+
+    public static String parseRules(String[] rules) {
+        String generatedCode = "";
+        for(String rule: rules) {
+            generatedCode += parseRule(rule);
+        }
+        return generatedCode;
+    }
 
     public static String parseRule(String rule) {
         String codeBlock = "";

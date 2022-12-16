@@ -1,10 +1,9 @@
-package main.java.tw.jruletest.analyzers;
+package tw.jruletest.analyzers;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 
 public class JavaClassAnalyzer {
 

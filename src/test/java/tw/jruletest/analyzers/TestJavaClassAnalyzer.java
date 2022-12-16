@@ -1,6 +1,6 @@
-package test.java.analyzers;
+package tw.jruletest.analyzers;
 
-import main.java.tw.jruletest.analyzers.JavaClassAnalyzer;
+import tw.jruletest.analyzers.JavaClassAnalyzer;
 import org.junit.*;
 
 public class TestJavaClassAnalyzer {

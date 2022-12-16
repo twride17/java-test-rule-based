@@ -1,9 +1,9 @@
-package main.java.tw.jruletest.generators;
+package tw.jruletest.generators;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.List;
+import java.util.Map;
 
 /**
  * @author Toby Wride
@@ -33,23 +33,14 @@ public class TestSuiteGenerator {
     /**
      * Constructs the test suite and writes it to a Java file in a specified package
      *
-     * @param filename: the name of the file to write the suite to
-     * @param packageName: the name of the package to write the file into
-     * */
-
-    public static void writeSuiteToFile(String code, String filename, String packageName) {
-        writeSuiteToFile(code, packageName.replaceAll("\\.", "/") + "/" + filename);
-    }
-
-    /**
-     * Constructs the test suite and writes it to a Java file in a specified package
-     *
      * @param codeBlocks: list of blocks of code for all the test cases in the test suite
      * @param filename: the name of the file to write the suite to
      * */
 
-    public static void writeSuiteToFile(List<String> codeBlocks, String filename) {
-        writeSuiteToFile(constructTestSuite(codeBlocks), filename);
+    public static void writeSuiteToFile(Map<String, String> codeBlocks, String className) {
+        String filename = className.replaceAll("\\.", "\\") + ".java";
+        int classNameIndex = className.lastIndexOf(".");
+        writeSuiteToFile(constructTestSuite(codeBlocks, className.substring(0, classNameIndex), className.substring(classNameIndex)), filename);
     }
 
     /**
@@ -59,10 +50,10 @@ public class TestSuiteGenerator {
      * @return constructed test suite as a single string
      * */
 
-    public static String constructTestSuite(List<String> codeBlocks) {
-        String code = "package example;\n\npublic class TestSuite {";
-        for(String codeBlock: codeBlocks) {
-            code += "\n\n" + TestCaseGenerator.writeTestCase(codeBlock);
+    public static String constructTestSuite(Map<String, String> codeBlocks, String className, String packageName) {
+        String code = "package " + packageName + ";\n\npublic class " + className + " {";
+        for(String methodName: codeBlocks.keySet()) {
+            code += "\n\n" + TestCaseGenerator.writeTestCase(codeBlocks.get(methodName), methodName);
         }
         return code + "\n}";
     }

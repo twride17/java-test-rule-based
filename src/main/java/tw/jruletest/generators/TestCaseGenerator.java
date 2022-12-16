@@ -1,4 +1,4 @@
-package main.java.tw.jruletest.generators;
+package tw.jruletest.generators;
 
 /**
  * @author Toby Wride

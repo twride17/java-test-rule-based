@@ -1,6 +1,7 @@
-package main.java.tw.jruletest.analyzers;
+package tw.jruletest.analyzers;
 
-import main.java.tw.jruletest.app.Runner;
+import tw.jruletest.files.TestClassFile;
+import tw.jruletest.loaders.TestClassLoader;
 
 import java.io.*;
 import java.lang.reflect.Field;
@@ -8,29 +9,32 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
-import java.util.List;
+import java.nio.file.Paths;
 
 public class TestClassAnalyzer {
 
-    /**
-     * Obtains the rules defined in each of the files provided and passes them to the Runner class
-     *
-     * @param testFiles: list of files from which to extract the rules
-     * */
+    private String className;
+    private String filePath;
 
-    public static void extractRules(List<File> testFiles) {
-        for(File file: testFiles) {
-            readTestClass("test.java.examples." + file.getName().substring(0, file.getName().indexOf(".")), file);
-        }
+    private TestClassFile testClassFile;
+
+    public TestClassAnalyzer(File file) {
+        filePath = file.getPath();
+        int classNameIndex = filePath.lastIndexOf(".");
+        int packageNameIndex = filePath.indexOf("test\\java\\")+10;
+        className = filePath.substring(packageNameIndex, classNameIndex).replaceAll("\\\\", ".");
+        testClassFile = new TestClassFile(className);
     }
 
-    private static void readTestClass(String className, File file) {
+    public TestClassFile readTestClass() {
+        TestClassLoader loader = new TestClassLoader(TestClassAnalyzer.class.getClassLoader());
         try {
-            Class<?> cls = Class.forName(className);
+            loader.loadClass(className);
+            Class<?> cls = Class.forName(className, false, loader);
             Object classInstance = cls.newInstance();
 
-            Method[] methods = orderMethods(cls.getDeclaredMethods(), file);
-            Field[] fields = orderFields(cls.getDeclaredFields(), file);
+            Method[] methods = orderMethods(cls.getDeclaredMethods());
+            Field[] fields = orderFields(cls.getDeclaredFields());
 
             if((fields.length == 1) && (methods.length > 1)) {
                 readFieldAfterMethod(classInstance, fields[0], methods);
@@ -45,60 +49,59 @@ public class TestClassAnalyzer {
         } catch (InstantiationException | IllegalAccessException e) {
             System.out.println("Couldn't instantiate " + className);
         }
+        return testClassFile;
     }
 
-    private static void readFieldAfterMethod(Object instance, Field field, Method[] methods) {
+    private void readFieldAfterMethod(Object instance, Field field, Method[] methods) {
         for(Method method: methods) {
             readFromMethod(instance, method);
             readFromField(instance, field);
         }
     }
 
-    private static void readFields(Object instance, Field[] fields) {
+    private void readFields(Object instance, Field[] fields) {
         for(Field field: fields) {
             readFromField(instance, field);
         }
     }
 
-    private static void readFromMethods(Object instance, Method[] methods) {
+    private void readFromMethods(Object instance, Method[] methods) {
         for(Method method: methods) {
             readFromMethod(instance, method);
         }
     }
 
-    private static void readFromMethod(Object instance, Method method) {
+    private void readFromMethod(Object instance, Method method) {
         String result = callMethod(instance, method);
         if(result != null) {
-            Runner.addRuleSet(result);
+            testClassFile.addRule(method.getName(), result);
         }
     }
 
-    private static void readFromField(Object instance, Field field) {
+    private void readFromField(Object instance, Field field) {
         try {
             if(field.getType().isArray()) {
                 readFromArrayField(instance, field);
             } else {
-                Runner.addRuleSet((String) field.get(instance));
+                testClassFile.addRule(field.getName(), (String) field.get(instance));
             }
         } catch(IllegalAccessException e) {
             System.out.println("Cannot access field: " + field.getName());
         }
     }
 
-    private static void readFromArrayField(Object instance, Field field) {
+    private void readFromArrayField(Object instance, Field field) {
         try {
             Object[] set = (Object[])field.get(instance);
-            String ruleSet = "";
             for(Object rule: set) {
-                ruleSet += rule + " ";
+                testClassFile.addRule(field.getName(), (String) rule);
             }
-            Runner.addRuleSet(ruleSet);
         } catch(IllegalAccessException e) {
             System.out.println("Cannot access the field " + field.getName());
         }
     }
 
-    private static String callMethod(Object instance, Method method) {
+    private String callMethod(Object instance, Method method) {
         try {
             return (String)method.invoke(instance);
         } catch(IllegalArgumentException e) {
@@ -114,11 +117,11 @@ public class TestClassAnalyzer {
         return null;
     }
 
-    private static Method[] orderMethods(Method[] methods, File file) {
+    private Method[] orderMethods(Method[] methods) {
         Method[] orderedMethods = new Method[methods.length];
         int methodsFound = 0;
         try {
-            BufferedReader javaReader = new BufferedReader(new InputStreamReader(Files.newInputStream(file.toPath())));
+            BufferedReader javaReader = new BufferedReader(new InputStreamReader(Files.newInputStream(Paths.get(filePath))));
             while(methodsFound < orderedMethods.length) {
                 String[] terms = javaReader.readLine().split(" ");
                 for(String term: terms) {
@@ -138,11 +141,11 @@ public class TestClassAnalyzer {
         return orderedMethods;
     }
 
-    private static Field[] orderFields(Field[] fields, File file) {
+    private Field[] orderFields(Field[] fields) {
         Field[] orderedFields = new Field[fields.length];
         int fieldsFound = 0;
         try {
-            BufferedReader javaReader = new BufferedReader(new InputStreamReader(Files.newInputStream(file.toPath())));
+            BufferedReader javaReader = new BufferedReader(new InputStreamReader(Files.newInputStream(Paths.get(filePath))));
             while(fieldsFound < orderedFields.length) {
                 String[] terms = javaReader.readLine().split(" ");
                 for(String term: terms) {
@@ -162,7 +165,7 @@ public class TestClassAnalyzer {
         return orderedFields;
     }
 
-    private static boolean matches(String name, String code) {
+    private boolean matches(String name, String code) {
         if(name.contains(".")) {
             name = name.substring(name.lastIndexOf("."));
         }

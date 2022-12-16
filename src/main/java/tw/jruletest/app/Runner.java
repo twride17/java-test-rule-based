@@ -1,13 +1,13 @@
-package main.java.tw.jruletest.app;
+package tw.jruletest.app;
 
-import main.java.tw.jruletest.analyzers.TestClassAnalyzer;
-import main.java.tw.jruletest.generators.TestSuiteGenerator;
-import main.java.tw.jruletest.parse.Parser;
+import tw.jruletest.analyzers.RuleExtractor;
+import tw.jruletest.generators.TestSuiteGenerator;
 
 import java.io.*;
-import java.lang.reflect.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.nio.file.Paths;
+import java.util.*;
 
 /**
  * @author Toby Wride
@@ -23,7 +23,7 @@ public class Runner {
 
     private static String path;
 
-    private static ArrayList<String> ruleSets = new ArrayList<>();
+    public static Map<String, Map<String, String>> ruleSets = new HashMap<>();
 
     public static void main(String[] args) {
         if(args.length == 0) {
@@ -35,29 +35,43 @@ public class Runner {
             System.out.println("args given");
             path = args[0];
         }
-        path += "\\src\\test\\java\\examples";
-        // System.out.println(path);
+        //path += "\\src\\test\\java\\examples";
+        path += "\\src\\test\\java\\tw\\jruletest\\examples";
+
+        try {
+            runCommand("javac -cp src/test/java " + path + "/*.java");
+            //runCommand("java -cp src/test/java tw/jruletest/examples/TestClass1");
+        } catch(Exception e){}
 
         List<File> classFiles = searchFiles(new File(path), new ArrayList<>());
-        TestClassAnalyzer.extractRules(classFiles);
+        RuleExtractor.extractRules(classFiles.get(0));
+//        RuleExtractor.extractRules(classFiles);
+//
+//        for(String className: ruleSets.keySet()) {
+//            Map<String, String> rules = ruleSets.get(className);
+//            TestSuiteGenerator.writeSuiteToFile(rules, className);
+//        }
+    }
 
-        int x = 1;
-        for(String ruleSet: ruleSets) {
-            List<String> codeBlocks = new ArrayList<>();
-            String code = "";
-            for(String rule: ruleSet.split("\n")) {
-                System.out.println(rule);
-                code += Parser.parseRule(rule);
-            }
-            System.out.println();
-            codeBlocks.add(code);
-            TestSuiteGenerator.writeSuiteToFile(codeBlocks, "Test" + x + ".txt");
-            x++;
+    public static void runCommand(String command) throws Exception {
+        Process process = Runtime.getRuntime().exec(command);
+        displayOutput(command + " stdout:", process.getInputStream());
+        displayOutput(command + " stderr:", process.getErrorStream());
+        process.waitFor();
+        System.out.println(command + " exitValue() " + process.exitValue());
+    }
+
+    private static void displayOutput(String command, InputStream input) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+        String line = reader.readLine();
+        while(line != null) {
+            System.out.println(line);
+            line = reader.readLine();
         }
     }
 
-    public static void addRuleSet(String set) {
-        ruleSets.add(set);
+    public static void addTestClass(String className, Map<String, String> rules) {
+        ruleSets.put(className, rules);
     }
 
     public static List<File> searchFiles(File topLevelFile, List<File> files) {
@@ -71,9 +85,5 @@ public class Runner {
             }
         }
         return files;
-    }
-
-    public static ArrayList<String> getRuleSets() {
-        return ruleSets;
     }
 }
