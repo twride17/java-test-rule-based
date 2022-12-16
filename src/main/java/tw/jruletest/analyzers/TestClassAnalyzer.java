@@ -1,5 +1,6 @@
 package tw.jruletest.analyzers;
 
+import tw.jruletest.app.Runner;
 import tw.jruletest.files.TestClassFile;
 import tw.jruletest.loaders.TestClassLoader;
 
@@ -27,10 +28,9 @@ public class TestClassAnalyzer {
     }
 
     public TestClassFile readTestClass() {
-        TestClassLoader loader = new TestClassLoader(TestClassAnalyzer.class.getClassLoader());
         try {
-            loader.loadClass(className);
-            Class<?> cls = Class.forName(className, false, loader);
+            Runner.getLoader().loadClass(className);
+            Class<?> cls = Class.forName(className, false, Runner.getLoader());
             Object classInstance = cls.newInstance();
 
             Method[] methods = orderMethods(cls.getDeclaredMethods());

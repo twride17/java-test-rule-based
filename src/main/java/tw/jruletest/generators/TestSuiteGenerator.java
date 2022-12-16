@@ -1,6 +1,7 @@
 package tw.jruletest.generators;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
@@ -21,8 +22,17 @@ public class TestSuiteGenerator {
      * */
 
     public static void writeSuiteToFile(String code, String filename) {
+        String[] directoryNames = filename.substring(0, filename.lastIndexOf("\\")).split("\\\\");
+        String directoryPath = "src\\test\\java";
+        for(String directoryName: directoryNames) {
+            directoryPath += "\\" + directoryName;
+            File currentDirectory = new File(directoryPath);
+            if(!currentDirectory.exists()) {
+                currentDirectory.mkdir();
+            }
+        }
         try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter("src/test/java/" + filename));
+            BufferedWriter writer = new BufferedWriter(new FileWriter("src\\test\\java\\" + filename));
             writer.write(code);
             writer.close();
         } catch(IOException e) {
@@ -34,13 +44,13 @@ public class TestSuiteGenerator {
      * Constructs the test suite and writes it to a Java file in a specified package
      *
      * @param codeBlocks: list of blocks of code for all the test cases in the test suite
-     * @param filename: the name of the file to write the suite to
+     * @param className: the full name of the class to write the suite for. Is used to generate the filename
      * */
 
     public static void writeSuiteToFile(Map<String, String> codeBlocks, String className) {
-        String filename = className.replaceAll("\\.", "\\") + ".java";
+        String filename = "generated\\" + className.replaceAll("\\.", "\\\\") + ".txt";
         int classNameIndex = className.lastIndexOf(".");
-        writeSuiteToFile(constructTestSuite(codeBlocks, className.substring(0, classNameIndex), className.substring(classNameIndex)), filename);
+        writeSuiteToFile(constructTestSuite(codeBlocks, className.substring(classNameIndex+1), className.substring(0, classNameIndex)), filename);
     }
 
     /**

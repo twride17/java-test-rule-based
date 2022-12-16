@@ -2,6 +2,8 @@ package tw.jruletest.app;
 
 import tw.jruletest.analyzers.RuleExtractor;
 import tw.jruletest.generators.TestSuiteGenerator;
+import tw.jruletest.loaders.TestClassLoader;
+import tw.jruletest.parse.Parser;
 
 import java.io.*;
 import java.net.URL;
@@ -22,6 +24,7 @@ public class Runner {
     // Use framework classes to create own runner
 
     private static String path;
+    private static TestClassLoader loader;
 
     public static Map<String, Map<String, String>> ruleSets = new HashMap<>();
 
@@ -38,27 +41,34 @@ public class Runner {
         //path += "\\src\\test\\java\\examples";
         path += "\\src\\test\\java\\tw\\jruletest\\examples";
 
-        try {
-            runCommand("javac -cp src/test/java " + path + "/*.java");
-            //runCommand("java -cp src/test/java tw/jruletest/examples/TestClass1");
-        } catch(Exception e){}
+        loader = new TestClassLoader(Runner.class.getClassLoader());
+        runCommand("javac -cp src " + path + "/*.java");
 
         List<File> classFiles = searchFiles(new File(path), new ArrayList<>());
-        RuleExtractor.extractRules(classFiles.get(0));
-//        RuleExtractor.extractRules(classFiles);
-//
-//        for(String className: ruleSets.keySet()) {
-//            Map<String, String> rules = ruleSets.get(className);
-//            TestSuiteGenerator.writeSuiteToFile(rules, className);
-//        }
+        for(File file: classFiles) {
+            System.out.println(file.getPath());
+        }
+        RuleExtractor.extractRules(classFiles);
+
+        for(String className: ruleSets.keySet()) {
+            Map<String, String> rules = ruleSets.get(className);
+            for(String methodName: rules.keySet()) {
+                rules.replace(methodName, Parser.parseRules(className, rules.get(methodName).split("\n")));
+            }
+            TestSuiteGenerator.writeSuiteToFile(rules, className);
+        }
     }
 
-    public static void runCommand(String command) throws Exception {
-        Process process = Runtime.getRuntime().exec(command);
-        displayOutput(command + " stdout:", process.getInputStream());
-        displayOutput(command + " stderr:", process.getErrorStream());
-        process.waitFor();
-        System.out.println(command + " exitValue() " + process.exitValue());
+    public static void runCommand(String command) {
+        try {
+            Process process = Runtime.getRuntime().exec(command);
+            //displayOutput(command + " stdout:", process.getInputStream());
+            //displayOutput(command + " stderr:", process.getErrorStream());
+            process.waitFor();
+            //System.out.println(command + " exitValue() " + process.exitValue());
+        } catch(Exception e) {
+            System.out.println("Couldn't run process: " + command);
+        }
     }
 
     private static void displayOutput(String command, InputStream input) throws IOException {
@@ -85,5 +95,9 @@ public class Runner {
             }
         }
         return files;
+    }
+
+    public static TestClassLoader getLoader() {
+        return loader;
     }
 }

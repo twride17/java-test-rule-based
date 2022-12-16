@@ -1,9 +1,14 @@
 package tw.jruletest.analyzers;
 
+import tw.jruletest.app.Runner;
+
+import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 public class JavaClassAnalyzer {
 
@@ -13,16 +18,23 @@ public class JavaClassAnalyzer {
      * Performs reflection on the source java classes to simplify the process of decoding rules
      * */
 
-    private static Class<?> getRequiredClass(String classname) throws ClassNotFoundException {
-        return Class.forName("test.java.testprograms." + classname);
-    }
+    private static String currentPackage = "";
 
-    public static String getReturnTypeCode() {
-        return null;
-    }
-
-    public static Type getReturnType() {
-        return null;
+    private static Class<?> getRequiredClass(String className) throws ClassNotFoundException {
+        String currentClass = "";
+        List<File> files = Runner.searchFiles(new File(System.getProperty("user.dir") + "\\src\\test\\java"), new ArrayList<>());
+        for(File file: files) {
+            String path = file.getPath();
+            if(path.contains(className+".java") && !path.contains("generated")) {
+                currentClass = path.substring(path.indexOf("src\\test\\java")+14, path.lastIndexOf("\\")+1) + className;
+            }
+        }
+        currentClass = currentClass.replaceAll("\\\\", ".");
+        Runner.runCommand("javac -cp src " + currentClass + ".java");
+        try {
+            Runner.getLoader().loadClass(currentClass);
+        } catch(LinkageError e) {}
+        return Class.forName(currentClass, true, Runner.getLoader());
     }
 
     public static boolean isField(String segment) {
@@ -58,5 +70,9 @@ public class JavaClassAnalyzer {
             System.out.println("Could not find class: " + parts[0]);
             return false;
         }
+    }
+
+    public static void updateCurrentPackage(String className) {
+        currentPackage = className;
     }
 }

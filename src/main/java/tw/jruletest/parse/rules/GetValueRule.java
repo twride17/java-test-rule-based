@@ -14,8 +14,6 @@ public class GetValueRule implements Rule {
         terms.remove("of");
         // Expect class name and field next
         // TODO Find field type, add as identifier
-
-        // TODO Use reflection to find if method or variable
         if(JavaClassAnalyzer.isField(terms.get(0))) {
             return "int value = " + terms.get(0) + ";";
         }

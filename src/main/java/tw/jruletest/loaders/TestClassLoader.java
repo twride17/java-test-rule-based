@@ -13,7 +13,6 @@ public class TestClassLoader extends ClassLoader {
 
     private Class<?> getClass(String name) throws ClassNotFoundException {
         String file = name.replace('.', File.separatorChar) + ".class";
-        System.out.println(file);
         try {
             // This loads the byte code data from the file
             byte[] b = loadClassFileData(file);
@@ -22,7 +21,6 @@ public class TestClassLoader extends ClassLoader {
             resolveClass(c);
             return c;
         } catch (IOException e) {
-            e.printStackTrace();
             throw new ClassNotFoundException();
         }
     }
