@@ -6,9 +6,6 @@ import tw.jruletest.loaders.TestClassLoader;
 import tw.jruletest.parse.Parser;
 
 import java.io.*;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.nio.file.Paths;
 import java.util.*;
 
 /**
@@ -26,7 +23,7 @@ public class Runner {
     private static String path;
     private static TestClassLoader loader;
 
-    public static Map<String, Map<String, String>> ruleSets = new HashMap<>();
+    private static Map<String, Map<String, String>> ruleSets = new HashMap<>();
 
     public static void main(String[] args) {
         if(args.length == 0) {
@@ -41,13 +38,13 @@ public class Runner {
         //path += "\\src\\test\\java\\examples";
         path += "\\src\\test\\java\\tw\\jruletest\\examples";
 
-        loader = new TestClassLoader(Runner.class.getClassLoader());
+        createTestClassLoader();
         runCommand("javac -cp src " + path + "/*.java");
 
         List<File> classFiles = searchFiles(new File(path), new ArrayList<>());
-        for(File file: classFiles) {
-            System.out.println(file.getPath());
-        }
+        //for(File file: classFiles) {
+        //    System.out.println(file.getPath());
+        //}
         RuleExtractor.extractRules(classFiles);
 
         for(String className: ruleSets.keySet()) {
@@ -99,5 +96,13 @@ public class Runner {
 
     public static TestClassLoader getLoader() {
         return loader;
+    }
+
+    public static void createTestClassLoader() {
+        loader = new TestClassLoader(Runner.class.getClassLoader());
+    }
+
+    public static Map<String, Map<String, String>> getRuleSets() {
+        return ruleSets;
     }
 }

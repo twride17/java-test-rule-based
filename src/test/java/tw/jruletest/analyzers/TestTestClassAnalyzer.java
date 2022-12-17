@@ -5,27 +5,32 @@ import tw.jruletest.app.Runner;
 import org.junit.*;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public class TestTestClassAnalyzer {
 
     private List<File> files;
 
-    private final String[][] EXPECTED_RULES = {{"Call method Example.exampleMethod with 12\nGet value of Example.x"},
-                                                {"Call Test.method with arguments: 1 Call Test.method with arguments: 2 Get value of Test.x "},
+    private final String[][] EXPECTED_RULES = {{"Call method Example.exampleMethod with 12\nGet value of Example.example"},
+                                                {"Call Test.method with arguments: 1\nCall Test.method with arguments: 2\nGet value of Test.x\n"},
                                                 {"Get value of Class.field", "Get value of Class.method", "Get value of Class.field"},
                                                 {"Call Test.setValue with 10", "Get value of Test.x", "Call Test.setValue with -10",
                                                         "Get value of Test.x"},
                                                 {"Get value of Class.field", "Get value of Class.method", "Get value of Class.field"},
                                                 {"Call Class.method", "Call Test.setValue with 2000", "Get value of Test.x",
-                                                        "Call Example.exampleMethod with 100", "Get value of Example.x"}};
+                                                        "Call Example.exampleMethod with 100", "Get value of Example.example"}};
 
     @Before
     public void setup() {
         files = Runner.searchFiles(new File(System.getProperty("user.dir") + "\\src\\test\\java\\tw\\jruletest\\examples")
                                                     , new ArrayList<>());
+        Runner.createTestClassLoader();
     }
 
     @Test
@@ -60,13 +65,51 @@ public class TestTestClassAnalyzer {
 
     private void conductTest(int testNumber) {
         RuleExtractor.extractRules(new ArrayList<>(Collections.singleton(files.get(testNumber))));
-//        ArrayList<String> rules = Runner.getRuleSets();
-//        for(int i = 0; i < rules.size(); i++) {
-//            Assert.assertEquals(EXPECTED_RULES[testNumber][i], rules.get(i));
+        Map<String, Map<String, String>> rules = Runner.getRuleSets();
+
+        String className = "tw.jruletest.examples.TestClass" + (testNumber+1);
+        Map<String, String> ruleSet = rules.get(className);
+        if(ruleSet.size() == 1) {
+            System.out.println(ruleSet.get(ruleSet.keySet().toArray(new String[0])[0]));
+            System.out.println(EXPECTED_RULES[testNumber][0]);
+            Assert.assertEquals(EXPECTED_RULES[testNumber][0], ruleSet.get(ruleSet.keySet().toArray(new String[0])[0]));
+        } else {
+            for (String methodKey : ruleSet.keySet()) {
+                int methodNum = Integer.parseInt(methodKey.substring(methodKey.length()-1));
+                Assert.assertEquals(ruleSet.get(methodKey), EXPECTED_RULES[testNumber][methodNum-1]);
+            }
+        }
+
+//        for(String testClassName: rules.keySet()) {
+//            //System.out.println(testClassName.substring(testClassName.length()-1));
+//            int classNumber = Integer.parseInt(testClassName.substring(testClassName.length()-1));
+//            Map<String, String> ruleSet = rules.get(testClassName);
+//            if(ruleSet.size() == 1) {
+//                System.out.println(ruleSet.get(ruleSet.keySet().toArray(new String[0])[0]));
+//                System.out.println(EXPECTED_RULES[classNumber-1][0]);
+//                Assert.assertEquals(EXPECTED_RULES[classNumber-1][0], ruleSet.get(ruleSet.keySet().toArray(new String[0])[0]));
+//            } else {
+//                for (String methodKey : ruleSet.keySet()) {
+//                    int methodNum = Integer.parseInt(methodKey.substring(methodKey.length()-1));
+//                    Assert.assertEquals(ruleSet.get(methodKey), EXPECTED_RULES[classNumber - 1][methodNum-1]);
+//                }
+//            }
 //        }
-//
-//        do {
-//            rules.remove(0);
-//        } while(!rules.isEmpty());
+        String[] keys = rules.keySet().toArray(new String[0]);
+        for(String key: keys) {
+            rules.remove(key);
+        }
+    }
+
+    @After
+    public void teardown() {
+        try {
+            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "src/test/java/tw/jruletest/examples/TestClass1.class"));
+            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "src/test/java/tw/jruletest/examples/TestClass2.class"));
+            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "src/test/java/tw/jruletest/examples/TestClass3.class"));
+            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "src/test/java/tw/jruletest/examples/TestClass4.class"));
+            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "src/test/java/tw/jruletest/examples/TestClass5.class"));
+            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "src/test/java/tw/jruletest/examples/TestClass6.class"));
+        } catch(IOException e) {}
     }
 }

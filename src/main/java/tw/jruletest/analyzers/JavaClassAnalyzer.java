@@ -6,7 +6,6 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,19 +17,20 @@ public class JavaClassAnalyzer {
      * Performs reflection on the source java classes to simplify the process of decoding rules
      * */
 
-    private static String currentPackage = "";
-
     private static Class<?> getRequiredClass(String className) throws ClassNotFoundException {
         String currentClass = "";
         List<File> files = Runner.searchFiles(new File(System.getProperty("user.dir") + "\\src\\test\\java"), new ArrayList<>());
         for(File file: files) {
             String path = file.getPath();
             if(path.contains(className+".java") && !path.contains("generated")) {
-                currentClass = path.substring(path.indexOf("src\\test\\java")+14, path.lastIndexOf("\\")+1) + className;
+                //System.out.println(path);
+                currentClass = path.substring(path.indexOf("src\\test\\java"), path.lastIndexOf("\\")+1) + className;
+                Runner.runCommand("javac -cp src " + currentClass + ".java");
             }
         }
-        currentClass = currentClass.replaceAll("\\\\", ".");
-        Runner.runCommand("javac -cp src " + currentClass + ".java");
+
+        currentClass = currentClass.substring(14).replaceAll("\\\\", ".");
+        //System.out.println(currentClass);
         try {
             Runner.getLoader().loadClass(currentClass);
         } catch(LinkageError e) {}
@@ -70,9 +70,5 @@ public class JavaClassAnalyzer {
             System.out.println("Could not find class: " + parts[0]);
             return false;
         }
-    }
-
-    public static void updateCurrentPackage(String className) {
-        currentPackage = className;
     }
 }

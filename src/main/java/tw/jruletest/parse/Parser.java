@@ -19,7 +19,6 @@ public class Parser {
     private static final HashMap<String, Rule> KEYWORD_HANDLERS = mapKeywordsToHandlers();
 
     public static String parseRules(String className, String[] rules) {
-        JavaClassAnalyzer.updateCurrentPackage(className.substring(0, className.lastIndexOf(".")+1));
         String generatedCode = "";
         for(String rule: rules) {
             generatedCode += parseRule(rule);

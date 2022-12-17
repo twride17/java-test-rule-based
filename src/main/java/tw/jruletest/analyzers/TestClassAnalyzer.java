@@ -93,9 +93,11 @@ public class TestClassAnalyzer {
     private void readFromArrayField(Object instance, Field field) {
         try {
             Object[] set = (Object[])field.get(instance);
+            String ruleSet = "";
             for(Object rule: set) {
-                testClassFile.addRule(field.getName(), (String) rule);
+                ruleSet += rule + "\n";
             }
+            testClassFile.addRule(field.getName(), ruleSet);
         } catch(IllegalAccessException e) {
             System.out.println("Cannot access the field " + field.getName());
         }
