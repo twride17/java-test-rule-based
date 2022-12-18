@@ -30,6 +30,7 @@ public class TestTestClassAnalyzer {
     public void setup() {
         files = Runner.searchFiles(new File(System.getProperty("user.dir") + "\\src\\test\\java\\tw\\jruletest\\examples")
                                                     , new ArrayList<>());
+        Runner.runCommand("javac -cp src src\\test\\java\\tw\\jruletest\\examples\\*.java");
         Runner.createTestClassLoader();
     }
 
@@ -69,9 +70,8 @@ public class TestTestClassAnalyzer {
 
         String className = "tw.jruletest.examples.TestClass" + (testNumber+1);
         Map<String, String> ruleSet = rules.get(className);
+        Assert.assertFalse(ruleSet.isEmpty());
         if(ruleSet.size() == 1) {
-            System.out.println(ruleSet.get(ruleSet.keySet().toArray(new String[0])[0]));
-            System.out.println(EXPECTED_RULES[testNumber][0]);
             Assert.assertEquals(EXPECTED_RULES[testNumber][0], ruleSet.get(ruleSet.keySet().toArray(new String[0])[0]));
         } else {
             for (String methodKey : ruleSet.keySet()) {
@@ -80,21 +80,6 @@ public class TestTestClassAnalyzer {
             }
         }
 
-//        for(String testClassName: rules.keySet()) {
-//            //System.out.println(testClassName.substring(testClassName.length()-1));
-//            int classNumber = Integer.parseInt(testClassName.substring(testClassName.length()-1));
-//            Map<String, String> ruleSet = rules.get(testClassName);
-//            if(ruleSet.size() == 1) {
-//                System.out.println(ruleSet.get(ruleSet.keySet().toArray(new String[0])[0]));
-//                System.out.println(EXPECTED_RULES[classNumber-1][0]);
-//                Assert.assertEquals(EXPECTED_RULES[classNumber-1][0], ruleSet.get(ruleSet.keySet().toArray(new String[0])[0]));
-//            } else {
-//                for (String methodKey : ruleSet.keySet()) {
-//                    int methodNum = Integer.parseInt(methodKey.substring(methodKey.length()-1));
-//                    Assert.assertEquals(ruleSet.get(methodKey), EXPECTED_RULES[classNumber - 1][methodNum-1]);
-//                }
-//            }
-//        }
         String[] keys = rules.keySet().toArray(new String[0]);
         for(String key: keys) {
             rules.remove(key);
@@ -104,12 +89,17 @@ public class TestTestClassAnalyzer {
     @After
     public void teardown() {
         try {
-            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "src/test/java/tw/jruletest/examples/TestClass1.class"));
-            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "src/test/java/tw/jruletest/examples/TestClass2.class"));
-            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "src/test/java/tw/jruletest/examples/TestClass3.class"));
-            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "src/test/java/tw/jruletest/examples/TestClass4.class"));
-            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "src/test/java/tw/jruletest/examples/TestClass5.class"));
-            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "src/test/java/tw/jruletest/examples/TestClass6.class"));
-        } catch(IOException e) {}
+            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/test/java/tw/jruletest/examples/TestClass1.class"));
+            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/test/java/tw/jruletest/examples/TestClass2.class"));
+            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/test/java/tw/jruletest/examples/TestClass3.class"));
+            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/test/java/tw/jruletest/examples/TestClass4.class"));
+            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/test/java/tw/jruletest/examples/TestClass5.class"));
+            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/test/java/tw/jruletest/examples/TestClass6.class"));
+            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/test/java/tw/jruletest/testprograms/Example.class"));
+            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/test/java/tw/jruletest/testprograms/Class.class"));
+            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/test/java/tw/jruletest/testprograms/Test.class"));
+        } catch (IOException e) {
+            System.out.println("Class file does not exist.");
+        }
     }
 }

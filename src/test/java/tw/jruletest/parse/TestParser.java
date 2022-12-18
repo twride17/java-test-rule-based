@@ -3,6 +3,10 @@ package tw.jruletest.parse;
 import tw.jruletest.parse.Parser;
 import org.junit.*;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 public class TestParser {
 
     @Test
@@ -21,5 +25,14 @@ public class TestParser {
     public void testParseMethodAndValueCommands() {
         String code = Parser.parseRule("Call Example.methodName with 1234 Get value of Example.example");
         Assert.assertEquals("Example.methodName(1234);\nint value = Example.example;\n", code);
+    }
+
+    @After
+    public void teardown() {
+        try {
+            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/test/java/tw/jruletest/testprograms/Example.class"));
+        } catch(IOException e) {
+            System.out.println("Couldn't delete file.");
+        }
     }
 }

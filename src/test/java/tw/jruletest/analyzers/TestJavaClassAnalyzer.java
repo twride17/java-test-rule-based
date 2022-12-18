@@ -12,6 +12,7 @@ public class TestJavaClassAnalyzer {
 
     @Before
     public void setup() {
+        //Runner.runCommand("javac -cp src src/test/java/tw/jruletest/testprograms/Example.java");
         Runner.createTestClassLoader();
     }
 
@@ -38,7 +39,9 @@ public class TestJavaClassAnalyzer {
     @After
     public void teardown() {
         try {
-            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "src/test/java/tw/jruletest/testprograms/Example.class"));
-        } catch(IOException e) {}
+            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/test/java/tw/jruletest/testprograms/Example.class"));
+        } catch(IOException e) {
+            System.out.println("Couldn't delete file.");
+        }
     }
 }

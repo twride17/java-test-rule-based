@@ -58,6 +58,7 @@ public class Runner {
 
     public static void runCommand(String command) {
         try {
+            //System.out.println(command);
             Process process = Runtime.getRuntime().exec(command);
             //displayOutput(command + " stdout:", process.getInputStream());
             //displayOutput(command + " stderr:", process.getErrorStream());
