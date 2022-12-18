@@ -14,11 +14,13 @@ public class GetValueRule implements Rule {
         terms.remove("of");
         // Expect class name and field next
         // TODO Find field type, add as identifier
-        if(JavaClassAnalyzer.isField(terms.get(0))) {
-            return "int value = " + terms.get(0) + ";";
+        String classCall = terms.get(0);
+        Rule.createImportStatement(classCall.substring(0, classCall.indexOf(".")));
+        if(JavaClassAnalyzer.isField(classCall)) {
+            return "int value = " + classCall + ";";
         }
         else if (JavaClassAnalyzer.isMethodCall(terms.get(0))) {
-            return "int value = " + new MethodCallRule().decodeRule(rule.substring(rule.indexOf(terms.get(0))));
+            return "int value = " + new MethodCallRule().decodeRule(rule.substring(rule.indexOf(classCall)));
         }
         else {
             return "Invalid rule: " + rule;

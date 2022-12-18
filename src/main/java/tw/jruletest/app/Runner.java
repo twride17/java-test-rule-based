@@ -1,6 +1,7 @@
 package tw.jruletest.app;
 
 import tw.jruletest.analyzers.RuleExtractor;
+import tw.jruletest.files.FileFinder;
 import tw.jruletest.generators.TestSuiteGenerator;
 import tw.jruletest.loaders.TestClassLoader;
 import tw.jruletest.parse.Parser;
@@ -36,16 +37,19 @@ public class Runner {
             path = args[0];
         }
         //path += "\\src\\test\\java\\examples";
-        path += "\\src\\test\\java\\tw\\jruletest\\examples";
+        path += "\\src";
 
         createTestClassLoader();
-        runCommand("javac -cp src " + path + "/*.java");
 
-        List<File> classFiles = searchFiles(new File(path), new ArrayList<>());
+        FileFinder.collectFiles(path);
         //for(File file: classFiles) {
         //    System.out.println(file.getPath());
         //}
-        RuleExtractor.extractRules(classFiles);
+        List<File> files = FileFinder.getFiles(path + "\\test\\java\\tw\\jruletest\\examples");
+        for(File file: files) {
+            runCommand("javac -cp src " + file.getPath().substring(file.getPath().indexOf("src")));
+        }
+        RuleExtractor.extractRules(files);
 
         for(String className: ruleSets.keySet()) {
             Map<String, String> rules = ruleSets.get(className);
@@ -78,21 +82,12 @@ public class Runner {
         }
     }
 
-    public static void addTestClass(String className, Map<String, String> rules) {
-        ruleSets.put(className, rules);
+    public static String getPath() {
+        return path;
     }
 
-    public static List<File> searchFiles(File topLevelFile, List<File> files) {
-        File[] fileList = topLevelFile.listFiles();
-        for (File file : fileList) {
-            if (file.isFile() && file.getName().endsWith(".java")) {
-                files.add(file);
-            }
-            else if (file.isDirectory()) {
-                searchFiles(file, files);
-            }
-        }
-        return files;
+    public static void addTestClass(String className, Map<String, String> rules) {
+        ruleSets.put(className, rules);
     }
 
     public static TestClassLoader getLoader() {

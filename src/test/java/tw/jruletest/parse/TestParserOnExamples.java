@@ -1,8 +1,10 @@
 package tw.jruletest.parse;
 
+import tw.jruletest.files.FileFinder;
 import tw.jruletest.parse.Parser;
 import org.junit.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -14,6 +16,11 @@ public class TestParserOnExamples {
     // "Get value of Test.x"
     private final String[][] RULES = {{"Call method Test.setValue with arguments: 6", "Get value of Test.x"}};
     private final String[] EXPECTED_CODE = {"Test.setValue(6);\nint value = Test.x;\n"};
+
+    @Before
+    public void setup() {
+        FileFinder.collectFiles(System.getProperty("user.dir") + "\\src\\test\\java");
+    }
 
     // Test with the first example program
     @Test

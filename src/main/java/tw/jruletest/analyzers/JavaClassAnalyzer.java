@@ -1,6 +1,7 @@
 package tw.jruletest.analyzers;
 
 import tw.jruletest.app.Runner;
+import tw.jruletest.files.FileFinder;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -18,19 +19,11 @@ public class JavaClassAnalyzer {
      * */
 
     private static Class<?> getRequiredClass(String className) throws ClassNotFoundException {
-        String currentClass = "";
-        List<File> files = Runner.searchFiles(new File(System.getProperty("user.dir") + "\\src\\test\\java"), new ArrayList<>());
-        for(File file: files) {
-            String path = file.getPath();
-            if(path.contains(className+".java") && !path.contains("generated")) {
-                //System.out.println(path);
-                currentClass = path.substring(path.indexOf("src\\test\\java"), path.lastIndexOf("\\")+1) + className;
-                Runner.runCommand("javac -cp src " + currentClass + ".java");
-            }
-        }
+        String filePath = FileFinder.findFile("\\" + className + ".java", "test\\java").getPath();
+        String currentClass = filePath.substring(filePath.indexOf("src"), filePath.indexOf("."));
+        Runner.runCommand("javac -cp src " + currentClass + ".java");
 
         currentClass = currentClass.substring(14).replaceAll("\\\\", ".");
-        //System.out.println(currentClass);
         try {
             Runner.getLoader().loadClass(currentClass);
         } catch(LinkageError e) {}

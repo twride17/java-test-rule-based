@@ -1,13 +1,20 @@
 package tw.jruletest.parse.rules;
 
+import tw.jruletest.files.FileFinder;
 import tw.jruletest.parse.rules.GetValueRule;
 import org.junit.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class TestGetValueRule {
+
+    @Before
+    public void setup() {
+        FileFinder.collectFiles(System.getProperty("user.dir") + "\\src\\test\\java");
+    }
 
     @Test
     public void testGetValueWithIntegerType() {

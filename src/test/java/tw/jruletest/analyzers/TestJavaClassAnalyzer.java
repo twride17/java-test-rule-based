@@ -2,7 +2,9 @@ package tw.jruletest.analyzers;
 
 import org.junit.*;
 import tw.jruletest.app.Runner;
+import tw.jruletest.files.FileFinder;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -13,12 +15,13 @@ public class TestJavaClassAnalyzer {
     @Before
     public void setup() {
         //Runner.runCommand("javac -cp src src/test/java/tw/jruletest/testprograms/Example.java");
+        FileFinder.collectFiles(System.getProperty("user.dir") + "\\src\\test\\java");
         Runner.createTestClassLoader();
     }
 
     @Test
     public void testIsMethodWithMethod() {
-        Assert.assertTrue(JavaClassAnalyzer.isMethodCall("Example.methodName"));
+        Assert.assertTrue(JavaClassAnalyzer.isMethodCall("Example.exampleMethod"));
     }
 
     @Test

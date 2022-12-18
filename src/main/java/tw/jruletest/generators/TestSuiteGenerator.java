@@ -1,9 +1,13 @@
 package tw.jruletest.generators;
 
+import tw.jruletest.analyzers.ImportCollector;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -48,7 +52,7 @@ public class TestSuiteGenerator {
      * */
 
     public static void writeSuiteToFile(Map<String, String> codeBlocks, String className) {
-        String filename = "generated\\" + className.replaceAll("\\.", "\\\\") + ".txt";
+        String filename = "generated\\" + className.replaceAll("\\.", "\\\\") + ".java";
         int classNameIndex = className.lastIndexOf(".");
         writeSuiteToFile(constructTestSuite(codeBlocks, className.substring(classNameIndex+1), className.substring(0, classNameIndex)), filename);
     }
@@ -61,10 +65,19 @@ public class TestSuiteGenerator {
      * */
 
     public static String constructTestSuite(Map<String, String> codeBlocks, String className, String packageName) {
-        String code = "package " + packageName + ";\n\npublic class " + className + " {";
+        ImportCollector collector = new ImportCollector();
+        String testCode = "";
         for(String methodName: codeBlocks.keySet()) {
-            code += "\n\n" + TestCaseGenerator.writeTestCase(codeBlocks.get(methodName), methodName);
+            testCode += "\n\n" + TestCaseGenerator.writeTestCase(codeBlocks.get(methodName), methodName, collector);
         }
-        return code + "\n}";
+
+        String topCode = "package generated." + packageName + ";\n\n// Necessary Imports\n";
+        for(String importStatement: ImportCollector.getImports()) {
+            topCode += importStatement + "\n";
+        }
+        ImportCollector.resetImports();
+        topCode += "\npublic class " + className + " {";
+
+        return topCode + testCode + "\n}";
     }
 }

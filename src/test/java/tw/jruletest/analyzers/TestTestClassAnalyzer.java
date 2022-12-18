@@ -3,6 +3,7 @@ package tw.jruletest.analyzers;
 import tw.jruletest.analyzers.RuleExtractor;
 import tw.jruletest.app.Runner;
 import org.junit.*;
+import tw.jruletest.files.FileFinder;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,10 +16,10 @@ import java.util.Map;
 
 public class TestTestClassAnalyzer {
 
-    private List<File> files;
+    private List<File> files = new ArrayList<>();
 
     private final String[][] EXPECTED_RULES = {{"Call method Example.exampleMethod with 12\nGet value of Example.example"},
-                                                {"Call Test.method with arguments: 1\nCall Test.method with arguments: 2\nGet value of Test.x\n"},
+                                                {"Call Test.setValue with arguments: 1\nCall Test.setValue with arguments: 2\nGet value of Test.x\n"},
                                                 {"Get value of Class.field", "Get value of Class.method", "Get value of Class.field"},
                                                 {"Call Test.setValue with 10", "Get value of Test.x", "Call Test.setValue with -10",
                                                         "Get value of Test.x"},
@@ -28,8 +29,8 @@ public class TestTestClassAnalyzer {
 
     @Before
     public void setup() {
-        files = Runner.searchFiles(new File(System.getProperty("user.dir") + "\\src\\test\\java\\tw\\jruletest\\examples")
-                                                    , new ArrayList<>());
+        FileFinder.collectFiles(System.getProperty("user.dir") + "\\src\\test\\java");
+        files = FileFinder.getFiles("examples");
         Runner.runCommand("javac -cp src src\\test\\java\\tw\\jruletest\\examples\\*.java");
         Runner.createTestClassLoader();
     }

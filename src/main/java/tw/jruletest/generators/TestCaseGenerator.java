@@ -1,5 +1,7 @@
 package tw.jruletest.generators;
 
+import tw.jruletest.analyzers.ImportCollector;
+
 /**
  * @author Toby Wride
  *
@@ -16,7 +18,7 @@ public class TestCaseGenerator {
      * */
 
     public static String writeTestCase(String codeBlock) {
-        return writeTestCase(codeBlock, "example");
+        return writeTestCase(codeBlock, "example", new ImportCollector());
     }
 
     /**
@@ -27,7 +29,7 @@ public class TestCaseGenerator {
      * @return generated code that has been constructed
      * */
 
-    public static String writeTestCase(String codeBlock, String methodName) {
+    public static String writeTestCase(String codeBlock, String methodName, ImportCollector collector) {
         String code = "\tpublic void " + methodName + "() {";
         for(String block: codeBlock.split("\n")) {
             code += "\n\t\t" + block;

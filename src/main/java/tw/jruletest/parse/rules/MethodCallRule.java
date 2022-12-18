@@ -14,9 +14,11 @@ public class MethodCallRule implements Rule {
         // Expect method identifier at start of term list
         // (ie: Call (method) Class.method = 'Class.method'
         // Assuming static method
-        String code = ruleTerms[0] + "(";
+        String className = ruleTerms[0];
+        String code = className + "(";
         // TODO use reflection to find number of arguments
         // Avoid using rule in case written incorrectly
+        Rule.createImportStatement(className.substring(0, className.indexOf(".")));
         if(ruleTerms.length != 1) {
             code += new MethodArgumentRule().decodeRule(rule.substring(rule.indexOf("with")));
         }

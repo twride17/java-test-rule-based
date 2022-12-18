@@ -3,6 +3,9 @@ src/main/*.class
 src/test/java/tw/jruletest/examples/*.class
 src/test/java/tw/jruletest/testprograms/*.class
 
+# Generated test classes
+src/test/java/generated/
+
 # Log file
 *.log
 
