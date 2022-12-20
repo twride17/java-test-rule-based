@@ -6,8 +6,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -20,9 +18,10 @@ import java.util.Map;
 public class TestSuiteGenerator {
 
     /**
-     * Constructs the test suite and writes it to a Java file in a default package called 'generated'
+     * Constructs the test suite and writes it to a Java file in a package starting with 'generated'
      *
-     * @param filename: the name of the file to write the test suite into
+     * @param code code to write into the specified file
+     * @param filename the name of the file to write the test suite into
      * */
 
     public static void writeSuiteToFile(String code, String filename) {
@@ -35,6 +34,7 @@ public class TestSuiteGenerator {
                 currentDirectory.mkdir();
             }
         }
+
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter("src\\test\\java\\" + filename));
             writer.write(code);
@@ -47,8 +47,8 @@ public class TestSuiteGenerator {
     /**
      * Constructs the test suite and writes it to a Java file in a specified package
      *
-     * @param codeBlocks: list of blocks of code for all the test cases in the test suite
-     * @param className: the full name of the class to write the suite for. Is used to generate the filename
+     * @param codeBlocks list of blocks of code mapped to their respective methods
+     * @param className the full name of the class to write the suite for. Is used to generate the filename
      * */
 
     public static void writeSuiteToFile(Map<String, String> codeBlocks, String className) {
@@ -58,17 +58,19 @@ public class TestSuiteGenerator {
     }
 
     /**
-     * Constructs the test suite and writes it to a Java file in a default package and filename
+     * Constructs the test suite and writes it to a Java file of the same name, in a specified package
      *
-     * @param codeBlocks: a list of the code for each test case in the suite
+     * @param codeBlocks a list of the code for each test case in the suite
+     * @param className the full name of the class to write the suite for. Is used to generate the filename
+     * @param packageName name of the package the test suite should belong to
+     *
      * @return constructed test suite as a single string
      * */
 
     public static String constructTestSuite(Map<String, String> codeBlocks, String className, String packageName) {
-        ImportCollector collector = new ImportCollector();
         String testCode = "";
         for(String methodName: codeBlocks.keySet()) {
-            testCode += "\n\n" + TestCaseGenerator.writeTestCase(codeBlocks.get(methodName), methodName, collector);
+            testCode += "\n\n" + TestCaseGenerator.writeTestCase(codeBlocks.get(methodName), methodName);
         }
 
         String topCode = "package generated." + packageName + ";\n\n// Necessary Imports\n";

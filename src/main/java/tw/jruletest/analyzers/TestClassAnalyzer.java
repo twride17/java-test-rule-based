@@ -1,8 +1,7 @@
 package tw.jruletest.analyzers;
 
-import tw.jruletest.app.Runner;
+import tw.jruletest.Runner;
 import tw.jruletest.files.TestClassFile;
-import tw.jruletest.loaders.TestClassLoader;
 
 import java.io.*;
 import java.lang.reflect.Field;

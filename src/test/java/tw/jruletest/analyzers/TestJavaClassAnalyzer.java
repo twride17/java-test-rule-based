@@ -1,13 +1,11 @@
 package tw.jruletest.analyzers;
 
 import org.junit.*;
-import tw.jruletest.app.Runner;
+import tw.jruletest.Runner;
 import tw.jruletest.files.FileFinder;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class TestJavaClassAnalyzer {

@@ -1,7 +1,5 @@
 package tw.jruletest.parse;
 
-import tw.jruletest.analyzers.JavaClassAnalyzer;
-import tw.jruletest.app.Runner;
 import tw.jruletest.parse.rules.*;
 
 import java.util.*;
@@ -18,7 +16,7 @@ public class Parser {
     private static final String[] KEYWORDS = {"Call", "Get"};
     private static final HashMap<String, Rule> KEYWORD_HANDLERS = mapKeywordsToHandlers();
 
-    public static String parseRules(String className, String[] rules) {
+    public static String parseRules(String[] rules) {
         String generatedCode = "";
         for(String rule: rules) {
             generatedCode += parseRule(rule);

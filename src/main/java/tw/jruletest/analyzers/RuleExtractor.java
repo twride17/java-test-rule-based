@@ -1,6 +1,6 @@
 package tw.jruletest.analyzers;
 
-import tw.jruletest.app.Runner;
+import tw.jruletest.Runner;
 import tw.jruletest.files.TestClassFile;
 
 import java.io.File;

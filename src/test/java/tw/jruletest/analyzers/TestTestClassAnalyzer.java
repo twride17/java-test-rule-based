@@ -1,7 +1,6 @@
 package tw.jruletest.analyzers;
 
-import tw.jruletest.analyzers.RuleExtractor;
-import tw.jruletest.app.Runner;
+import tw.jruletest.Runner;
 import org.junit.*;
 import tw.jruletest.files.FileFinder;
 
@@ -71,13 +70,14 @@ public class TestTestClassAnalyzer {
 
         String className = "tw.jruletest.examples.TestClass" + (testNumber+1);
         Map<String, String> ruleSet = rules.get(className);
-        Assert.assertFalse(ruleSet.isEmpty());
-        if(ruleSet.size() == 1) {
-            Assert.assertEquals(EXPECTED_RULES[testNumber][0], ruleSet.get(ruleSet.keySet().toArray(new String[0])[0]));
-        } else {
-            for (String methodKey : ruleSet.keySet()) {
+        Assert.assertEquals(EXPECTED_RULES[testNumber].length, ruleSet.size());
+
+        for (String methodKey: ruleSet.keySet()) {
+            try {
                 int methodNum = Integer.parseInt(methodKey.substring(methodKey.length()-1));
                 Assert.assertEquals(ruleSet.get(methodKey), EXPECTED_RULES[testNumber][methodNum-1]);
+            } catch(NumberFormatException e) {
+                Assert.assertEquals(EXPECTED_RULES[testNumber][0], ruleSet.get(methodKey));
             }
         }
 

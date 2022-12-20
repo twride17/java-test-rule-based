@@ -1,7 +1,5 @@
 package tw.jruletest.files;
 
-import tw.jruletest.app.Runner;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;

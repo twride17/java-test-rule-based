@@ -1,4 +1,4 @@
-package tw.jruletest.app;
+package tw.jruletest;
 
 import tw.jruletest.analyzers.RuleExtractor;
 import tw.jruletest.files.FileFinder;
@@ -54,7 +54,7 @@ public class Runner {
         for(String className: ruleSets.keySet()) {
             Map<String, String> rules = ruleSets.get(className);
             for(String methodName: rules.keySet()) {
-                rules.replace(methodName, Parser.parseRules(className, rules.get(methodName).split("\n")));
+                rules.replace(methodName, Parser.parseRules(rules.get(methodName).split("\n")));
             }
             TestSuiteGenerator.writeSuiteToFile(rules, className);
         }

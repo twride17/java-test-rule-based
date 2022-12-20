@@ -11,17 +11,6 @@ import tw.jruletest.analyzers.ImportCollector;
 public class TestCaseGenerator {
 
     /**
-     * Constructs the test case code for a given block of code and wraps it in a default method
-     *
-     * @param codeBlock: the commands to be included in the test case code
-     * @return generated code that has been constructed
-     * */
-
-    public static String writeTestCase(String codeBlock) {
-        return writeTestCase(codeBlock, "example", new ImportCollector());
-    }
-
-    /**
      * Constructs the test case code for a given block of code and wraps it in a method with the name given
      *
      * @param codeBlock: the commands to be included in the test case code
@@ -29,7 +18,7 @@ public class TestCaseGenerator {
      * @return generated code that has been constructed
      * */
 
-    public static String writeTestCase(String codeBlock, String methodName, ImportCollector collector) {
+    public static String writeTestCase(String codeBlock, String methodName) {
         String code = "\tpublic void " + methodName + "() {";
         for(String block: codeBlock.split("\n")) {
             code += "\n\t\t" + block;

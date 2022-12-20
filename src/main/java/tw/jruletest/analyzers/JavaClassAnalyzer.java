@@ -1,14 +1,11 @@
 package tw.jruletest.analyzers;
 
-import tw.jruletest.app.Runner;
+import tw.jruletest.Runner;
 import tw.jruletest.files.FileFinder;
 
-import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.List;
 
 public class JavaClassAnalyzer {
 

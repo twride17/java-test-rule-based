@@ -3,8 +3,6 @@ package tw.jruletest.parse.rules;
 import tw.jruletest.analyzers.ImportCollector;
 import tw.jruletest.files.FileFinder;
 
-import java.io.File;
-
 public interface Rule {
 
     /**
