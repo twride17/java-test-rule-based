@@ -16,11 +16,13 @@ public class JavaClassAnalyzer {
      * */
 
     private static Class<?> getRequiredClass(String className) throws ClassNotFoundException {
-        String filePath = FileFinder.findFile("\\" + className + ".java", "test\\java").getPath();
+        String filePath = FileFinder.findFile("\\" + className + ".java", "").getPath();
         String currentClass = filePath.substring(filePath.indexOf("src"), filePath.indexOf("."));
         Runner.runCommand("javac -cp src " + currentClass + ".java");
 
         currentClass = currentClass.substring(14).replaceAll("\\\\", ".");
+        Runner.getLoader().setFilePath(filePath.replace(".java", ".class"));
+        Runner.getLoader().setTopPackage(currentClass.substring(0, currentClass.indexOf(".")));
         try {
             Runner.getLoader().loadClass(currentClass);
         } catch(LinkageError e) {}

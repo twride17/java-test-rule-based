@@ -29,5 +29,5 @@ hs_err_pid*
 
 /.idea/
 /out/
-src/META-INF/
+/META-INF/
 JavaRuleBasedTesting.iml

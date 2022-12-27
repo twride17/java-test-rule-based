@@ -42,10 +42,7 @@ public class Runner {
         createTestClassLoader();
 
         FileFinder.collectFiles(path);
-        //for(File file: classFiles) {
-        //    System.out.println(file.getPath());
-        //}
-        List<File> files = FileFinder.getFiles(path + "\\test\\java\\tw\\jruletest\\examples");
+        List<File> files = FileFinder.getFiles(path + "\\test\\java");
         for(File file: files) {
             runCommand("javac -cp src " + file.getPath().substring(file.getPath().indexOf("src")));
         }
@@ -53,21 +50,24 @@ public class Runner {
 
         for(String className: ruleSets.keySet()) {
             Map<String, String> rules = ruleSets.get(className);
+            System.out.println("Writing tests for " + className);
             for(String methodName: rules.keySet()) {
                 rules.replace(methodName, Parser.parseRules(rules.get(methodName).split("\n")));
             }
             TestSuiteGenerator.writeSuiteToFile(rules, className);
         }
+
+        TestExecutor.executeTests();
     }
 
     public static void runCommand(String command) {
         try {
             //System.out.println(command);
             Process process = Runtime.getRuntime().exec(command);
-            //displayOutput(command + " stdout:", process.getInputStream());
-            //displayOutput(command + " stderr:", process.getErrorStream());
+            displayOutput(command + " stdout:", process.getInputStream());
+            displayOutput(command + " stderr:", process.getErrorStream());
             process.waitFor();
-            //System.out.println(command + " exitValue() " + process.exitValue());
+            System.out.println(command + " exitValue() " + process.exitValue());
         } catch(Exception e) {
             System.out.println("Couldn't run process: " + command);
         }
@@ -95,7 +95,11 @@ public class Runner {
     }
 
     public static void createTestClassLoader() {
-        loader = new TestClassLoader(Runner.class.getClassLoader());
+        createTestClassLoader(Runner.class.getClassLoader());
+    }
+
+    public static void createTestClassLoader(ClassLoader parent) {
+        loader = new TestClassLoader(parent);
     }
 
     public static Map<String, Map<String, String>> getRuleSets() {

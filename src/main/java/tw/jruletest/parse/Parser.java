@@ -13,7 +13,7 @@ public class Parser {
      * Parses the rules from a test case
      */
 
-    private static final String[] KEYWORDS = {"Call", "Get"};
+    private static final String[] KEYWORDS = {"Call", "Get", "Expect"};
     private static final HashMap<String, Rule> KEYWORD_HANDLERS = mapKeywordsToHandlers();
 
     public static String parseRules(String[] rules) {
@@ -65,6 +65,9 @@ public class Parser {
                     break;
                 case "Call":
                     handler = new MethodCallRule();
+                    break;
+                case "Expect":
+                    handler = new ExpectationRule();
                     break;
             }
             keywordHandlers.put(keyword, handler);
