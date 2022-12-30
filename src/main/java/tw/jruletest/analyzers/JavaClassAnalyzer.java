@@ -16,17 +16,22 @@ public class JavaClassAnalyzer {
      * */
 
     private static Class<?> getRequiredClass(String className) throws ClassNotFoundException {
-        String filePath = FileFinder.findFile("\\" + className + ".java", "").getPath();
-        String currentClass = filePath.substring(filePath.indexOf("src"), filePath.indexOf("."));
-        Runner.runCommand("javac -cp src " + currentClass + ".java");
-
-        currentClass = currentClass.substring(14).replaceAll("\\\\", ".");
-        Runner.getLoader().setFilePath(filePath.replace(".java", ".class"));
-        Runner.getLoader().setTopPackage(currentClass.substring(0, currentClass.indexOf(".")));
         try {
-            Runner.getLoader().loadClass(currentClass);
-        } catch(LinkageError e) {}
-        return Class.forName(currentClass, true, Runner.getLoader());
+            String filePath = FileFinder.findFile("\\" + className + ".java", "").getPath();
+            String currentClass = filePath.substring(filePath.indexOf("src"), filePath.indexOf("."));
+            Runner.runCommand("javac -cp src " + currentClass + ".java");
+
+            currentClass = currentClass.substring(14).replaceAll("\\\\", ".");
+            Runner.getLoader().setFilePath(filePath.replace(".java", ".class"));
+            Runner.getLoader().setTopPackage(currentClass.substring(0, currentClass.indexOf(".")));
+            try {
+                Runner.getLoader().loadClass(currentClass);
+            } catch (LinkageError e) {
+            }
+            return Class.forName(currentClass, true, Runner.getLoader());
+        } catch(NullPointerException e) {
+            throw new ClassNotFoundException();
+        }
     }
 
     public static boolean isField(String segment) {
@@ -41,10 +46,8 @@ public class JavaClassAnalyzer {
             }
             return false;
         } catch(ClassNotFoundException e) {
-            System.out.println("Could not find class: " + parts[0]);
             return false;
         }
-
     }
 
     public static boolean isMethodCall(String segment) {
@@ -59,7 +62,6 @@ public class JavaClassAnalyzer {
             }
             return false;
         } catch(ClassNotFoundException e) {
-            System.out.println("Could not find class: " + parts[0]);
             return false;
         }
     }

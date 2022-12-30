@@ -64,10 +64,10 @@ public class Runner {
         try {
             //System.out.println(command);
             Process process = Runtime.getRuntime().exec(command);
-            displayOutput(command + " stdout:", process.getInputStream());
-            displayOutput(command + " stderr:", process.getErrorStream());
+            //displayOutput(command + " stdout:", process.getInputStream());
+            //displayOutput(command + " stderr:", process.getErrorStream());
             process.waitFor();
-            System.out.println(command + " exitValue() " + process.exitValue());
+            //System.out.println(command + " exitValue() " + process.exitValue());
         } catch(Exception e) {
             System.out.println("Couldn't run process: " + command);
         }

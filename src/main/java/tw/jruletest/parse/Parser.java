@@ -1,5 +1,6 @@
 package tw.jruletest.parse;
 
+import tw.jruletest.exceptions.UnparsableRuleException;
 import tw.jruletest.parse.rules.*;
 
 import java.util.*;
@@ -29,10 +30,14 @@ public class Parser {
         ArrayList<String> ruleSegments = getRuleSegments(rule);
         // Currently sequential commands
         // TODO deal with different control flows
-        for(String segment: ruleSegments) {
-            String keyword = segment.split(" ")[0];
-            String remains = segment.substring(segment.indexOf(" "));
-            codeBlock += KEYWORD_HANDLERS.get(keyword).decodeRule(remains) + "\n";
+        try {
+            for (String segment : ruleSegments) {
+                String keyword = segment.split(" ")[0];
+                String remains = segment.substring(segment.indexOf(" "));
+                codeBlock += KEYWORD_HANDLERS.get(keyword).decodeRule(remains) + "\n";
+            }
+        } catch(UnparsableRuleException e) {
+            e.printError();
         }
         return codeBlock;
     }
