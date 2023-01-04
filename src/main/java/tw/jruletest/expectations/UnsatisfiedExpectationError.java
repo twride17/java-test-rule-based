@@ -9,6 +9,6 @@ public class UnsatisfiedExpectationError extends AssertionError {
     }
 
     public void explainError() {
-        System.out.println(errorMessage);
+        System.out.println("Error: " + errorMessage);
     }
 }

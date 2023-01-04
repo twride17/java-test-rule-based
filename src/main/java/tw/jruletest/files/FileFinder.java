@@ -49,7 +49,28 @@ public class FileFinder {
         return requiredFiles;
     }
 
-    public static void resetFiles() {
-        files = new ArrayList<>();
+    public static List<String> getDistinctDirectoryNames(String sectionName) {
+        List<String> directories = new ArrayList<>();
+        List<File> javaFiles = getFiles(sectionName);
+        for(File javaFile: javaFiles) {
+            String name = javaFile.getPath();
+            String directoryName = name.substring(0, name.lastIndexOf("\\"));
+            if(!directories.contains(directoryName)) {
+                directories.add(directoryName);
+            }
+        }
+        return directories;
+    }
+
+    public static List<String> getClassNames(List<File> files, String topDir) {
+        List<String> classNames = new ArrayList<>();
+        for(File file: files) {
+            classNames.add(getClassName(file.getPath(), topDir));
+        }
+        return classNames;
+    }
+
+    public static String getClassName(String className, String topDir) {
+        return className.substring(className.indexOf(topDir)+topDir.length(), className.indexOf(".")).replaceAll("\\\\", ".");
     }
 }

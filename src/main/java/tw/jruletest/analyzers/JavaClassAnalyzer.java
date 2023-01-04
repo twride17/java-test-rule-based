@@ -26,8 +26,7 @@ public class JavaClassAnalyzer {
             Runner.getLoader().setTopPackage(currentClass.substring(0, currentClass.indexOf(".")));
             try {
                 Runner.getLoader().loadClass(currentClass);
-            } catch (LinkageError e) {
-            }
+            } catch (LinkageError e) {}
             return Class.forName(currentClass, true, Runner.getLoader());
         } catch(NullPointerException e) {
             throw new ClassNotFoundException();

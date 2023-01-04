@@ -1,34 +1,59 @@
 package tw.jruletest;
 
 import tw.jruletest.expectations.UnsatisfiedExpectationError;
+import tw.jruletest.files.FileFinder;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 
 public class TestExecutor {
 
     public static void executeTests() {
-        Runner.runCommand("javac -cp " + System.getProperty("java.class.path") +
-                " src/main/java/app/Example.java src/test/java/generated/app/ExampleClass.java");
+        FileFinder.collectFiles(Runner.getPath());
+        String command = "javac -cp " + System.getProperty("java.class.path");
 
-        try {
-            Runner.getLoader().loadClass("app.Example");
+        List<String> javaFileNames = FileFinder.getDistinctDirectoryNames("src\\main\\java");
+        for(String javaFileName: javaFileNames) {
+            command += " " + javaFileName + "\\*.java";
         }
-        catch (LinkageError e) {}
-        catch(ClassNotFoundException e) {
-            System.out.println("Could not find required class.");
+
+        List<String> testFileNames = FileFinder.getDistinctDirectoryNames("src\\test\\java\\generated\\");
+        for(String testFileName: testFileNames) {
+            command += " " + testFileName + "\\*.java";
         }
+
+        Runner.runCommand(command);
+
+        List<String> classNames = FileFinder.getClassNames(FileFinder.getFiles(System.getProperty("user.dir") + "\\src\\main\\java"), "src\\main\\java\\");
+        for(String className: classNames) {
+            try {
+                Runner.getLoader().loadClass(className);
+            } catch (ClassNotFoundException e) {
+                System.out.println("Could not find " + className);
+            } catch (LinkageError e) {}
+        }
+
         Runner.getLoader().setTopPackage("generated");
-        Runner.getLoader().setFilePath(System.getProperty("user.dir") + "\\src\\test\\java\\generated\\app\\ExampleClass.class");
+        List<File> generatedTestFiles = FileFinder.getFiles("generated");
+        for(File generatedFile: generatedTestFiles) {
+            executeGeneratedTestClass(generatedFile.getPath().replace(".java", ".class"));
+        }
+    }
 
+    private static void executeGeneratedTestClass(String filename) {
+        Runner.getLoader().setFilePath(filename);
+        String className = FileFinder.getClassName(filename, "src\\test\\java\\");
+        System.out.println("Executing tests in " + className);
         Class<?> foundClass = null;
         try {
-            foundClass = Runner.getLoader().loadClass("generated.app.ExampleClass");
+            foundClass = Runner.getLoader().loadClass(className);
         } catch(ClassNotFoundException e) {
-            System.out.println("Couldn't find the test class.");
+            System.out.println("Couldn't find the test class:" + className);
         } catch(LinkageError e) {}
 
         Object instance = new Object();
@@ -48,18 +73,19 @@ public class TestExecutor {
         }
 
         try {
-            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "\\src\\test\\java\\generated\\app\\ExampleClass.class"));
+            Files.deleteIfExists(Paths.get(filename));
         } catch (IOException e) {
             System.out.println("Couldn't delete file");
         }
     }
 
+    // TODO Proper logging of test passes and failures
     private static void executeTest(Object instance, Method testMethod) throws Throwable {
         try {
             testMethod.invoke(instance);
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             Throwable cause = e.getCause();
-            if(cause instanceof UnsatisfiedExpectationError) {
+            if (cause instanceof UnsatisfiedExpectationError) {
                 throw cause;
             } else {
                 System.out.println("Failed to call method: " + testMethod.getName());

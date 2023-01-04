@@ -23,10 +23,10 @@ public class TestClassLoader extends ClassLoader {
     }
 
     private Class<?> getClass(String name) throws ClassNotFoundException {
-        String file = name.replace('.', File.separatorChar) + ".class";
+        //String file = name.replace('.', File.separatorChar) + ".class";
         try {
             // This loads the byte code data from the file
-            byte[] b = loadClassFileData(file);
+            byte[] b = loadClassFileData();
             // defineClass is inherited from the ClassLoader class, it converts byte array into a Class.
             Class<?> c = defineClass(name, b, 0, b.length);
             resolveClass(c);
@@ -45,7 +45,7 @@ public class TestClassLoader extends ClassLoader {
         return super.loadClass(name);
     }
 
-    private byte[] loadClassFileData(String name) throws IOException {
+    private byte[] loadClassFileData() throws IOException {
         InputStream stream = Files.newInputStream(Paths.get(filePath));
         int size = stream.available();
         byte buff[] = new byte[size];
