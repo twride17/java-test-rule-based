@@ -8,7 +8,7 @@ public class UnsatisfiedExpectationError extends AssertionError {
         errorMessage = message;
     }
 
-    public void explainError() {
-        System.out.println("Error: " + errorMessage);
+    public String explainError() {
+        return errorMessage;
     }
 }

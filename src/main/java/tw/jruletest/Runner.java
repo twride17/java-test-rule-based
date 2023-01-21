@@ -1,6 +1,7 @@
 package tw.jruletest;
 
 import tw.jruletest.analyzers.RuleExtractor;
+import tw.jruletest.compilers.ClassCompiler;
 import tw.jruletest.files.FileFinder;
 import tw.jruletest.generators.TestSuiteGenerator;
 import tw.jruletest.loaders.TestClassLoader;
@@ -47,15 +48,16 @@ public class Runner {
             runCommand("javac -cp src " + file.getPath().substring(file.getPath().indexOf("src")));
         }
         RuleExtractor.extractRules(files);
+        ClassCompiler.compileJavaClasses();
 
         for(String className: ruleSets.keySet()) {
             Map<String, String> rules = ruleSets.get(className);
-            System.out.println("Writing tests for " + className);
             for(String methodName: rules.keySet()) {
                 rules.replace(methodName, Parser.parseRules(rules.get(methodName).split("\n")));
             }
             TestSuiteGenerator.writeSuiteToFile(rules, className);
         }
+        FileFinder.collectFiles(path);
 
         TestExecutor.executeTests();
     }

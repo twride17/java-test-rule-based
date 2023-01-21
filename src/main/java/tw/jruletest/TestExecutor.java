@@ -1,7 +1,9 @@
 package tw.jruletest;
 
+import tw.jruletest.compilers.ClassCompiler;
 import tw.jruletest.expectations.UnsatisfiedExpectationError;
 import tw.jruletest.files.FileFinder;
+import tw.jruletest.logging.TestLogger;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,20 +16,7 @@ import java.util.List;
 public class TestExecutor {
 
     public static void executeTests() {
-        FileFinder.collectFiles(Runner.getPath());
-        String command = "javac -cp " + System.getProperty("java.class.path");
-
-        List<String> javaFileNames = FileFinder.getDistinctDirectoryNames("src\\main\\java");
-        for(String javaFileName: javaFileNames) {
-            command += " " + javaFileName + "\\*.java";
-        }
-
-        List<String> testFileNames = FileFinder.getDistinctDirectoryNames("src\\test\\java\\generated\\");
-        for(String testFileName: testFileNames) {
-            command += " " + testFileName + "\\*.java";
-        }
-
-        Runner.runCommand(command);
+        ClassCompiler.compileGeneratedClasses();
 
         List<String> classNames = FileFinder.getClassNames(FileFinder.getFiles(System.getProperty("user.dir") + "\\src\\main\\java"), "src\\main\\java\\");
         for(String className: classNames) {
@@ -48,11 +37,12 @@ public class TestExecutor {
     private static void executeGeneratedTestClass(String filename) {
         Runner.getLoader().setFilePath(filename);
         String className = FileFinder.getClassName(filename, "src\\test\\java\\");
-        System.out.println("Executing tests in " + className);
+        TestLogger.setTestClassDetails(className);
         Class<?> foundClass = null;
         try {
             foundClass = Runner.getLoader().loadClass(className);
         } catch(ClassNotFoundException e) {
+            TestLogger.errorEncountered("Couldn't find the test class:" + className);
             System.out.println("Couldn't find the test class:" + className);
         } catch(LinkageError e) {}
 
@@ -60,6 +50,7 @@ public class TestExecutor {
         try {
             instance = foundClass.newInstance();
         } catch(InstantiationException | IllegalAccessException e) {
+            TestLogger.errorEncountered("Couldn't instantiate or access class: " + className);
             System.out.println("Couldn't instantiate or access class");
         }
 
@@ -67,8 +58,10 @@ public class TestExecutor {
         for (Method test : testMethods) {
             try {
                 executeTest(instance, test);
+                TestLogger.passedTest(test.getName());
             } catch(Throwable e) {
-                ((UnsatisfiedExpectationError)e).explainError();
+                String error = ((UnsatisfiedExpectationError)e).explainError();
+                TestLogger.failedTest(test.getName(), error);
             }
         }
 
@@ -77,6 +70,8 @@ public class TestExecutor {
         } catch (IOException e) {
             System.out.println("Couldn't delete file");
         }
+
+        TestLogger.writeToLogfile();
     }
 
     // TODO Proper logging of test passes and failures
@@ -88,6 +83,7 @@ public class TestExecutor {
             if (cause instanceof UnsatisfiedExpectationError) {
                 throw cause;
             } else {
+                TestLogger.errorEncountered("Failed to call method: " + testMethod.getName());
                 System.out.println("Failed to call method: " + testMethod.getName());
             }
         }

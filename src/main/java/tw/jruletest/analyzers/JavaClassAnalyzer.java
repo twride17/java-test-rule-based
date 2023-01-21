@@ -19,8 +19,6 @@ public class JavaClassAnalyzer {
         try {
             String filePath = FileFinder.findFile("\\" + className + ".java", "").getPath();
             String currentClass = filePath.substring(filePath.indexOf("src"), filePath.indexOf("."));
-            Runner.runCommand("javac -cp src " + currentClass + ".java");
-
             currentClass = currentClass.substring(14).replaceAll("\\\\", ".");
             Runner.getLoader().setFilePath(filePath.replace(".java", ".class"));
             Runner.getLoader().setTopPackage(currentClass.substring(0, currentClass.indexOf(".")));
