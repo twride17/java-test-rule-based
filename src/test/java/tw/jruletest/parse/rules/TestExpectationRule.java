@@ -13,6 +13,7 @@ public class TestExpectationRule {
 
     @Before
     public void setup() {
+        Runner.runCommand("javac -cp src src\\test\\java\\tw\\jruletest\\testprograms\\Class.java");
         FileFinder.collectFiles(System.getProperty("user.dir") + "\\src\\test\\java");
         Runner.createTestClassLoader();
     }

@@ -12,7 +12,7 @@ public class TestJavaClassAnalyzer {
 
     @Before
     public void setup() {
-        //Runner.runCommand("javac -cp src src/test/java/tw/jruletest/testprograms/Example.java");
+        Runner.runCommand("javac -cp src src/test/java/tw/jruletest/testprograms/Example.java");
         FileFinder.collectFiles(System.getProperty("user.dir") + "\\src\\test\\java");
         Runner.createTestClassLoader();
     }

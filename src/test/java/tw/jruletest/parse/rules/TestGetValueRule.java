@@ -1,5 +1,6 @@
 package tw.jruletest.parse.rules;
 
+import tw.jruletest.Runner;
 import tw.jruletest.exceptions.UnparsableRuleException;
 import tw.jruletest.files.FileFinder;
 import tw.jruletest.parse.rules.GetValueRule;
@@ -14,6 +15,7 @@ public class TestGetValueRule {
 
     @Before
     public void setup() {
+        Runner.runCommand("javac -cp src src\\test\\java\\tw\\jruletest\\testprograms\\Class.java");
         FileFinder.collectFiles(System.getProperty("user.dir") + "\\src\\test\\java");
     }
 
