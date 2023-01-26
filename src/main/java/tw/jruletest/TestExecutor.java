@@ -32,6 +32,9 @@ public class TestExecutor {
         for(File generatedFile: generatedTestFiles) {
             executeGeneratedTestClass(generatedFile.getPath().replace(".java", ".class"));
         }
+
+        TestLogger.printLog();
+        Runner.clearClassFiles();
     }
 
     private static void executeGeneratedTestClass(String filename) {
@@ -65,16 +68,9 @@ public class TestExecutor {
             }
         }
 
-        try {
-            Files.deleteIfExists(Paths.get(filename));
-        } catch (IOException e) {
-            System.out.println("Couldn't delete file");
-        }
-
         TestLogger.writeToLogfile();
     }
 
-    // TODO Proper logging of test passes and failures
     private static void executeTest(Object instance, Method testMethod) throws Throwable {
         try {
             testMethod.invoke(instance);

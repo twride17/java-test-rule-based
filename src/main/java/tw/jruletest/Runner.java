@@ -8,6 +8,8 @@ import tw.jruletest.loaders.TestClassLoader;
 import tw.jruletest.parse.Parser;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 
 /**
@@ -42,7 +44,7 @@ public class Runner {
 
         createTestClassLoader();
 
-        FileFinder.collectFiles(path);
+        removeExistingGeneratedTests();
         List<File> files = FileFinder.getFiles(path + "\\test\\java");
         for(File file: files) {
             runCommand("javac -cp src " + file.getPath().substring(file.getPath().indexOf("src")));
@@ -82,6 +84,32 @@ public class Runner {
             System.out.println(line);
             line = reader.readLine();
         }
+    }
+
+    public static void clearClassFiles() {
+        List<File> files = FileFinder.getFiles("src");
+        for(File file: files) {
+            deleteFile(file.getPath().replace(".java", ".class"));
+            //System.out.println(file.getPath().replace(".java", ".class"));
+        }
+    }
+
+    private static void removeExistingGeneratedTests() {
+        FileFinder.collectFiles(path);
+        try {
+            List<File> testFiles = FileFinder.getFiles("generated");
+            for (File file : testFiles) {
+                deleteFile(file.getPath());
+            }
+            deleteFile(path + "\\test\\java\\generated\\TestResults.log");
+            FileFinder.collectFiles(path);
+        } catch(NullPointerException e) {}
+    }
+
+    private static void deleteFile(String filename) {
+        try {
+            Files.deleteIfExists(Paths.get(filename));
+        } catch (IOException e) {}
     }
 
     public static String getPath() {

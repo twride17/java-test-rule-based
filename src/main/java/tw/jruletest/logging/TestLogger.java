@@ -2,9 +2,7 @@ package tw.jruletest.logging;
 
 import tw.jruletest.Runner;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 
 public class TestLogger {
 
@@ -25,7 +23,7 @@ public class TestLogger {
     }
 
     public static void failedTest(String testName, String failureMessage) {
-        currentLog += testName + ": FAILED\n";
+        currentLog += "Test method " + testName + ": FAILED, caused by:\n";
         currentLog += failureMessage + "\n";
     }
 
@@ -36,5 +34,20 @@ public class TestLogger {
             logWriter.close();
             currentLog = "";
         } catch(IOException e) {}
+    }
+
+    public static void printLog() {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(Runner.getPath() + "\\test\\java\\" + LOG_FILENAME));
+            String line;
+            do {
+                line = reader.readLine();
+                if(line != null) {
+                    System.out.println(line);
+                }
+            } while(line != null);
+        } catch(IOException e) {
+            System.out.println("Couldn't open log file.");
+        }
     }
 }
