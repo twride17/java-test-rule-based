@@ -14,7 +14,7 @@ public class Parser {
      * Parses the rules from a test case
      */
 
-    private static final String[] KEYWORDS = {"Call", "Get", "Expect"};
+    private static final String[] KEYWORDS = {"Call", "Get", "Store", "Expect"};
     private static final HashMap<String, Rule> KEYWORD_HANDLERS = mapKeywordsToHandlers();
 
     public static String parseRules(String[] rules) {
@@ -74,6 +74,8 @@ public class Parser {
                 case "Expect":
                     handler = new ExpectationRule();
                     break;
+                case "Store":
+                    handler = new StoreValueRule();
             }
             keywordHandlers.put(keyword, handler);
         }

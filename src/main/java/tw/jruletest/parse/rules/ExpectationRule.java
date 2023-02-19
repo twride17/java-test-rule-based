@@ -1,7 +1,10 @@
 package tw.jruletest.parse.rules;
 
+import tw.jruletest.analyzers.CallType;
 import tw.jruletest.analyzers.ImportCollector;
 import tw.jruletest.analyzers.JavaClassAnalyzer;
+import tw.jruletest.exceptions.UnidentifiedCallException;
+import tw.jruletest.exceptions.UnparsableRuleException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,7 +14,7 @@ public class ExpectationRule implements Rule {
     private static final String[] POSSIBLE_OPERATORS = {"equal"};
 
     @Override
-    public String decodeRule(String rule) {
+    public String decodeRule(String rule) throws UnparsableRuleException {
         ImportCollector.addImport("import tw.jruletest.expectations.*;");
         rule = rule.trim();
 
@@ -33,17 +36,22 @@ public class ExpectationRule implements Rule {
         return code + getOperation(operatorSegment) + "(" + getValueArgument(actualSegment) + ");";
     }
 
-    private String getValueArgument(String segment) {
+    private String getValueArgument(String segment) throws UnparsableRuleException {
         String requiredCall = segment.split(" ")[0];
         if(segment.startsWith("value of")) {
             requiredCall = segment.substring(segment.indexOf("value of")+9).split(" ")[0];
         }
 
         //System.out.println(requiredCall);
-        if(JavaClassAnalyzer.isMethodCall(requiredCall)) {
-            return (new GetValueRule()).constructMethodCall(segment, requiredCall).replace(";", "");
-        } else {
-            return requiredCall;
+        try {
+            if (JavaClassAnalyzer.getCallType(requiredCall) == CallType.METHOD) {
+                return (new ValueOfCallRule()).constructMethodCall(segment, requiredCall).replace(";", "");
+            } else {
+                return requiredCall;
+            }
+        } catch(UnidentifiedCallException e) {
+            e.getUnidentifiedCall();
+            throw new UnparsableRuleException("Couldn't parse expectation using: " + segment);
         }
     }
 

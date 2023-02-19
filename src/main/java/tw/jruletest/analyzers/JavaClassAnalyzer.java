@@ -1,11 +1,13 @@
 package tw.jruletest.analyzers;
 
 import tw.jruletest.Runner;
+import tw.jruletest.exceptions.UnidentifiedCallException;
 import tw.jruletest.files.FileFinder;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
 
 public class JavaClassAnalyzer {
 
@@ -33,7 +35,17 @@ public class JavaClassAnalyzer {
         }
     }
 
-    public static boolean isField(String segment) {
+    public static CallType getCallType(String segment) throws UnidentifiedCallException {
+        if(isField(segment)) {
+            return CallType.FIELD;
+        } else if (isMethodCall(segment)) {
+            return CallType.METHOD;
+        } else {
+            throw new UnidentifiedCallException(segment);
+        }
+    }
+
+    private static boolean isField(String segment) {
         String[] parts = segment.split("\\.");
         try {
             Class<?> cls = getRequiredClass(parts[0]);
@@ -49,7 +61,7 @@ public class JavaClassAnalyzer {
         }
     }
 
-    public static boolean isMethodCall(String segment) {
+    private static boolean isMethodCall(String segment) {
         String[] parts = segment.split("\\.");
         try {
             Class<?> cls = getRequiredClass(parts[0]);
@@ -63,5 +75,40 @@ public class JavaClassAnalyzer {
         } catch(ClassNotFoundException e) {
             return false;
         }
+    }
+
+    public static Type getReturnType(String name, boolean methodRequired) {
+        try {
+            String className = name.split("\\.")[0];
+            String callName = name.split("\\.")[1];
+            if(methodRequired) {
+                return getMethodType(className, callName);
+            } else {
+                return getFieldType(className, callName);
+            }
+        } catch(ClassNotFoundException e) {
+            System.out.println("Couldn't find the class for: " + name);
+        }
+        return null;
+    }
+
+    private static Type getMethodType(String className, String callName) throws ClassNotFoundException {
+        Method[] methods = getRequiredClass(className).getDeclaredMethods();
+        for(Method method: methods) {
+            if(method.getName().equals(callName)) {
+                return method.getReturnType();
+            }
+        }
+        return null;
+    }
+
+    private static Type getFieldType(String className, String callName) throws ClassNotFoundException {
+        Field[] fields = getRequiredClass(className).getDeclaredFields();
+        for(Field field: fields) {
+            if(field.getName().equals(callName)) {
+                return field.getType();
+            }
+        }
+        return null;
     }
 }
