@@ -2,6 +2,7 @@ package tw.jruletest.analyzers;
 
 import org.junit.*;
 import tw.jruletest.Runner;
+import tw.jruletest.exceptions.UnidentifiedCallException;
 import tw.jruletest.files.FileFinder;
 
 import java.io.IOException;
@@ -19,22 +20,48 @@ public class TestJavaClassAnalyzer {
 
     @Test
     public void testIsMethodWithMethod() {
-        Assert.assertTrue(JavaClassAnalyzer.isMethodCall("Example.exampleMethod"));
+        try {
+            Assert.assertEquals(CallType.METHOD, JavaClassAnalyzer.getCallType("Example.exampleMethod"));
+        } catch(UnidentifiedCallException e) {
+            Assert.fail();
+        }
     }
 
     @Test
     public void testIsMethodWithField() {
-        Assert.assertFalse(JavaClassAnalyzer.isMethodCall("Example.example"));
+        try {
+            Assert.assertNotEquals(CallType.METHOD, JavaClassAnalyzer.getCallType("Example.example"));
+        } catch(UnidentifiedCallException e) {
+            Assert.fail();
+        }
     }
 
     @Test
     public void testIsFieldWithField() {
-        Assert.assertTrue(JavaClassAnalyzer.isField("Example.example"));
+        try {
+            Assert.assertEquals(CallType.FIELD, JavaClassAnalyzer.getCallType("Example.example"));
+        } catch(UnidentifiedCallException e) {
+            Assert.fail();
+        }
     }
 
     @Test
     public void testIsFieldWithMethod() {
-        Assert.assertFalse(JavaClassAnalyzer.isField("Example.methodName"));
+        try {
+            Assert.assertNotEquals(CallType.FIELD, JavaClassAnalyzer.getCallType("Example.exampleMethod"));
+        } catch(UnidentifiedCallException e) {
+            Assert.fail();
+        }
+    }
+
+    @Test
+    public void testUnidentifiedCall() {
+        try {
+            JavaClassAnalyzer.getCallType("Wrong");
+            Assert.fail("Should have thrown exception.");
+        } catch(UnidentifiedCallException e) {
+            Assert.assertEquals("No such field or method: Wrong", e.getUnidentifiedCall());
+        }
     }
 
     @After

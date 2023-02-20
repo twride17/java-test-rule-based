@@ -1,9 +1,11 @@
 package tw.jruletest.parse.rules;
 
+import tw.jruletest.Runner;
 import tw.jruletest.exceptions.UnparsableRuleException;
 import tw.jruletest.files.FileFinder;
 import tw.jruletest.parse.rules.GetValueRule;
 import org.junit.*;
+import tw.jruletest.translation.VariableStore;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,6 +16,7 @@ public class TestGetValueRule {
 
     @Before
     public void setup() {
+        VariableStore.addVariable("", "");
         FileFinder.collectFiles(System.getProperty("user.dir") + "\\src\\test\\java");
     }
 
@@ -21,8 +24,9 @@ public class TestGetValueRule {
     public void testGetValueWithIntegerType() {
         try {
             String code = new GetValueRule().decodeRule("value of Class.field");
-            Assert.assertEquals("int value = Class.field;", code);
+            Assert.assertEquals("int fieldValue = Class.field", code);
         } catch(UnparsableRuleException e) {
+            e.printError();
             Assert.fail();
         }
     }
@@ -31,14 +35,16 @@ public class TestGetValueRule {
     public void testGetValueOfIntegerReturnedValue() {
         try {
             String code = new GetValueRule().decodeRule("value of Class.method");
-            Assert.assertEquals("int value = Class.method();", code);
+            Assert.assertEquals("int methodValue = Class.method()", code);
         } catch(UnparsableRuleException e) {
+            e.printError();
             Assert.fail();
         }
     }
 
     @After
     public void teardown() {
+        VariableStore.reset();
         try {
             Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/test/java/tw/jruletest/testprograms/Class.class"));
         } catch(IOException e) {

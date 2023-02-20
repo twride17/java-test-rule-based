@@ -34,7 +34,7 @@ public class Parser {
             for (String segment : ruleSegments) {
                 String keyword = segment.split(" ")[0];
                 String remains = segment.substring(segment.indexOf(" "));
-                codeBlock += KEYWORD_HANDLERS.get(keyword).decodeRule(remains) + "\n";
+                codeBlock += KEYWORD_HANDLERS.get(keyword).decodeRule(remains) + ";\n";
             }
         } catch(UnparsableRuleException e) {
             e.printError();

@@ -25,7 +25,7 @@ public class StoreValueRule implements Rule {
     public String setVariableName(String varName, String callName, boolean isMethod) {
         String call;
         if(isMethod) {
-            call = (new ValueOfCallRule()).constructMethodCall(callName.split("\\.")[0], callName.split("\\.")[1]);
+            call = (new ValueOfCallRule()).constructMethodCall(callName, callName);
         } else {
             call = callName;
         }

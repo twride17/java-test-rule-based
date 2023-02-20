@@ -25,6 +25,8 @@ public class Runner {
     private static String path;
     private static TestClassLoader loader;
 
+    private static String currentMethod = "";
+
     private static Map<String, Map<String, String>> ruleSets = new HashMap<>();
 
     public static void main(String[] args) {
@@ -53,13 +55,19 @@ public class Runner {
             Map<String, String> rules = ruleSets.get(className);
             System.out.println("Writing tests for " + className);
             for(String methodName: rules.keySet()) {
+                currentMethod = methodName;
                 rules.replace(methodName, Parser.parseRules(rules.get(methodName).split("\n")));
             }
             TestSuiteGenerator.writeSuiteToFile(rules, className);
             VariableStore.reset();
+            currentMethod = "";
         }
 
         TestExecutor.executeTests();
+    }
+
+    public static String getCurrentMethod() {
+        return currentMethod;
     }
 
     public static void runCommand(String command) {

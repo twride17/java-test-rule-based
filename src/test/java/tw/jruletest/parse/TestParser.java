@@ -3,6 +3,7 @@ package tw.jruletest.parse;
 import tw.jruletest.files.FileFinder;
 import tw.jruletest.parse.Parser;
 import org.junit.*;
+import tw.jruletest.translation.VariableStore;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,17 +26,18 @@ public class TestParser {
     @Test
     public void testParseGetValueCommand() {
         String code = Parser.parseRule("Get value of Example.example");
-        Assert.assertEquals("int value = Example.example;\n", code);
+        Assert.assertEquals("int exampleValue = Example.example;\n", code);
     }
 
     @Test
     public void testParseMethodAndValueCommands() {
         String code = Parser.parseRule("Call Example.methodName with 1234 Get value of Example.example");
-        Assert.assertEquals("Example.methodName(1234);\nint value = Example.example;\n", code);
+        Assert.assertEquals("Example.methodName(1234);\nint exampleValue = Example.example;\n", code);
     }
 
     @After
     public void teardown() {
+        VariableStore.reset();
         try {
             Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/test/java/tw/jruletest/testprograms/Example.class"));
         } catch(IOException e) {

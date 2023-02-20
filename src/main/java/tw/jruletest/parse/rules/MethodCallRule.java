@@ -12,7 +12,7 @@ public class MethodCallRule implements Rule {
         rule = rule.replace(" method ", "").trim();
         String[] ruleTerms = rule.split(" ");
         // Expect method identifier at start of term list
-        // (ie: Call (method) Class.method = 'Class.method'
+        // (ie: Call (method) Class.method = 'Class.method()'
         // Assuming static method
         String className = ruleTerms[0];
         String code = className + "(";
@@ -22,6 +22,6 @@ public class MethodCallRule implements Rule {
         if(ruleTerms.length != 1) {
             code += new MethodArgumentRule().decodeRule(rule.substring(rule.indexOf("with")));
         }
-        return code + ");";
+        return code + ")";
     }
 }

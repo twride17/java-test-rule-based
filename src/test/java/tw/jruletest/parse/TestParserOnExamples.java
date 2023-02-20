@@ -14,8 +14,12 @@ public class TestParserOnExamples {
     // Define the rules for the program test as:
     // "Call method Test.setValue with arguments: 6"
     // "Get value of Test.x"
-    private final String[][] RULES = {{"Call method Test.setValue with arguments: 6", "Get value of Test.x"}};
-    private final String[] EXPECTED_CODE = {"Test.setValue(6);\nint value = Test.x;\n"};
+    private final String[][] RULES = {{"Call method Test.setValue with arguments: 6", "Get value of Test.x",
+                                        "Call method Test.setValue with: 56","Get value of Test.x",
+                                        "Expect xValue2 to not equal xValue"}};
+    private final String[] EXPECTED_CODE = {"Test.setValue(6);\nint xValue = Test.x;\n" +
+                                            "Test.setValue(56);\nint xValue2 = Test.x;\n" +
+                                            "Expectations.expect(xValue2).toNotEqual(xValue);\n"};
 
     @Before
     public void setup() {

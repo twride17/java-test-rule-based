@@ -5,6 +5,7 @@ import tw.jruletest.analyzers.ImportCollector;
 import tw.jruletest.analyzers.JavaClassAnalyzer;
 import tw.jruletest.exceptions.UnidentifiedCallException;
 import tw.jruletest.exceptions.UnparsableRuleException;
+import tw.jruletest.translation.VariableStore;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,7 +15,7 @@ public class ExpectationRule implements Rule {
     private static final String[] POSSIBLE_OPERATORS = {"equal"};
 
     @Override
-    public String decodeRule(String rule) throws UnparsableRuleException {
+    public String decodeRule(String rule) {//throws UnparsableRuleException {
         ImportCollector.addImport("import tw.jruletest.expectations.*;");
         rule = rule.trim();
 
@@ -33,25 +34,23 @@ public class ExpectationRule implements Rule {
         String actualSegment = remains.substring(operatorIndex).trim();
 
         String code = "Expectations.expect(" + getValueArgument(expectSegment) + ").";
-        return code + getOperation(operatorSegment) + "(" + getValueArgument(actualSegment) + ");";
+        return code + getOperation(operatorSegment) + "(" + getValueArgument(actualSegment) + ")";
     }
 
-    private String getValueArgument(String segment) throws UnparsableRuleException {
+    private String getValueArgument(String segment) {//throws UnparsableRuleException {
         String requiredCall = segment.split(" ")[0];
         if(segment.startsWith("value of")) {
             requiredCall = segment.substring(segment.indexOf("value of")+9).split(" ")[0];
         }
 
-        //System.out.println(requiredCall);
         try {
             if (JavaClassAnalyzer.getCallType(requiredCall) == CallType.METHOD) {
-                return (new ValueOfCallRule()).constructMethodCall(segment, requiredCall).replace(";", "");
+                return (new ValueOfCallRule()).constructMethodCall(segment, requiredCall);
             } else {
                 return requiredCall;
             }
         } catch(UnidentifiedCallException e) {
-            e.getUnidentifiedCall();
-            throw new UnparsableRuleException("Couldn't parse expectation using: " + segment);
+            return requiredCall;
         }
     }
 
