@@ -15,7 +15,7 @@ public class StoreValueRule implements Rule {
         try {
             String methodCall = rule.substring(0, inIndex).trim();
             boolean isMethod = JavaClassAnalyzer.getCallType(methodCall) == CallType.METHOD;
-            return setVariableName(methodCall, variableName, isMethod);
+            return setVariableName(variableName, methodCall, isMethod);
         } catch(UnidentifiedCallException e) {
             e.getUnidentifiedCall();
             throw new UnparsableRuleException(rule);

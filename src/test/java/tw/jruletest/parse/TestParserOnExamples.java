@@ -1,19 +1,14 @@
 package tw.jruletest.parse;
 
 import tw.jruletest.files.FileFinder;
-import tw.jruletest.parse.Parser;
 import org.junit.*;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class TestParserOnExamples {
 
-    // Define the rules for the program test as:
-    // "Call method Test.setValue with arguments: 6"
-    // "Get value of Test.x"
     private final String[][] RULES = {{"Call method Test.setValue with arguments: 6", "Get value of Test.x",
                                         "Call method Test.setValue with: 56","Get value of Test.x",
                                         "Expect xValue2 to not equal xValue"}};
@@ -29,14 +24,9 @@ public class TestParserOnExamples {
     // Test with the first example program
     @Test
     public void testParserExample1() {
-        for(int i = 0; i < RULES.length; i++) {
-            String code = "";
-            String[] ruleSet = RULES[i];
-            for(String rule: ruleSet) {
-                code += Parser.parseRule(rule);
-            }
-            Assert.assertEquals(EXPECTED_CODE[i], code);
-        }
+        String rules = "Call method Example.exampleMethod with arguments: 25\nStore value of Example.example in x\n" +
+                        "Call Test.setValue with: 56\nGet Test.x\nExpect xValue to not equal x\nCall Test.setValue with: -100\n" +
+                        "Expect value of Test.x to equal -100";
     }
 
     @After

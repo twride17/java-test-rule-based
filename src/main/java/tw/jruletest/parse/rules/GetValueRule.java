@@ -3,8 +3,7 @@ package tw.jruletest.parse.rules;
 import tw.jruletest.analyzers.CallType;
 import tw.jruletest.analyzers.JavaClassAnalyzer;
 import tw.jruletest.exceptions.*;
-import tw.jruletest.translation.RuleManipulator;
-import tw.jruletest.translation.VariableStore;
+import tw.jruletest.translation.*;
 
 public class GetValueRule implements Rule {
 
