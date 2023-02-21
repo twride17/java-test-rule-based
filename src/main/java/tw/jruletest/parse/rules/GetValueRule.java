@@ -1,5 +1,6 @@
 package tw.jruletest.parse.rules;
 
+import tw.jruletest.Runner;
 import tw.jruletest.analyzers.CallType;
 import tw.jruletest.analyzers.JavaClassAnalyzer;
 import tw.jruletest.exceptions.*;
@@ -21,6 +22,7 @@ public class GetValueRule implements Rule {
 
     public String deriveVariableName(String call) {
         String callName = call.split("\\.")[1];
-        return VariableStore.getNextUnusedName(callName, callName + "Value");
+        System.out.println(Runner.getCurrentMethod());
+        return VariableStore.getNextUnusedName(Runner.getCurrentMethod(), callName + "Value");
     }
 }

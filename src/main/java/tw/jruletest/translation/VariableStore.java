@@ -19,7 +19,7 @@ public class VariableStore {
             int numberSimilar = 0;
             ArrayList<String> methodVars = variables.get(method);
             for (String variable : methodVars) {
-                if (variable.contains(variableName)) {
+                if (variableExists(variable, method)) {
                     numberSimilar++;
                 }
             }
@@ -32,11 +32,16 @@ public class VariableStore {
         }
     }
 
-    public static boolean variableExists(String variable, String method) {
+    private static boolean variableExists(String variable, String method) {
         return variables.get(method).contains(variable);
     }
 
     public static void reset() {
         variables = new HashMap<>();
+    }
+
+    // Required for testing
+    public static ArrayList<String> getVars(String method) {
+        return variables.get(method);
     }
 }

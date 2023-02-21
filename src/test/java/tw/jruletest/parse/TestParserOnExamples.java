@@ -28,6 +28,7 @@ public class TestParserOnExamples {
     public void teardown() {
         try {
             Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/test/java/tw/jruletest/testprograms/Test.class"));
+            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/test/java/tw/jruletest/testprograms/Example.class"));
         } catch(IOException e) {
             System.out.println("Couldn't delete file");
         }

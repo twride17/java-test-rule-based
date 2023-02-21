@@ -16,7 +16,6 @@ public class TestGetValueRule {
 
     @Before
     public void setup() {
-        VariableStore.addVariable("", "");
         FileFinder.collectFiles(System.getProperty("user.dir") + "\\src\\test\\java");
     }
 
