@@ -9,7 +9,7 @@ public class TestStringExpectations {
         try {
             Expectations.expect("String").toEqual("String");
         } catch(UnsatisfiedExpectationError e) {
-            Assert.fail("Should not have obtained an unsatisfied exception");
+            Assert.fail("Should not have obtained an unsatisfied expectation error");
         }
     }
 
@@ -17,7 +17,7 @@ public class TestStringExpectations {
     public void testStringEqualExpectationNotSatisfied() {
         try {
             Expectations.expect("String").toEqual("Wrong String");
-            Assert.fail("Expected to get unsatisfied exception");
+            Assert.fail("Expected to get unsatisfied expectation error");
         } catch (UnsatisfiedExpectationError e) {
             Assert.assertEquals("Unsatisfied Expectation: String is not equal to Wrong String when expected to be", e.getErrorMessage());
         }
@@ -28,7 +28,7 @@ public class TestStringExpectations {
         try {
             Expectations.expect("String").toNotEqual("Wrong String");
         } catch(UnsatisfiedExpectationError e) {
-            Assert.fail("Should not have obtained an unsatisfied exception");
+            Assert.fail("Should not have obtained an unsatisfied expectation error");
         }
     }
 
@@ -36,7 +36,7 @@ public class TestStringExpectations {
     public void testStringNotEqualExpectationNotSatisfied() {
         try {
             Expectations.expect("String").toNotEqual("String");
-            Assert.fail("Expected to get unsatisfied exception");
+            Assert.fail("Expected to get unsatisfied expectation error");
         } catch (UnsatisfiedExpectationError e) {
             Assert.assertEquals("Unsatisfied Expectation: String is equal to String when expected to not be", e.getErrorMessage());
         }

@@ -4,41 +4,37 @@ public class ExpectationObject<T> {
 
     private T firstValue;
 
-    public ExpectationObject(T expected) {
-        firstValue = expected;
+    public ExpectationObject(T firstValue) {
+        this.firstValue = firstValue;
     }
 
-    public void toEqual(T secondValue) throws UnsatisfiedExpectationError {
+    public void toEqual(T secondValue) {
         if(!firstValue.equals(secondValue)) {
             Expectations.failed("Unsatisfied Expectation: " + firstValue + " is not equal to " + secondValue + " when expected to be");
         }
     }
 
-    public void toNotEqual(T secondValue) throws UnsatisfiedExpectationError {
+    public void toNotEqual(T secondValue) {
         if(firstValue.equals(secondValue)) {
             Expectations.failed("Unsatisfied Expectation: " + firstValue + " is equal to " + secondValue + " when expected to not be");
         }
     }
 
-    public void toBeTrue() throws UnsatisfiedExpectationError {
-        if(firstValue instanceof Boolean) {
-            testTruth(true);
-        } else {
-            Expectations.failed("Type mismatch: expected value is not of Boolean type");
-        }
+    public void toBeTrue() {
+        testTruth(true);
     }
 
-    public void toBeFalse() throws UnsatisfiedExpectationError {
-        if(firstValue instanceof Boolean) {
-            testTruth(false);
-        } else {
-            Expectations.failed("Type mismatch: expected value is not of Boolean type");
-        }
+    public void toBeFalse() {
+        testTruth(false);
     }
 
     private void testTruth(boolean trueRequired) {
-        if((Boolean) firstValue != trueRequired) {
-            Expectations.failed("Unsatisfied Expectation: " + trueRequired + " value has not been obtained");
+        try {
+            if ((Boolean) firstValue != trueRequired) {
+                Expectations.failed("Unsatisfied Expectation: " + trueRequired + " value has not been obtained");
+            }
+        } catch(ClassCastException e) {
+            Expectations.failed("Type mismatch: expected value is not of Boolean type");
         }
     }
 }
