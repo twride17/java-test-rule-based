@@ -2,31 +2,43 @@ package tw.jruletest.expectations;
 
 public class ExpectationObject<T> {
 
-    private T expectedValue;
+    private T firstValue;
 
     public ExpectationObject(T expected) {
-        expectedValue = expected;
+        firstValue = expected;
     }
 
-    public void toEqual(T actualValue) throws UnsatisfiedExpectationError {
-        if(!expectedValue.equals(actualValue)) {
-            toFail("Unsatisfied Expectation: " + expectedValue + " is not equal to " + actualValue);
+    public void toEqual(T secondValue) throws UnsatisfiedExpectationError {
+        if(!firstValue.equals(secondValue)) {
+            Expectations.failed("Unsatisfied Expectation: " + firstValue + " is not equal to " + secondValue + " when expected to be");
+        }
+    }
+
+    public void toNotEqual(T secondValue) throws UnsatisfiedExpectationError {
+        if(firstValue.equals(secondValue)) {
+            Expectations.failed("Unsatisfied Expectation: " + firstValue + " is equal to " + secondValue + " when expected to not be");
         }
     }
 
     public void toBeTrue() throws UnsatisfiedExpectationError {
-
+        if(firstValue instanceof Boolean) {
+            testTruth(true);
+        } else {
+            Expectations.failed("Type mismatch: expected value is not of Boolean type");
+        }
     }
 
     public void toBeFalse() throws UnsatisfiedExpectationError {
-
+        if(firstValue instanceof Boolean) {
+            testTruth(false);
+        } else {
+            Expectations.failed("Type mismatch: expected value is not of Boolean type");
+        }
     }
 
-    public void toFail() {
-        toFail("Expectation is not satisfied.");
-    }
-
-    public void toFail(String message) {
-        throw new UnsatisfiedExpectationError(message);
+    private void testTruth(boolean trueRequired) {
+        if((Boolean) firstValue != trueRequired) {
+            Expectations.failed("Unsatisfied Expectation: " + trueRequired + " value has not been obtained");
+        }
     }
 }
