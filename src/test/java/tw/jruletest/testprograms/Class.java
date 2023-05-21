@@ -7,4 +7,8 @@ public class Class {
     public static int method() {
         return 0;
     }
+
+    public static String string() {
+        return "String";
+    }
 }

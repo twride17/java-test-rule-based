@@ -2,7 +2,7 @@ package tw.jruletest.expectations;
 
 public class ExpectationObject<T> {
 
-    private T firstValue;
+    private final T firstValue;
 
     public ExpectationObject(T firstValue) {
         this.firstValue = firstValue;

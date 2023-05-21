@@ -53,6 +53,42 @@ public class TestExpectationRule {
         Assert.assertEquals("Expectations.expect(0).toEqual(Class.method());\n", Parser.parseRule(rule));
     }
 
+    @Test
+    public void testStringVariableValueNotEquals() {
+        String rule = "Expect value to not equal 'Not hello'";
+        Assert.assertEquals("Expectations.expect(value).toNotEqual('Hello');\n", Parser.parseRule(rule));
+    }
+
+    @Test
+    public void testStringVariableValueEquals() {
+        String rule = "Expect value to equal 'String'";
+        Assert.assertEquals("Expectations.expect(value).toEqual('String');\n", Parser.parseRule(rule));
+    }
+
+    @Test
+    public void testStringMethodCallNotEquals() {
+        String rule = "Expect value of Class.string to not equal 'Other String'";
+        Assert.assertEquals("Expectations.expect(Class.string()).toNotEqual('Other String');\n", Parser.parseRule(rule));
+    }
+
+    @Test
+    public void testStringMethodCallEquals() {
+        String rule = "Expect value of Class.string to equal 'String'";
+        Assert.assertEquals("Expectations.expect(Class.string()).toEqual('String');\n", Parser.parseRule(rule));
+    }
+
+    @Test
+    public void testValueNotEqualsStringMethodCall() {
+        String rule = "Expect 'Hi String' to not equal value of Class.string";
+        Assert.assertEquals("Expectations.expect('Hi String').toNotEqual(Class.string());\n", Parser.parseRule(rule));
+    }
+
+    @Test
+    public void testValueEqualsStringMethodCall() {
+        String rule = "Expect 'String' to equal value of Class.string";
+        Assert.assertEquals("Expectations.expect('String').toEqual(Class.string());\n", Parser.parseRule(rule));
+    }
+
     @After
     public void teardown() {
         try {

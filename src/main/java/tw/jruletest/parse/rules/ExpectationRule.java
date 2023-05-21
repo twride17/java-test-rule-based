@@ -36,10 +36,10 @@ public class ExpectationRule implements Rule {
     private String getValueArgument(String segment) {
         String requiredCall = segment.split(" ")[0];
         if(segment.startsWith("value of")) {
-            requiredCall = segment.substring(segment.indexOf("value of")+9).split(" ")[0];
+            requiredCall = segment.substring(segment.indexOf("value of")+9);
         }
 
-        //System.out.println(requiredCall);
+        System.out.println(requiredCall);
         if(JavaClassAnalyzer.isMethodCall(requiredCall)) {
             return (new GetValueRule()).constructMethodCall(segment, requiredCall).replace(";", "");
         } else {
