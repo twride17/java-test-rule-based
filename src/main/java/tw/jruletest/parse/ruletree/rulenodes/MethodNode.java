@@ -18,10 +18,11 @@ public class MethodNode implements TreeNode {
             int argumentIndex = MethodArgumentNode.validateRule(ruleContent.substring(currentEnd+1).trim());
             if(argumentIndex == -1) {
                 System.out.println("Invalid arguments detected");
+                return -1;
             } else {
                 System.out.println("Resulting rule: " + ruleContent.substring(0, currentEnd + argumentIndex + 2));
+                return currentEnd + argumentIndex + 2;
             }
-            return currentEnd + argumentIndex + 2;
         } else {
             String[] ruleSegments = ruleContent.split(" ");
             try {

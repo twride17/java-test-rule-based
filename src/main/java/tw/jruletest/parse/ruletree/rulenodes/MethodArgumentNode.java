@@ -80,54 +80,20 @@ public class MethodArgumentNode implements TreeNode {
                     } else {
                         if(nextWords[0].equals("and") && (isAlphaNumeric(nextWords[1]) || Parser.KEYWORDS.contains(nextWords[1]))) {
                             System.out.println("Allowed rule");
+                            System.out.println(ruleContent.indexOf(nextWords[1]) + nextWords[1].length() + 1);
                             System.out.println(ruleContent.substring(0, ruleContent.indexOf(nextWords[1]) + nextWords[1].length() + 1));
                             return ruleContent.indexOf(nextWords[1]) + nextWords[1].length() + 1;
-                        } else {
+                        } else if(nextWords[0].equals("in") && isAlphaNumeric(nextWords[1])) {
+                            System.out.println("Allowed rule");
+                            System.out.println(requiredRuleSegment);
+                            return requiredRuleSegment.length();
+                        }else {
                             System.out.println("Detected error");
                             return -1;
                         }
                     }
                 }
             }
-
-            // If last word is keyword: change last word to previous word
-            //
-            // If last word is and:
-            //      Check next word is not and, keyword or non-alphanumeric if exists
-            //      If fails, invalid
-            // Otherwise if last word has comma at end, invalid
-
-//            //System.out.println(lastWord);
-//
-//            System.out.println("Remainder: " + requiredRuleSegment);
-//            if(Parser.KEYWORDS.contains(lastWord) && matchingWords.length > 1 && matchingWords[matchingWords.length-2].equals("and")) {
-//                nextSpaceIndex = requiredRuleSegment.lastIndexOf("and")-1;
-//                requiredRuleSegment = requiredRuleSegment.substring(0, nextSpaceIndex);
-//                matchingWords = requiredRuleSegment.split(" ");
-//                lastWord = matchingWords[matchingWords.length-1];
-//            }
-//
-//            if(lastWord.charAt(lastWord.length()-1) == ',' || lastWord.equals("and") || !isAlphaNumeric(lastWord)) {
-//                System.out.println("Detected error");
-//                return -1;
-//            } else if (matchingWords.length > 1){
-//                String penultimateWord = matchingWords[matchingWords.length-2];
-//                if(!penultimateWord.equals("and") && penultimateWord.charAt(penultimateWord.length()-1) != ',') {
-//                    System.out.println("Detected error");
-//                    return -1;
-//                } else {
-//                    System.out.println("Allowed rule");
-//                    System.out.println(requiredRuleSegment);
-//                    return nextSpaceIndex;
-//                }
-//            } else {
-//                System.out.println("Allowed rule");
-//                System.out.println(requiredRuleSegment);
-//                return nextSpaceIndex;
-//            }
-//        } else {
-//            System.out.println("No match found!");
-//            return -1;
         } else {
             System.out.println("No match found");
             return -1;

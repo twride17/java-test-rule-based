@@ -3,8 +3,6 @@ package tw.jruletest.parse.ruletree.rulenodes;
 import tw.jruletest.exceptions.UnparsableRuleException;
 import tw.jruletest.parse.ruletree.TreeNode;
 
-import java.util.Locale;
-
 public class ExpectationNode implements TreeNode {
 
     private static final String[] POSSIBLE_COMPARATORS = {" equal "};
@@ -25,9 +23,9 @@ public class ExpectationNode implements TreeNode {
             }
         }
 
+        // TODO Change to allow for strings as expected value
         comparatorIndex += ruleContent.substring(comparatorIndex).split(" ")[0].length();
         try {
-            System.out.println(ruleContent.charAt(comparatorIndex));
             if (ruleContent.charAt(comparatorIndex-1) == ',') {
                 comparatorIndex -= 1;
             }

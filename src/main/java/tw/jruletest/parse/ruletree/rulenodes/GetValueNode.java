@@ -37,14 +37,14 @@ public class GetValueNode implements TreeNode {
 
         String valueCall = ruleContent.substring(currentEnd).trim();
         System.out.println(valueCall);
-        int possibleMethodIndex = currentEnd + MethodNode.validateRule(valueCall);
+        int possibleMethodIndex = MethodNode.validateRule(valueCall);
         if(possibleMethodIndex == -1) {
             // Should be invalid rule structure
             System.out.println("Invalid rule");
             return -1;
         } else {
-            System.out.println("Rule collected: " + ruleContent.substring(0, possibleMethodIndex));
-            return possibleMethodIndex;
+            System.out.println("Rule collected: " + ruleContent.substring(0, possibleMethodIndex + currentEnd));
+            return possibleMethodIndex + currentEnd;
         }
     }
 
