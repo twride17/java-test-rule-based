@@ -1,10 +1,12 @@
 package tw.jruletest.parse;
 
-import com.sun.corba.se.impl.orbutil.ObjectUtility;
 import tw.jruletest.exceptions.UnparsableRuleException;
 import tw.jruletest.parse.rules.*;
 import tw.jruletest.parse.ruletree.TreeNode;
 import tw.jruletest.parse.ruletree.rulenodes.ExpectationNode;
+import tw.jruletest.parse.ruletree.rulenodes.GetValueNode;
+import tw.jruletest.parse.ruletree.rulenodes.MethodNode;
+import tw.jruletest.parse.ruletree.rulenodes.StoreValueNode;
 
 import java.util.*;
 
@@ -17,9 +19,8 @@ public class Parser {
      * Parses the rules from a test case
      */
 
-    private static final String[] KEYWORDS = {"call", "get", "store", "expect"};
+    public static final ArrayList<String> KEYWORDS = new ArrayList<>(Arrays.asList("call", "get", "store", "expect"));
     private static final String[] POSSIBLE_CONNECTIVES = {"and", "then"};
-    private static final HashMap<String, Rule> KEYWORD_HANDLERS = mapKeywordsToHandlers();
 
     private static LinkedList<TreeNode> rules = new LinkedList<>();
 
@@ -86,7 +87,7 @@ public class Parser {
 
                 remainingRule = remainingRule.substring(connectiveIndex);
                 String nextWord = remainingRule.split(" ")[0];
-                if((new ArrayList<>(Arrays.asList(KEYWORDS))).contains(nextWord)) {
+                if(KEYWORDS.contains(nextWord)) {
                     currentEndIndex = getEndOfSubRule(remainingRule, nextWord);
                     subRules.add(remainingRule.substring(0, currentEndIndex).trim());
                 } else {
@@ -110,6 +111,7 @@ public class Parser {
             System.out.println(subRule);
         }
 
+
         // Generate the trees and add into list
     }
 
@@ -117,66 +119,15 @@ public class Parser {
         switch(startCommand.toLowerCase()) {
             case "expect":
                 return ExpectationNode.validateRule(rule);
+            case "get":
+                return GetValueNode.validateRule(rule);
+            case "store":
+                return StoreValueNode.validateRule(rule);
+            case "call":
+                return MethodNode.validateRule(rule);
             default:
                 throw new UnparsableRuleException(rule);
         }
-    }
-
-//    public static String parseRule(String rule) {
-//        String codeBlock = "";
-//        ArrayList<String> ruleSegments = getRuleSegments(rule);
-//        // Currently sequential commands
-//        // TODO deal with different control flows
-//        try {
-//            for (String segment : ruleSegments) {
-//                String keyword = segment.split(" ")[0];
-//                String remains = segment.substring(segment.indexOf(" "));
-//                codeBlock += KEYWORD_HANDLERS.get(keyword).decodeRule(remains) + ";\n";
-//            }
-//        } catch(UnparsableRuleException e) {
-//            e.printError();
-//        }
-//        return codeBlock;
-//    }
-
-    private static ArrayList<String> getRuleSegments(String rule) {
-        ArrayList<String> subRules = new ArrayList<>();
-        TreeMap<Integer, String> keywordLocations = new TreeMap<>();
-        for(String keyword: KEYWORDS) {
-            keywordLocations.put(rule.indexOf(keyword), keyword);
-        }
-
-        Integer[] indices = keywordLocations.keySet().toArray(new Integer[0]);
-        for(int i = 0; i < indices.length-1; i++) {
-            int location = indices[i];
-            if(location >= 0) {
-                subRules.add(rule.substring(location, indices[i+1]).trim());
-            }
-        }
-        subRules.add(rule.substring(indices[indices.length-1]).trim());
-        return subRules;
-    }
-
-    private static HashMap<String, Rule> mapKeywordsToHandlers() {
-        HashMap<String, Rule> keywordHandlers = new HashMap<>();
-        for(String keyword: KEYWORDS) {
-            Rule handler = null;
-            switch (keyword) {
-                case "Get":
-                    handler = new GetValueRule();
-                    break;
-                case "Call":
-                    handler = new MethodCallRule();
-                    break;
-                case "Expect":
-                    handler = new ExpectationRule();
-                    break;
-                case "Store":
-                    handler = new StoreValueRule();
-            }
-            keywordHandlers.put(keyword, handler);
-        }
-        return keywordHandlers;
     }
 
     private static void testRule(String rule) {
@@ -195,5 +146,13 @@ public class Parser {
         testRule("Expect value of x and y to equal 0");
         testRule("Expect value of x to equal 0, value of y to equal 2 and value of t to equal 4");
         testRule("Expect value of x, y and z to not equal 0");
+        testRule("Expect value of x, y and z to not equal 0");
+        testRule("Get value of Class.method");
+        testRule("get value of Class.method with arguments: 1, 2 and 3");
+        testRule("Get result of Class.method: 12 and expect Class.x to equal 12");
+        testRule("Expect Class.x to equal 12, get value of Class.method and expect Class.method2 to equal 10.6");
+        testRule("Call Class.method and store value of Example.x in xValue");
+        testRule("Store value of Class.method with arguments: 1 and 2, -90.23 in value and expect value to equal 0");
+        testRule("Call Class.method and get value of Example.x and store value in value2");
     }
 }

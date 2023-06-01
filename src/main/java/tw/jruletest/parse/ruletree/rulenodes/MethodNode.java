@@ -44,8 +44,8 @@ public class MethodNode implements TreeNode {
                     System.out.println("Uses full rule");
                     return ruleContent.length();
                 } else {
-                    System.out.println("Valid method structure: " + ruleContent.substring(0, nextSpaceIndex));
-                    return nextSpaceIndex;
+                    System.out.println("Valid method structure: " + ruleContent.substring(0, nextSpaceIndex + currentEnd));
+                    return nextSpaceIndex + currentEnd;
                 }
             } catch(ArrayIndexOutOfBoundsException e) {
                 System.out.println("Invalid Structure");
