@@ -1,5 +1,6 @@
 package tw.jruletest.parse.ruletree.rulenodes;
 
+import tw.jruletest.exceptions.InvalidRuleStructureException;
 import tw.jruletest.exceptions.UnparsableRuleException;
 import tw.jruletest.parse.ruletree.TreeNode;
 
@@ -14,7 +15,7 @@ public class ExpectationNode implements TreeNode {
         return null;
     }
 
-    public static int validateRule(String ruleContent) {
+    public static int validateRule(String ruleContent) throws InvalidRuleStructureException  {
         int comparatorIndex = -1;
         for(String comparator: POSSIBLE_COMPARATORS) {
             int newIndex = ruleContent.indexOf(comparator);
@@ -29,7 +30,9 @@ public class ExpectationNode implements TreeNode {
             if (ruleContent.charAt(comparatorIndex-1) == ',') {
                 comparatorIndex -= 1;
             }
-        } catch(StringIndexOutOfBoundsException e) {}
+        } catch(StringIndexOutOfBoundsException e) {
+            throw new InvalidRuleStructureException(ruleContent, "Expectation Node");
+        }
 
         return comparatorIndex;
     }

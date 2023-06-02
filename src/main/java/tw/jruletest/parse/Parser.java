@@ -1,5 +1,6 @@
 package tw.jruletest.parse;
 
+import tw.jruletest.exceptions.InvalidRuleStructureException;
 import tw.jruletest.exceptions.UnparsableRuleException;
 import tw.jruletest.parse.rules.*;
 import tw.jruletest.parse.ruletree.TreeNode;
@@ -116,17 +117,22 @@ public class Parser {
     }
 
     private static int getEndOfSubRule(String rule, String startCommand) throws UnparsableRuleException {
-        switch(startCommand.toLowerCase()) {
-            case "expect":
-                return ExpectationNode.validateRule(rule);
-            case "get":
-                return GetValueNode.validateRule(rule);
-            case "store":
-                return StoreValueNode.validateRule(rule);
-            case "call":
-                return MethodNode.validateRule(rule);
-            default:
-                throw new UnparsableRuleException(rule);
+        try {
+            switch (startCommand.toLowerCase()) {
+                case "expect":
+                    return ExpectationNode.validateRule(rule);
+                case "get":
+                    return GetValueNode.validateRule(rule);
+                case "store":
+                    return StoreValueNode.validateRule(rule);
+                case "call":
+                    return MethodNode.validateRule(rule);
+                default:
+                    throw new UnparsableRuleException(rule);
+            }
+        } catch(InvalidRuleStructureException e) {
+            e.printError();
+            throw new UnparsableRuleException(rule);
         }
     }
 

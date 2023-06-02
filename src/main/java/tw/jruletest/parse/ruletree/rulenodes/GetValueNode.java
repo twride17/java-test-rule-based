@@ -1,5 +1,6 @@
 package tw.jruletest.parse.ruletree.rulenodes;
 
+import tw.jruletest.exceptions.InvalidRuleStructureException;
 import tw.jruletest.parse.ruletree.TreeNode;
 
 public class GetValueNode implements TreeNode {
@@ -11,8 +12,8 @@ public class GetValueNode implements TreeNode {
         return null;
     }
 
-    public static int validateRule(String ruleContent) {
-        System.out.println(ruleContent);
+    public static int validateRule(String ruleContent) throws InvalidRuleStructureException {
+        //System.out.println(ruleContent);
         int currentEnd;
         String[] segments = ruleContent.split(" ");
         if(segments[0].equalsIgnoreCase("get")) {
@@ -22,8 +23,8 @@ public class GetValueNode implements TreeNode {
                 currentEnd = ("get").length();
             } else {
                 // Should be invalid rule structure
-                System.out.println("Invalid rule");
-                return -1;
+                //System.out.println("Invalid rule");
+                throw new InvalidRuleStructureException(ruleContent, "Get Value Node");
             }
         } else if((segments[0].equals("value") || segments[0].equals("result")) && segments[1].equals("of")) {
             currentEnd = ("of ").length() + segments[0].length() + 1;
@@ -31,34 +32,34 @@ public class GetValueNode implements TreeNode {
             currentEnd = 0;
         } else {
             // Should be invalid rule structure
-            System.out.println("Invalid rule");
-            return -1;
+            //System.out.println("Invalid rule");
+            throw new InvalidRuleStructureException(ruleContent, "Get Value Node");
         }
 
         String valueCall = ruleContent.substring(currentEnd).trim();
-        System.out.println(valueCall);
+        //System.out.println(valueCall);
         int possibleMethodIndex = MethodNode.validateRule(valueCall);
         if(possibleMethodIndex == -1) {
             // Should be invalid rule structure
-            System.out.println("Invalid rule");
-            return -1;
+            //System.out.println("Invalid rule");
+            throw new InvalidRuleStructureException(ruleContent, "Get Value Node");
         } else {
-            System.out.println("Rule collected: " + ruleContent.substring(0, possibleMethodIndex + currentEnd));
+            //System.out.println("Rule collected: " + ruleContent.substring(0, possibleMethodIndex + currentEnd));
             return possibleMethodIndex + currentEnd;
         }
     }
 
-    public static void main(String[] args) {
-        validateRule("Get value of x");
-        System.out.println();
-        validateRule("value of x");
-        System.out.println();
-        validateRule("Get value of Class.method with: 2 and -75.2, 63");
-        System.out.println();
-        validateRule("Get result of Class.method and store in y");
-        System.out.println();
-        validateRule("x and store");
-        System.out.println();
-        validateRule("Get of x");
-    }
+//    public static void main(String[] args) {
+//        validateRule("Get value of x");
+//        System.out.println();
+//        validateRule("value of x");
+//        System.out.println();
+//        validateRule("Get value of Class.method with: 2 and -75.2, 63");
+//        System.out.println();
+//        validateRule("Get result of Class.method and store in y");
+//        System.out.println();
+//        validateRule("x and store");
+//        System.out.println();
+//        validateRule("Get of x");
+//    }
 }
