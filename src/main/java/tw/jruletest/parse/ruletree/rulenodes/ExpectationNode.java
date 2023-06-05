@@ -1,17 +1,18 @@
 package tw.jruletest.parse.ruletree.rulenodes;
 
 import tw.jruletest.exceptions.InvalidRuleStructureException;
-import tw.jruletest.exceptions.UnparsableRuleException;
 import tw.jruletest.parse.ruletree.TreeNode;
 
 public class ExpectationNode implements TreeNode {
 
     private static final String[] POSSIBLE_COMPARATORS = {" equal "};
 
-    public ExpectationNode() { }
+    public ExpectationNode() {
+
+    }
 
     @Override
-    public String generateCode() throws UnparsableRuleException {
+    public String generateCode() {
         return null;
     }
 
@@ -30,9 +31,7 @@ public class ExpectationNode implements TreeNode {
             if (ruleContent.charAt(comparatorIndex-1) == ',') {
                 comparatorIndex -= 1;
             }
-        } catch(StringIndexOutOfBoundsException e) {
-            throw new InvalidRuleStructureException(ruleContent, "Expectation Node");
-        }
+        } catch(StringIndexOutOfBoundsException e) {}
 
         return comparatorIndex;
     }
