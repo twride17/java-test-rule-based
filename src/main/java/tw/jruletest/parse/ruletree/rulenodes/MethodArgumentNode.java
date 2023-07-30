@@ -1,139 +1,192 @@
 package tw.jruletest.parse.ruletree.rulenodes;
 
 import tw.jruletest.exceptions.InvalidRuleStructureException;
-import tw.jruletest.exceptions.UnparsableRuleException;
 import tw.jruletest.parse.Parser;
 import tw.jruletest.parse.ruletree.TreeNode;
 
-import java.util.LinkedList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.ArrayList;
 
 public class MethodArgumentNode implements TreeNode {
+
+    // TODO Change to nodes when updated
+    private ArrayList<TreeNode> arguments = new ArrayList<>();
+
+    public MethodArgumentNode() {}
+
     @Override
     public String generateCode() {
         return null;
     }
 
-    public static int validateRule(String ruleContent) throws InvalidRuleStructureException {
-        // Doesn't allow snake case
-        Pattern regex = Pattern.compile("^(((?!and)(((-?)[0-9]*(\\.?)[0-9]+)|([a-z][A-Za-z0-9]*)))(((\\sand)|(,))\\s(((-?)[0-9]*(\\.?)[0-9]+)|([a-z][A-Za-z0-9]*)))*)");
-        Matcher matcher = regex.matcher(ruleContent);
-        //System.out.println("Rule: " + ruleContent);
+    public int validateRule(String ruleContent) throws InvalidRuleStructureException {
+        boolean valid = false;
+        String remainingRule = ruleContent;
+        while(!valid) {
+            String connective = "";
+            if(remainingRule.isEmpty() || remainingRule.equals(",") || remainingRule.equals("and")) {
+                throw new InvalidRuleStructureException(remainingRule, "Method Argument Node");
+            }
 
-        // Should be InvalidRuleStructureException???
-        if(matcher.find()) {
-            //System.out.println("Found match!");
-            //System.out.println("Start: " + matcher.start() + ", end: " + matcher.end() + " = " + matcher.group());
-            //System.out.println(matcher.group());
+            int commaIndex = findConnective(remainingRule, ",");
+            int andIndex = findConnective(remainingRule, " and");
 
-            int nextSpaceIndex = 0;
-            if(matcher.end() != ruleContent.length()) {
-                if(ruleContent.charAt(matcher.end()) != ' ') {
-                    nextSpaceIndex = ruleContent.substring(matcher.end()+1).indexOf(" ");
+            int connectiveIndex = -1;
+            if(commaIndex == -1 && andIndex != -1) {
+                connectiveIndex = andIndex;
+                connective = " and ";
+            } else if(andIndex == -1) {
+                if(commaIndex != -1) {
+                    connectiveIndex = commaIndex;
+                    connective = ", ";
+                }
+            } else {
+                if(commaIndex < andIndex) {
+                    connectiveIndex = commaIndex;
+                    connective = ", ";
+                } else {
+                    connectiveIndex = andIndex;
+                    connective = " and ";
                 }
             }
 
-            String requiredRuleSegment = "";
-            if(nextSpaceIndex != -1) {
-                nextSpaceIndex += matcher.end();
-                requiredRuleSegment = ruleContent.substring(0, nextSpaceIndex);
-            } else {
-                requiredRuleSegment = ruleContent;
-            }
-            //System.out.println(requiredRuleSegment);
-
-            String[] matchingWords = requiredRuleSegment.split(" ");
-            String lastWord = matchingWords[matchingWords.length-1];
-
-            if(Parser.KEYWORDS.contains(lastWord)) {
-                matchingWords = requiredRuleSegment.substring(0, requiredRuleSegment.indexOf(lastWord)-1).split(" ");
-                lastWord = matchingWords[matchingWords.length-1];
-                if(lastWord.equals("and") && matchingWords.length > 1) {
-                    String penultimateWord = matchingWords[matchingWords.length-2];
-                    if(penultimateWord.equals("and") || (penultimateWord.charAt(penultimateWord.length()-1) == ',') || !isAlphaNumeric(penultimateWord)) {
-                        //System.out.println("Error detected");
-                        throw new InvalidRuleStructureException(ruleContent, "Method Argument Node");
-                    } else {
-                        //System.out.println("Allowed rule");
-                        //System.out.println(ruleContent.substring(0, requiredRuleSegment.lastIndexOf("and") - 1));
-                        return requiredRuleSegment.lastIndexOf("and") - 1;
-                    }
+            if(connectiveIndex == -1) {
+                if(remainingRule.startsWith("`") && remainingRule.charAt(remainingRule.length() - 1) == '`') {
+                    valid = true;
+                } else if(remainingRule.indexOf(' ') == -1) {
+                    valid = true;
                 } else {
-                    //System.out.println("Error detected");
+                    throw new InvalidRuleStructureException(remainingRule, "Method Argument Node");
+                }
+                arguments.add(Argument.getArgumentNode(remainingRule));
+            } else if(connectiveIndex == 0) {
+                throw new InvalidRuleStructureException(remainingRule, "Method Argument Node");
+            } else {
+                int leftQuoteNum = countQuotes(remainingRule.substring(0, connectiveIndex));
+                int rightQuoteNum = countQuotes(remainingRule.substring(connectiveIndex));
+
+                if(leftQuoteNum == 1) {
+                    if(rightQuoteNum % 2 == 0) {
+                        throw new InvalidRuleStructureException(ruleContent, "Method Argument Node");
+                    }
+                    connectiveIndex += remainingRule.substring(connectiveIndex).indexOf('`') + 1;
+                    arguments.add(Argument.getArgumentNode(remainingRule.substring(0, connectiveIndex)));
+                    remainingRule = remainingRule.substring(connectiveIndex);
+                    if(remainingRule.isEmpty()) {
+                        valid = true;
+                    } else {
+                        commaIndex = findConnective(remainingRule, ",");
+                        andIndex = findConnective(remainingRule, " and");
+
+                        if(commaIndex == -1) {
+                            if(andIndex == -1) {
+                                throw new InvalidRuleStructureException(ruleContent, "Method Argument Node");
+                            } else if(andIndex == 0) {
+                                connectiveIndex = 5;
+                            } else {
+                                throw new InvalidRuleStructureException(ruleContent, "Method Argument Node");
+                            }
+                        } else if(andIndex == -1) {
+                            if(commaIndex == 0) {
+                                connectiveIndex = 2;
+                            } else {
+                                throw new InvalidRuleStructureException(ruleContent, "Method Argument Node");
+                            }
+                        } else {
+                            if(commaIndex == 0) {
+                                connectiveIndex = 2;
+                            } else if(andIndex == 0) {
+                                connectiveIndex = 5;
+                            } else {
+                                throw new InvalidRuleStructureException(ruleContent, "Method Argument Node");
+                            }
+                        }
+
+                        remainingRule = remainingRule.substring(connectiveIndex);
+                    }
+                } else if(leftQuoteNum <= 2){
+                    arguments.add(Argument.getArgumentNode(remainingRule.substring(0, connectiveIndex)));
+                    // TODO add argument object to list
+                    connectiveIndex += connective.length();
+                    remainingRule = remainingRule.substring(connectiveIndex);
+                } else {
                     throw new InvalidRuleStructureException(ruleContent, "Method Argument Node");
                 }
-            } else if(lastWord.equals("and") || (lastWord.charAt(lastWord.length()-1) == ',') || !isAlphaNumeric(lastWord)) {
-                // InvalidStructureException
-                //System.out.println("Error detected");
-                throw new InvalidRuleStructureException(ruleContent, "Method Argument Node");
-            } else {
-                if(requiredRuleSegment.length() == ruleContent.length()) {
-                    //System.out.println("Allowed rule");
-                    //System.out.println(requiredRuleSegment);
-                    return requiredRuleSegment.length();
-                } else {
-                    int currentSegmentLength = requiredRuleSegment.length() + 1;
-                    String[] nextWords = ruleContent.substring(currentSegmentLength).split(" ");
-                    if(nextWords.length == 1) {
-                        // Can't be valid
-                        //System.out.println("Error detected");
-                        throw new InvalidRuleStructureException(ruleContent, "Method Argument Node");
-                    } else {
-                        if(nextWords[0].equals("and") && (isAlphaNumeric(nextWords[1]) || Parser.KEYWORDS.contains(nextWords[1]))) {
-                            //System.out.println("Allowed rule");
-                            //System.out.println(ruleContent.indexOf(nextWords[1]) + nextWords[1].length() + 1);
-                            //System.out.println(ruleContent.substring(0, ruleContent.indexOf(nextWords[1]) + nextWords[1].length() + 1));
-                            return ruleContent.indexOf(nextWords[1]) + nextWords[1].length() + 1;
-                        } else if(nextWords[0].equals("in") && isAlphaNumeric(nextWords[1])) {
-                            //System.out.println("Allowed rule");
-                            //System.out.println(requiredRuleSegment);
-                            return requiredRuleSegment.length();
-                        }else {
-                            //System.out.println("Detected error");
-                            throw new InvalidRuleStructureException(ruleContent, "Method Argument Node");
-                        }
+
+                int nextSpaceIndex = remainingRule.indexOf(' ');
+                if(nextSpaceIndex != -1) {
+                    if(Parser.KEYWORDS.contains(remainingRule.substring(0, nextSpaceIndex))) {
+                        valid = true;
                     }
                 }
             }
+        }
+        return ruleContent.length();
+    }
+
+    private int findConnective(String rule, String connective) throws InvalidRuleStructureException {
+        int index = rule.indexOf(connective);
+        if(index != -1) {
+            index += connective.length();
+            if(index == rule.length() || rule.charAt(index) != ' ') {
+                throw new InvalidRuleStructureException(rule, "Method Argument Node");
+            } else {
+                return index - connective.length();
+            }
         } else {
-            //System.out.println("No match found");
-            throw new InvalidRuleStructureException(ruleContent, "Method Argument Node");
+            return index;
         }
     }
 
-    private static boolean isAlphaNumeric(String segment) {
-        return Pattern.compile("((-?)[0-9]*(\\.?)[0-9]+)|([a-z][a-zA-z0-9]*)").matcher(segment).matches();
+    private int countQuotes(String segment) {
+        int numQuotes = 0;
+        for(Character character: segment.toCharArray()) {
+            if(character == '`') {
+                numQuotes ++;
+            }
+        }
+        return numQuotes;
     }
 
-//    public static void main(String[] args) {
-//        // All work properly
-//        validateRule("value1, 10.5 and value3");
-//        System.out.println();
-//        validateRule("1v, value2, value3");
-//        System.out.println();
-//        validateRule("value1 and store dummy");
-//        System.out.println();
-//        validateRule("value1, value2,");
-//        System.out.println();
-//        validateRule("value1, value2, 4");
-//        System.out.println();
-//        validateRule("value1, value2 value3");
-//        System.out.println();
-//        validateRule("value1, value2 value3 value4");
-//        System.out.println();
-//        validateRule("value1 and -65.78 and value3");
-//        System.out.println();
-//        validateRule("and value1 and -65.78 and value3");
-//        System.out.println();
-//        validateRule("value1 and value2 and");
-//        System.out.println();
-//        validateRule("value1, value2 and and");
-//        System.out.println();
-//        validateRule("v, and !");
-//        System.out.println();
-//        validateRule("10.5");
-//        System.out.println();
-//        validateRule("-100");
-//    }
+    public void showArguments() {
+        String argumentList = "Arguments:";
+        for(TreeNode node: arguments) {
+            argumentList += " " + node.generateCode();
+        }
+        System.out.println(argumentList);
+    }
+
+    public static void main(String[] args) {
+        // All work properly
+        testValid("value1, 10.5 and value3");
+        testValid("1v, value2, value3");
+        testValid("value1 and store dummy");
+        testValid("value1, value2,");
+        testValid("value1, value2, 4");
+        testValid("value1, value2 value3");
+        testValid("value1, value2 value3 value4");
+        testValid("value1 and -65.78 and value3");
+        testValid("and value1 and -65.78 and value3");
+        testValid("value1 and value2 and");
+        testValid("value1, value2 and and");
+        testValid("v, and !");
+        testValid("`This is a string`");
+        testValid("`This is a string and hello's a good word, probably`, 32 and x");
+        testValid("`Hello world` and 6, value1");
+        testValid("value1, value2 and `hello");
+        testValid("value1, value2 and `hello`");
+        testValid("-0.612f, value2 and `hello`");
+        testValid("value1 and `hello it's me` and -90");
+    }
+
+    public static void testValid(String rule) {
+        try {
+            MethodArgumentNode n = new MethodArgumentNode();
+            System.out.println(rule);
+            n.validateRule(rule);
+            n.showArguments();
+        } catch(InvalidRuleStructureException e) {
+            e.printError();
+        }
+        System.out.println();
+    }
 }
