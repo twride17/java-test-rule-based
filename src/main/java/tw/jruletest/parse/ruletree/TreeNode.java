@@ -5,7 +5,7 @@ import tw.jruletest.exceptions.UnparsableRuleException;
 
 public interface TreeNode {
 
-    String generateCode() throws UnparsableRuleException;
+    String generateCode();
 
     int validateRule(String rule) throws InvalidRuleStructureException;
 }

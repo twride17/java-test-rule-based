@@ -1,20 +1,21 @@
 package tw.jruletest.parse.ruletree.argumentnodes;
 
 import tw.jruletest.exceptions.InvalidRuleStructureException;
-import tw.jruletest.exceptions.UnparsableRuleException;
 import tw.jruletest.parse.ruletree.TreeNode;
 
 public class StringNode implements TreeNode {
 
+    private String argumentString;
+
     @Override
-    public String generateCode() throws UnparsableRuleException {
-        return null;
+    public String generateCode() {
+        return argumentString;
     }
 
     @Override
     public int validateRule(String rule) throws InvalidRuleStructureException {
-        // Assumes any character should be allowed in a string except '"'
         if(!rule.contains("\"")) {
+            argumentString = rule;
             return 0;
         } else {
             throw new InvalidRuleStructureException(rule, "String Node");

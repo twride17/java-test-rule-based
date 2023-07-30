@@ -13,8 +13,8 @@ public class Argument {
     public static TreeNode getArgumentNode(String argument) throws InvalidRuleStructureException {
         TreeNode possibleNode;
 
-        int possibleQuoteIndex = argument.indexOf("'");
-        if((possibleQuoteIndex == 0) && (argument.charAt(argument.length()-1) == '\'')) {
+        int possibleQuoteIndex = argument.indexOf("`");
+        if((possibleQuoteIndex == 0) && (argument.charAt(argument.length()-1) == '`')) {
             possibleNode =  new StringNode();
         } else if(Pattern.compile("[a-z][a-z0-9A-Z]*").matcher(argument).matches()){
             possibleNode = new VariableNode();
