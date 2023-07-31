@@ -3,6 +3,9 @@ package tw.jruletest.parse.ruletree.rulenodes;
 import tw.jruletest.exceptions.InvalidRuleStructureException;
 import tw.jruletest.parse.ruletree.TreeNode;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class GetValueNode implements TreeNode {
 
     private TreeNode callTree;
@@ -13,22 +16,26 @@ public class GetValueNode implements TreeNode {
     }
 
     public int validateRule(String ruleContent) throws InvalidRuleStructureException {
-        int currentEnd;
-        String[] segments = ruleContent.split(" ");
-        if(segments[0].equalsIgnoreCase("get")) {
-            if((segments[1].equals("value") || segments[1].equals("result")) && segments[2].equals("of")) {
-                currentEnd = ("get of ").length() + segments[1].length() + 1;
-            } else if(!segments[1].equals("of") && !segments[2].equals("of")) {
-                currentEnd = ("get").length();
-            } else {
+        Pattern regex = Pattern.compile("(((G|g)et\\s)?(value|result)\\sof\\s)?(.+)");
+        Matcher matcher = regex.matcher(ruleContent);
+
+        int currentEnd = 0;
+        if(matcher.find()) {
+            String nextSegment = ruleContent;
+            if(nextSegment.toLowerCase().startsWith("get ")) {
+                nextSegment = nextSegment.substring(4);
+            }
+
+            if(nextSegment.startsWith("of ") || (nextSegment.equals("of"))) {
+                throw new InvalidRuleStructureException(ruleContent, "Get Value Node");
+            } else if(nextSegment.startsWith("value ") || nextSegment.startsWith("result ")) {
+                nextSegment = nextSegment.substring(nextSegment.indexOf(' ')+1);
+                if(!nextSegment.startsWith("of ")) {
+                    throw new InvalidRuleStructureException(ruleContent, "Get Value Node");
+                }
+            } else if(nextSegment.equals("value") || nextSegment.equals("result")) {
                 throw new InvalidRuleStructureException(ruleContent, "Get Value Node");
             }
-        } else if((segments[0].equals("value") || segments[0].equals("result")) && segments[1].equals("of")) {
-            currentEnd = ("of ").length() + segments[0].length() + 1;
-        } else if(!segments[1].equals("of") && !segments[2].equals("of")) {
-            currentEnd = 0;
-        } else {
-            throw new InvalidRuleStructureException(ruleContent, "Get Value Node");
         }
 
         String valueCall = ruleContent.substring(currentEnd).trim();
@@ -63,5 +70,8 @@ public class GetValueNode implements TreeNode {
         testValid("Get result of Class.method and store in y");
         testValid("x and store");
         testValid("Get of x");
+        testValid("Get of");
+        testValid("Get value");
+        testValid("Get result");
     }
 }
