@@ -5,22 +5,21 @@ import tw.jruletest.parse.ruletree.TreeNode;
 
 public class MethodNode implements TreeNode {
 
+    private MethodArgumentNode arguments = null;
+
     @Override
     public String generateCode() {
         return null;
     }
 
-    public static int validateRule(String ruleContent) throws InvalidRuleStructureException {
+    public int validateRule(String ruleContent) throws InvalidRuleStructureException {
         int currentEnd = ruleContent.indexOf(":");
         if(currentEnd != -1) {
             // Invalid rules will give invalid structure exception
-            //System.out.println("Detected arguments");
-            int argumentIndex = MethodArgumentNode.validateRule(ruleContent.substring(currentEnd+1).trim());
+            int argumentIndex = (new MethodArgumentNode()).validateRule(ruleContent.substring(currentEnd+1).trim());
             if(argumentIndex == -1) {
-                //System.out.println("Invalid arguments detected");
                 throw new InvalidRuleStructureException(ruleContent, "Method Call Node");
             } else {
-                //System.out.println("Resulting rule: " + ruleContent.substring(0, currentEnd + argumentIndex + 2));
                 return currentEnd + argumentIndex + 2;
             }
         } else {
@@ -39,34 +38,38 @@ public class MethodNode implements TreeNode {
                 }
 
                 int nextSpaceIndex = ruleContent.substring(currentEnd).indexOf(" ");
-                //System.out.println("Valid method structure: " + ruleContent.substring(0, nextSpaceIndex));
                 if(nextSpaceIndex == -1) {
-                    //System.out.println("Uses full rule");
                     return ruleContent.length();
                 } else {
-                    //System.out.println("Valid method structure: " + ruleContent.substring(0, nextSpaceIndex + currentEnd));
                     return nextSpaceIndex + currentEnd;
                 }
             } catch(ArrayIndexOutOfBoundsException e) {
-                //System.out.println("Invalid Structure");
                 throw new InvalidRuleStructureException(ruleContent, "Method Call Node");
             }
         }
     }
 
-//    public static void main(String[] args) {
-//        validateRule("Call Example.method with arguments: value1, 10.5 and value3");
-//        System.out.println();
-//        validateRule("Call Example.method with: 1, 2");
-//        System.out.println();
-//        validateRule("Call Example.method: 10.5");
-//        System.out.println();
-//        validateRule("Example.method");
-//        System.out.println();
-//        validateRule("method Example.method with: value1, -100, value3 and store");
-//        System.out.println();
-//        validateRule("call method Example.method with: value1, value2, value3 and store");
-//        System.out.println();
-//        validateRule("call method Example.method with: value1, value2, value3, and store");
-//    }
+    public static void testValid(String rule) {
+        try {
+            MethodNode n = new MethodNode();
+            System.out.println(rule);
+            n.validateRule(rule);
+        } catch(InvalidRuleStructureException e) {
+            e.printError();
+        }
+        System.out.println();
+    }
+
+    public static void main(String[] args) {
+        testValid("Call Example.method with arguments: value1, 10.5 and value3");
+        testValid("Call Example.method with: 1, 2");
+        testValid("Call Example.method: 10.5");
+        testValid("Example.method");
+        testValid("method Example.method with: value1, -100, value3 and store");
+        testValid("call method Example.method with: value1, value2, value3 and store");
+        testValid("call method Example.method with: value1, value2, value3, and store");
+        testValid("call method Example.method with: `This and this`, value2, value3 and store");
+        testValid("call method Example.method with: value1, value2, `Hello, it's me` and get value of");
+        testValid("call method Example.method with: value1 and `Lol, value3");
+    }
 }
