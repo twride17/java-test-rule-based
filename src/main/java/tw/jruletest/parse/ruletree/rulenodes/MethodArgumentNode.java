@@ -104,6 +104,9 @@ public class MethodArgumentNode implements TreeNode {
                         remainingRule = remainingRule.substring(connectiveIndex);
                     }
                 } else if(leftQuoteNum <= 2){
+                    if(rightQuoteNum % 2 == 1) {
+                        throw new InvalidRuleStructureException(ruleContent, "Method Argument Node");
+                    }
                     arguments.add(Argument.getArgumentNode(remainingRule.substring(0, connectiveIndex)));
                     // TODO add argument object to list
                     connectiveIndex += connective.length();
@@ -174,6 +177,7 @@ public class MethodArgumentNode implements TreeNode {
         testValid("`Hello world` and 6, value1");
         testValid("value1, value2 and `hello");
         testValid("value1, value2 and `hello`");
+        testValid("value1, value2 and hello`");
         testValid("-0.612f, value2 and `hello`");
         testValid("value1 and `hello it's me` and -90");
     }
@@ -182,7 +186,8 @@ public class MethodArgumentNode implements TreeNode {
         try {
             MethodArgumentNode n = new MethodArgumentNode();
             System.out.println(rule);
-            n.validateRule(rule);
+            System.out.println(n.validateRule(rule));
+            System.out.println(rule.length());
             n.showArguments();
         } catch(InvalidRuleStructureException e) {
             e.printError();
