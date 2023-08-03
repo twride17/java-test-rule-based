@@ -86,5 +86,6 @@ public class StoreValueNode implements TreeNode {
         testValid("store value of xValue in test");
         testValid("store value of xValue in");
         testValid("store value of xValue test");
+        testValid("store result of Class.method: in y");
     }
 }

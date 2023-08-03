@@ -28,17 +28,17 @@ public class Argument {
 
     public static void main(String[] args) {
         // All work
-        test("'Hello World'");
-        test("'Hello \" world'");
+        test("`Hello World`");
+        test("`Hello \" world`");
         test("0.7f");
         test("-3.7856");
         test("x");
         test("x'");
-        test("'Hello it's me'");
+        test("`Hello it's me`");
         test("xValue");
         test("xValue1x2");
         test("10x");
-        test("h''h");
+        test("h``h");
     }
 
     public static void test(String rule) {

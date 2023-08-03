@@ -1,7 +1,9 @@
 package tw.jruletest.parse.ruletree.rulenodes;
 
+import com.sun.org.apache.xpath.internal.Arg;
 import tw.jruletest.exceptions.InvalidRuleStructureException;
 import tw.jruletest.parse.ruletree.TreeNode;
+import tw.jruletest.parse.ruletree.argumentnodes.VariableNode;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -20,30 +22,44 @@ public class GetValueNode implements TreeNode {
         Matcher matcher = regex.matcher(ruleContent);
 
         int currentEnd = 0;
+        String nextSegment = ruleContent;
         if(matcher.find()) {
-            String nextSegment = ruleContent;
             if(nextSegment.toLowerCase().startsWith("get ")) {
                 nextSegment = nextSegment.substring(4);
+                currentEnd += 4;
             }
 
             if(nextSegment.startsWith("of ") || (nextSegment.equals("of"))) {
                 throw new InvalidRuleStructureException(ruleContent, "Get Value Node");
             } else if(nextSegment.startsWith("value ") || nextSegment.startsWith("result ")) {
-                nextSegment = nextSegment.substring(nextSegment.indexOf(' ')+1);
+                currentEnd += nextSegment.indexOf(' ') + 1;
+                nextSegment = nextSegment.substring(nextSegment.indexOf(' ') + 1);
                 if(!nextSegment.startsWith("of ")) {
                     throw new InvalidRuleStructureException(ruleContent, "Get Value Node");
+                } else {
+                    currentEnd += nextSegment.indexOf(' ') + 1;
+                    nextSegment = nextSegment.substring(nextSegment.indexOf(' ') + 1);
                 }
             } else if(nextSegment.equals("value") || nextSegment.equals("result")) {
                 throw new InvalidRuleStructureException(ruleContent, "Get Value Node");
             }
         }
 
-        String valueCall = ruleContent.substring(currentEnd).trim();
-        int possibleMethodIndex = (new MethodNode()).validateRule(valueCall);
-        if(possibleMethodIndex == -1) {
-            throw new InvalidRuleStructureException(ruleContent, "Get Value Node");
-        } else {
-            return possibleMethodIndex + currentEnd;
+        callTree = new MethodNode();
+        try {
+            return callTree.validateRule(nextSegment) + currentEnd;
+        } catch(InvalidRuleStructureException e) {
+            try {
+                // Assume variable, so check next word
+                int nextSpaceIndex = nextSegment.indexOf(' ');
+                if(nextSpaceIndex != -1) {
+                    nextSegment = nextSegment.substring(0, nextSpaceIndex);
+                }
+                callTree = new VariableNode();
+                return currentEnd + callTree.validateRule(nextSegment);
+            } catch(InvalidRuleStructureException e2) {
+                throw new InvalidRuleStructureException(nextSegment, "Get Value Node");
+            }
         }
     }
 
@@ -68,10 +84,15 @@ public class GetValueNode implements TreeNode {
         testValid("Get value of Class.method with: `New string and new test`, value3 and 63 and store in z");
         testValid("Get value of Class.method with: `New string and new test`, value3 and `Hello` and store in z");
         testValid("Get result of Class.method and store in y");
+        testValid("Get result of Class.method: and store in y");
         testValid("x and store");
         testValid("Get of x");
         testValid("Get of");
         testValid("Get value");
         testValid("Get result");
+        testValid("Get result of 1");
+        testValid("Get result of 'Hello'");
+        testValid("Get result of xxx");
+        testValid("Get value of");
     }
 }
