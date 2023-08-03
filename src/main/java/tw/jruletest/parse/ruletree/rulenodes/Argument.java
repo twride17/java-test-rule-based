@@ -6,6 +6,7 @@ import tw.jruletest.parse.ruletree.argumentnodes.ConstantNode;
 import tw.jruletest.parse.ruletree.argumentnodes.StringNode;
 import tw.jruletest.parse.ruletree.argumentnodes.VariableNode;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Argument {
@@ -14,12 +15,21 @@ public class Argument {
         TreeNode possibleNode;
 
         int possibleQuoteIndex = argument.indexOf("`");
-        if((possibleQuoteIndex == 0) && (argument.charAt(argument.length()-1) == '`')) {
-            possibleNode =  new StringNode();
-        } else if(Pattern.compile("[a-z][a-z0-9A-Z]*").matcher(argument).matches()){
-            possibleNode = new VariableNode();
+        if((possibleQuoteIndex == 0) && (argument.substring(1).indexOf('`') != -1)) {
+            argument = argument.substring(0, argument.substring(1).indexOf('`') + 2);
+            possibleNode = new StringNode();
         } else {
-            possibleNode = new ConstantNode();
+            Matcher matcher = Pattern.compile("^([a-z][a-z0-9A-Z]*)").matcher(argument);
+            if(matcher.find()){
+                argument = argument.substring(0, matcher.end());
+                possibleNode = new VariableNode();
+            } else {
+                int nextSpaceIndex = argument.indexOf(' ');
+                if(nextSpaceIndex != -1) {
+                    argument = argument.substring(0, nextSpaceIndex);
+                }
+                possibleNode = new ConstantNode();
+            }
         }
 
         possibleNode.validateRule(argument);
@@ -33,12 +43,13 @@ public class Argument {
         test("0.7f");
         test("-3.7856");
         test("x");
-        test("x'");
-        test("`Hello it's me`");
+        test("`x` and 76");
+        test("`Hello it's me` and 6");
         test("xValue");
         test("xValue1x2");
         test("10x");
         test("h``h");
+        test("x, y");
     }
 
     public static void test(String rule) {
@@ -46,6 +57,7 @@ public class Argument {
             TreeNode node = getArgumentNode(rule);
             System.out.println(rule);
             System.out.println(node.getClass());
+            System.out.println(node.generateCode());
         } catch(InvalidRuleStructureException e) {
             e.printError();
         }
