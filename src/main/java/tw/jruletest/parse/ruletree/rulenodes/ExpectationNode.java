@@ -5,6 +5,20 @@ import tw.jruletest.parse.ruletree.TreeNode;
 
 public class ExpectationNode implements TreeNode {
 
+    /**
+     * @author Toby Wride
+     *
+     * Rule tree node for expectation rules
+     */
+
+    private int keywordLength = 0;
+
+    private TreeNode expectedValueTree;
+    private TreeNode actualValueTree;
+    private String comparator;
+
+    private boolean negated = false;
+
     private static final String[] POSSIBLE_COMPARATORS = {" equal "};
 
     public ExpectationNode() {
@@ -16,23 +30,103 @@ public class ExpectationNode implements TreeNode {
         return null;
     }
 
-    public static int validateRule(String ruleContent) throws InvalidRuleStructureException  {
+    public int validateRule(String ruleContent) throws InvalidRuleStructureException  {
         int comparatorIndex = -1;
         for(String comparator: POSSIBLE_COMPARATORS) {
             int newIndex = ruleContent.indexOf(comparator);
             if((newIndex >= 0) && (comparatorIndex < 0)) {
                 comparatorIndex = newIndex + comparator.length();
+                this.comparator = comparator;
+
+                String[] segments = ruleContent.substring(0, newIndex).split(" ");
+                negated = segments[segments.length-1].equals("not");
             }
         }
 
-        // TODO Change to allow for strings as expected value
-        comparatorIndex += ruleContent.substring(comparatorIndex).split(" ")[0].length();
-        try {
-            if (ruleContent.charAt(comparatorIndex-1) == ',') {
-                comparatorIndex -= 1;
-            }
-        } catch(StringIndexOutOfBoundsException e) {}
+        String comparatorPhrase = " to";
+        if(negated) {
+            comparatorPhrase += " not";
+        }
+        comparatorPhrase += comparator;
 
-        return comparatorIndex;
+        String remainingRule = ruleContent;
+        if(ruleContent.toLowerCase().startsWith("expect ")) {
+            keywordLength = 7;
+        }
+        remainingRule = remainingRule.substring(keywordLength);
+
+        int phraseIndex = remainingRule.indexOf(comparatorPhrase);
+        if(phraseIndex == -1) {
+            throw new InvalidRuleStructureException(ruleContent, "Expectation Node");
+        }
+
+        String expectedSegment = remainingRule.substring(0, phraseIndex);
+        String actualSegment = remainingRule.substring(phraseIndex + comparatorPhrase.length());
+
+        int firstArgumentIndex;
+        int secondArgumentIndex;
+        TreeNode currentNode;
+
+        try {
+            currentNode = Argument.getArgumentNode(expectedSegment);
+            firstArgumentIndex = currentNode.generateCode().length();
+            expectedValueTree = currentNode;
+        } catch(InvalidRuleStructureException e) {
+            try {
+                currentNode = new GetValueNode();
+                firstArgumentIndex = currentNode.validateRule(expectedSegment);
+                expectedValueTree = currentNode;
+            } catch(InvalidRuleStructureException e2) {
+                throw new InvalidRuleStructureException(expectedSegment, "Expectation Node");
+            }
+        }
+
+        try {
+            currentNode = Argument.getArgumentNode(actualSegment);
+            secondArgumentIndex = currentNode.generateCode().length();
+            actualValueTree = currentNode;
+        } catch(InvalidRuleStructureException e) {
+            try {
+                currentNode = new GetValueNode();
+                secondArgumentIndex = currentNode.validateRule(actualSegment) + 1;
+                actualValueTree = currentNode;
+            } catch(InvalidRuleStructureException e2) {
+                throw new InvalidRuleStructureException(actualSegment, "Expectation Node");
+            }
+        }
+
+        if(firstArgumentIndex != phraseIndex) {
+            throw new InvalidRuleStructureException(remainingRule, "Expectation Node");
+        } else {
+            return keywordLength + expectedSegment.length() + comparatorPhrase.length() + secondArgumentIndex;
+        }
+    }
+
+    public static void testValid(String rule) {
+        try {
+            ExpectationNode n = new ExpectationNode();
+            System.out.println(rule);
+            n.validateRule(rule);
+        } catch(InvalidRuleStructureException e) {
+            e.printError();
+        }
+        System.out.println();
+    }
+
+    public static void main(String[] args) {
+        testValid("Expect 2 to equal 4");
+        testValid("Expect x to equal -0.9874f");
+        testValid("Expect string to equal `Hello there`");
+        testValid("Expect value of Class.method with: `Hello, this is cool` to equal 4");
+        testValid("Expect Class.method to equal 3");
+        testValid("Expect Class.method: to equal 3");
+        testValid("Expect result of Class.method to equal `New and cool string`");
+        testValid("Expect -982 to not equal 4");
+        testValid("Expect xValue1 to equal 5");
+        testValid("Expect Example.method with arguments: 3, 56 and `Hello` to equal 4");
+        testValid("Expect Example.method: 3, 56 and Hello` to equal 4");
+        testValid("Expect value Example.method: 3, 56 and `Hello` to equal 4");
+        testValid("Expect of Example.method: 3, 56 and `Hello` to equal 4");
+        testValid("Expect value of Example.method: `Hello and 56 to equal 4");
     }
 }
