@@ -2,6 +2,7 @@ package tw.jruletest.parse.ruletree.rulenodes;
 
 import tw.jruletest.exceptions.InvalidRuleStructureException;
 import tw.jruletest.parse.ruletree.TreeNode;
+import tw.jruletest.parse.ruletree.argumentnodes.VariableNode;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -11,7 +12,7 @@ public class StoreValueNode implements TreeNode {
     private TreeNode valueTree;
 
     // TODO Likely to be a variable node, when implemented
-    private String variableTree;
+    private TreeNode variableTree;
 
 
     @Override
@@ -25,31 +26,36 @@ public class StoreValueNode implements TreeNode {
             String requiredSegment;
             int endIndex;
             if(ruleContent.toLowerCase().startsWith("store")) {
-                endIndex = ("store ").length();
-                requiredSegment = ruleContent.substring(endIndex);
+                endIndex = 6;
             } else {
                 endIndex = 0;
-                requiredSegment = ruleContent;
             }
 
-            requiredSegment = requiredSegment.substring(0, requiredSegment.indexOf(" in "));
+            requiredSegment = ruleContent.substring(endIndex);
+            if(requiredSegment.isEmpty()) {
+                throw new InvalidRuleStructureException(ruleContent, "Store Value Node");
+            }
 
+            valueTree = new GetValueNode();
             try {
-                int getValueIndex = (new GetValueNode()).validateRule(requiredSegment);
-                if(matcher.end() == ruleContent.length()) {
-                    return ruleContent.length();
-                } else {
-                    int callIndex = endIndex + getValueIndex + (" in ").length();
-                    return callIndex + ruleContent.substring(callIndex).indexOf(" ");
-                }
-            } catch(ArrayIndexOutOfBoundsException e) {
-                Argument.getArgumentNode(requiredSegment);
-                if(matcher.end() == ruleContent.length()) {
-                    return ruleContent.length();
-                } else {
-                    return matcher.end() + 1;
+                endIndex += valueTree.validateRule(requiredSegment);
+            } catch(InvalidRuleStructureException e) {
+                try {
+                    valueTree = Argument.getArgumentNode(requiredSegment);
+                    endIndex += valueTree.generateCode().length();
+                } catch(InvalidRuleStructureException e2) {
+                    throw new InvalidRuleStructureException(requiredSegment, "Get Value Node");
                 }
             }
+
+            requiredSegment = ruleContent.substring(endIndex);
+            if(requiredSegment.startsWith(" in") && !requiredSegment.trim().equals("in")) {
+                requiredSegment = requiredSegment.substring(4);
+                endIndex += 4;
+            }
+
+            variableTree = new VariableNode();
+            return endIndex + variableTree.validateRule(requiredSegment);
         } else {
             throw new InvalidRuleStructureException(ruleContent, "Store Value Node");
         }
@@ -59,7 +65,8 @@ public class StoreValueNode implements TreeNode {
         try {
             StoreValueNode n = new StoreValueNode();
             System.out.println(rule);
-            n.validateRule(rule);
+            System.out.println(n.validateRule(rule));
+            System.out.println(rule.length());
         } catch(InvalidRuleStructureException e) {
             e.printError();
         }
@@ -84,6 +91,7 @@ public class StoreValueNode implements TreeNode {
         testValid("store -100 in test");
         testValid("store value of Example.x in test");
         testValid("store value of xValue in test");
+        testValid("store xValue in test");
         testValid("store value of xValue in");
         testValid("store value of xValue test");
         testValid("store result of Class.method: in y");
