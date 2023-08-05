@@ -3,6 +3,7 @@ package tw.jruletest.parse.ruletree.argumentnodes;
 import tw.jruletest.exceptions.InvalidRuleStructureException;
 import tw.jruletest.parse.ruletree.TreeNode;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ConstantNode implements TreeNode {
@@ -17,12 +18,13 @@ public class ConstantNode implements TreeNode {
     @Override
     public int validateRule(String rule) throws InvalidRuleStructureException {
         // TODO Previously defined constants???
-        if(Pattern.compile("(-?)([0-9]+)((\\.[0-9]+)?)(f?)").matcher(rule).matches()) {
-            constantString = rule;
-            return 0;
+        Matcher matcher = Pattern.compile("^((-?)([0-9]+)((\\.[0-9]+)?)(f?))").matcher(rule);
+        if(matcher.find()) {
+            constantString = matcher.group();
+            return matcher.end();
         } else if(rule.equals("true") || rule.equals("false")) {
             constantString = rule;
-            return 0;
+            return rule.length();
         } else {
             throw new InvalidRuleStructureException(rule, "Constant Node");
         }
