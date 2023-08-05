@@ -1,6 +1,5 @@
 package tw.jruletest.parse.ruletree.rulenodes;
 
-import com.sun.org.apache.xpath.internal.Arg;
 import tw.jruletest.exceptions.InvalidRuleStructureException;
 import tw.jruletest.parse.ruletree.TreeNode;
 import tw.jruletest.parse.ruletree.argumentnodes.VariableNode;
@@ -50,11 +49,6 @@ public class GetValueNode implements TreeNode {
             return callTree.validateRule(nextSegment) + currentEnd;
         } catch(InvalidRuleStructureException e) {
             try {
-                // Assume variable, so check next word
-                int nextSpaceIndex = nextSegment.indexOf(' ');
-                if(nextSpaceIndex != -1) {
-                    nextSegment = nextSegment.substring(0, nextSpaceIndex);
-                }
                 callTree = new VariableNode();
                 return currentEnd + callTree.validateRule(nextSegment);
             } catch(InvalidRuleStructureException e2) {
@@ -67,7 +61,8 @@ public class GetValueNode implements TreeNode {
         try {
             GetValueNode n = new GetValueNode();
             System.out.println(rule);
-            n.validateRule(rule);
+            System.out.println(n.validateRule(rule));
+            System.out.println(rule.length());
         } catch(InvalidRuleStructureException e) {
             e.printError();
         }

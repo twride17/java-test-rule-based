@@ -68,13 +68,13 @@ public class ExpectationNode implements TreeNode {
         TreeNode currentNode;
 
         try {
-            currentNode = Argument.getArgumentNode(expectedSegment);
-            firstArgumentIndex = currentNode.generateCode().length();
+            currentNode = new GetValueNode();
+            firstArgumentIndex = currentNode.validateRule(expectedSegment);
             expectedValueTree = currentNode;
         } catch(InvalidRuleStructureException e) {
             try {
-                currentNode = new GetValueNode();
-                firstArgumentIndex = currentNode.validateRule(expectedSegment);
+                currentNode = Argument.getArgumentNode(expectedSegment);
+                firstArgumentIndex = currentNode.generateCode().length();
                 expectedValueTree = currentNode;
             } catch(InvalidRuleStructureException e2) {
                 throw new InvalidRuleStructureException(expectedSegment, "Expectation Node");
@@ -82,13 +82,13 @@ public class ExpectationNode implements TreeNode {
         }
 
         try {
-            currentNode = Argument.getArgumentNode(actualSegment);
-            secondArgumentIndex = currentNode.generateCode().length();
+            currentNode = new GetValueNode();
+            secondArgumentIndex = currentNode.validateRule(actualSegment) + 1;
             actualValueTree = currentNode;
         } catch(InvalidRuleStructureException e) {
             try {
-                currentNode = new GetValueNode();
-                secondArgumentIndex = currentNode.validateRule(actualSegment) + 1;
+                currentNode = Argument.getArgumentNode(actualSegment);
+                secondArgumentIndex = currentNode.generateCode().length();
                 actualValueTree = currentNode;
             } catch(InvalidRuleStructureException e2) {
                 throw new InvalidRuleStructureException(actualSegment, "Expectation Node");
@@ -106,7 +106,8 @@ public class ExpectationNode implements TreeNode {
         try {
             ExpectationNode n = new ExpectationNode();
             System.out.println(rule);
-            n.validateRule(rule);
+            System.out.println(n.validateRule(rule));
+            System.out.println(rule.length());
         } catch(InvalidRuleStructureException e) {
             e.printError();
         }

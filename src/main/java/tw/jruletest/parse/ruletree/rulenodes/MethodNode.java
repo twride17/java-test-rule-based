@@ -47,11 +47,13 @@ public class MethodNode implements TreeNode {
 
         if(colonIndex == -1) {
             int currentEnd = methodCallStart + methodCall.length();
-            if(currentEnd != ruleContent.length() && !ruleContent.substring(currentEnd).startsWith(" and ")) {
-                throw new InvalidRuleStructureException(ruleContent, "Method Node");
-            } else {
-                return methodCallStart + methodCall.length();
+            if(currentEnd != ruleContent.length()) {
+                String remainingRule = ruleContent.substring(currentEnd);
+                if(!remainingRule.startsWith(" and ") && !remainingRule.startsWith(" in ") && !remainingRule.startsWith(", ")) {
+                    throw new InvalidRuleStructureException(ruleContent, "Method Node");
+                }
             }
+            return methodCallStart + methodCall.length();
         } else {
             String middleWords = ruleContent.substring(methodCallStart + methodCall.length(), colonIndex);
             if(!middleWords.isEmpty()) {
