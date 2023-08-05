@@ -21,109 +21,68 @@ public class MethodArgumentNode implements TreeNode {
     public int validateRule(String ruleContent) throws InvalidRuleStructureException {
         boolean valid = false;
         String remainingRule = ruleContent;
-        while(!valid) {
-            String connective = "";
-            if(remainingRule.isEmpty() || remainingRule.equals(",") || remainingRule.equals("and")) {
-                throw new InvalidRuleStructureException(remainingRule, "Method Argument Node");
+        int currentEnd = 0;
+
+        do {
+            if(remainingRule.isEmpty()) {
+                throw new InvalidRuleStructureException(ruleContent, "Method Argument Node");
+            } else if(remainingRule.equals("and") || remainingRule.equals(",") || remainingRule.equals("and ") || remainingRule.equals(", ")) {
+                throw new InvalidRuleStructureException(ruleContent, "Method Argument Node");
             }
 
-            int commaIndex = findConnective(remainingRule, ",");
-            int andIndex = findConnective(remainingRule, " and");
+            TreeNode argumentNode = Argument.getArgumentNode(remainingRule);
+            int argumentEndIndex = argumentNode.generateCode().length();
+            currentEnd += argumentEndIndex;
+            arguments.add(argumentNode);
 
-            int connectiveIndex = -1;
-            if(commaIndex == -1 && andIndex != -1) {
-                connectiveIndex = andIndex;
-                connective = " and ";
-            } else if(andIndex == -1) {
-                if(commaIndex != -1) {
-                    connectiveIndex = commaIndex;
-                    connective = ", ";
-                }
+            if(argumentEndIndex == remainingRule.length()) {
+                valid = true;
             } else {
-                if(commaIndex < andIndex) {
-                    connectiveIndex = commaIndex;
-                    connective = ", ";
-                } else {
-                    connectiveIndex = andIndex;
-                    connective = " and ";
-                }
-            }
+                remainingRule = remainingRule.substring(argumentEndIndex);
 
-            if(connectiveIndex == -1) {
-                if(remainingRule.startsWith("`") && remainingRule.charAt(remainingRule.length() - 1) == '`') {
-                    valid = true;
-                } else if(remainingRule.indexOf(' ') == -1) {
-                    valid = true;
-                } else {
-                    throw new InvalidRuleStructureException(remainingRule, "Method Argument Node");
-                }
-                arguments.add(Argument.getArgumentNode(remainingRule));
-            } else if(connectiveIndex == 0) {
-                throw new InvalidRuleStructureException(remainingRule, "Method Argument Node");
-            } else {
-                int leftQuoteNum = countQuotes(remainingRule.substring(0, connectiveIndex));
-                int rightQuoteNum = countQuotes(remainingRule.substring(connectiveIndex));
-
-                if(leftQuoteNum == 1) {
-                    if(rightQuoteNum % 2 == 0) {
-                        throw new InvalidRuleStructureException(ruleContent, "Method Argument Node");
-                    }
-                    connectiveIndex += remainingRule.substring(connectiveIndex).indexOf('`') + 1;
-                    arguments.add(Argument.getArgumentNode(remainingRule.substring(0, connectiveIndex)));
-                    remainingRule = remainingRule.substring(connectiveIndex);
-                    if(remainingRule.isEmpty()) {
-                        valid = true;
-                    } else {
-                        commaIndex = findConnective(remainingRule, ",");
-                        andIndex = findConnective(remainingRule, " and");
-
-                        if(commaIndex == -1) {
-                            if(andIndex == -1) {
-                                throw new InvalidRuleStructureException(ruleContent, "Method Argument Node");
-                            } else if(andIndex == 0) {
-                                connectiveIndex = 5;
-                            } else {
-                                throw new InvalidRuleStructureException(ruleContent, "Method Argument Node");
-                            }
-                        } else if(andIndex == -1) {
-                            if(commaIndex == 0) {
-                                connectiveIndex = 2;
-                            } else {
-                                throw new InvalidRuleStructureException(ruleContent, "Method Argument Node");
-                            }
-                        } else {
-                            if(commaIndex == 0) {
-                                connectiveIndex = 2;
-                            } else if(andIndex == 0) {
-                                connectiveIndex = 5;
-                            } else {
-                                throw new InvalidRuleStructureException(ruleContent, "Method Argument Node");
-                            }
-                        }
-
-                        remainingRule = remainingRule.substring(connectiveIndex);
-                    }
-                } else if(leftQuoteNum <= 2){
-                    if(rightQuoteNum % 2 == 1) {
-                        throw new InvalidRuleStructureException(ruleContent, "Method Argument Node");
-                    }
-                    arguments.add(Argument.getArgumentNode(remainingRule.substring(0, connectiveIndex)));
-                    // TODO add argument object to list
-                    connectiveIndex += connective.length();
-                    remainingRule = remainingRule.substring(connectiveIndex);
+                String connective;
+                if(remainingRule.startsWith(" and")) {
+                    connective = " and";
+                } else if(remainingRule.startsWith(",")) {
+                    connective = ",";
+                } else if(remainingRule.startsWith(" in")) {
+                    return currentEnd;
                 } else {
                     throw new InvalidRuleStructureException(ruleContent, "Method Argument Node");
                 }
 
-                int nextSpaceIndex = remainingRule.indexOf(' ');
-                if(nextSpaceIndex != -1) {
-                    if(Parser.KEYWORDS.contains(remainingRule.substring(0, nextSpaceIndex))) {
-                        valid = true;
+                if(remainingRule.length() == connective.length()) {
+                    throw new InvalidRuleStructureException(ruleContent, "Method Argument Node");
+                }
+
+                remainingRule = remainingRule.substring(connective.length());
+
+                try {
+                    if(remainingRule.charAt(0) == ' ') {
+                        int nextSpaceIndex = remainingRule.substring(1).indexOf(' ');
+                        String nextWord;
+                        if(nextSpaceIndex == -1) {
+                            nextWord = remainingRule.substring(1);
+                        } else {
+                            nextWord = remainingRule.substring(1, nextSpaceIndex + 1);
+                        }
+
+                        if(Parser.KEYWORDS.contains(nextWord)) {
+                            valid = true;
+                        } else {
+                            currentEnd += connective.length() + 1;
+                            remainingRule = remainingRule.substring(1);
+                        }
+                    } else {
+                        throw new InvalidRuleStructureException(ruleContent, "Method Argument Node");
                     }
+                } catch(IndexOutOfBoundsException e) {
+                    throw new InvalidRuleStructureException(ruleContent, "Method Argument Node");
                 }
             }
-        }
-        return ruleContent.length();
+        } while(!valid);
+
+        return currentEnd;
     }
 
     private int findConnective(String rule, String connective) throws InvalidRuleStructureException {
