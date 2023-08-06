@@ -16,7 +16,7 @@ public class StringNode implements TreeNode {
     public int validateRule(String rule) throws InvalidRuleStructureException {
         if(!rule.contains("\"")) {
             argumentString = rule;
-            return 0;
+            return rule.length();
         } else {
             throw new InvalidRuleStructureException(rule, "String Node");
         }

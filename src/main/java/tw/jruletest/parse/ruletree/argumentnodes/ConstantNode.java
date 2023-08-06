@@ -20,8 +20,12 @@ public class ConstantNode implements TreeNode {
         // TODO Previously defined constants???
         Matcher matcher = Pattern.compile("^((-?)([0-9]+)((\\.[0-9]+)?)(f?))").matcher(rule);
         if(matcher.find()) {
-            constantString = matcher.group();
-            return matcher.end();
+            if((matcher.end() != rule.length()) && (rule.charAt(matcher.end()) != ' ')) {
+                throw new InvalidRuleStructureException(rule, "Constant Node");
+            } else {
+                constantString = matcher.group();
+                return matcher.end();
+            }
         } else if(rule.equals("true") || rule.equals("false")) {
             constantString = rule;
             return rule.length();
@@ -41,7 +45,7 @@ public class ConstantNode implements TreeNode {
         testValid("false");
         testValid("f");
         testValid(".");
-        testValid("5.");
+        testValid("5.08nd");
     }
 
     public static void testValid(String rule) {
