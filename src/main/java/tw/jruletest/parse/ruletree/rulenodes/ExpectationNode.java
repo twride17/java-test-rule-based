@@ -2,6 +2,7 @@ package tw.jruletest.parse.ruletree.rulenodes;
 
 import tw.jruletest.exceptions.InvalidRuleStructureException;
 import tw.jruletest.parse.ruletree.TreeNode;
+import tw.jruletest.parse.ruletree.argumentnodes.ArgumentNode;
 
 public class ExpectationNode implements TreeNode {
 
@@ -74,7 +75,7 @@ public class ExpectationNode implements TreeNode {
         } catch(InvalidRuleStructureException e) {
             try {
                 currentNode = Argument.getArgumentNode(expectedSegment);
-                firstArgumentIndex = currentNode.generateCode().length();
+                firstArgumentIndex = ((ArgumentNode)currentNode).getEndIndex() + 1;
                 expectedValueTree = currentNode;
             } catch(InvalidRuleStructureException e2) {
                 throw new InvalidRuleStructureException(expectedSegment, "Expectation Node");
@@ -83,12 +84,12 @@ public class ExpectationNode implements TreeNode {
 
         try {
             currentNode = new GetValueNode();
-            secondArgumentIndex = currentNode.validateRule(actualSegment) + 1;
+            secondArgumentIndex = currentNode.validateRule(actualSegment);
             actualValueTree = currentNode;
         } catch(InvalidRuleStructureException e) {
             try {
                 currentNode = Argument.getArgumentNode(actualSegment);
-                secondArgumentIndex = currentNode.generateCode().length();
+                secondArgumentIndex = ((ArgumentNode)currentNode).getEndIndex() + 1;
                 actualValueTree = currentNode;
             } catch(InvalidRuleStructureException e2) {
                 throw new InvalidRuleStructureException(actualSegment, "Expectation Node");
@@ -98,7 +99,7 @@ public class ExpectationNode implements TreeNode {
         if(firstArgumentIndex != phraseIndex) {
             throw new InvalidRuleStructureException(remainingRule, "Expectation Node");
         } else {
-            return keywordLength + expectedSegment.length() + comparatorPhrase.length() + secondArgumentIndex;
+            return comparatorIndex + secondArgumentIndex;
         }
     }
 
@@ -126,8 +127,11 @@ public class ExpectationNode implements TreeNode {
         testValid("Expect xValue1 to equal 5");
         testValid("Expect Example.method with arguments: 3, 56 and `Hello` to equal 4");
         testValid("Expect Example.method: 3, 56 and Hello` to equal 4");
+        testValid("Expect 4 to not equal Example.method: 3, 56 and `Hello`");
         testValid("Expect value Example.method: 3, 56 and `Hello` to equal 4");
         testValid("Expect of Example.method: 3, 56 and `Hello` to equal 4");
         testValid("Expect value of Example.method: `Hello and 56 to equal 4");
+        testValid("0 to not equal value of Class.method");
+        testValid("0 to equal value of Class.method");
     }
 }

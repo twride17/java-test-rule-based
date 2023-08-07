@@ -3,9 +3,7 @@ package tw.jruletest.parse.ruletree.argumentnodes;
 import tw.jruletest.exceptions.InvalidRuleStructureException;
 import tw.jruletest.parse.ruletree.TreeNode;
 
-public class StringNode implements TreeNode {
-
-    private String argumentString;
+public class StringNode extends ArgumentNode implements TreeNode {
 
     @Override
     public String generateCode() {

@@ -6,13 +6,11 @@ import tw.jruletest.parse.ruletree.TreeNode;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ConstantNode implements TreeNode {
-
-    private String constantString;
+public class ConstantNode extends ArgumentNode implements TreeNode {
 
     @Override
     public String generateCode() {
-        return constantString;
+        return argumentString;
     }
 
     @Override
@@ -20,18 +18,18 @@ public class ConstantNode implements TreeNode {
         // TODO Previously defined constants???
         Matcher matcher = Pattern.compile("^((-?)([0-9]+)((\\.[0-9]+)?)(f?))").matcher(rule);
         if(matcher.find()) {
-            if((matcher.end() != rule.length()) && (rule.charAt(matcher.end()) != ' ')) {
-                throw new InvalidRuleStructureException(rule, "Constant Node");
-            } else {
-                constantString = matcher.group();
+            if(!((matcher.end() != rule.length()) && (rule.charAt(matcher.end()) != ' ') && (rule.charAt(matcher.end()) != ','))) {
+                argumentString = matcher.group();
                 return matcher.end();
             }
-        } else if(rule.equals("true") || rule.equals("false")) {
-            constantString = rule;
-            return rule.length();
-        } else {
-            throw new InvalidRuleStructureException(rule, "Constant Node");
+        } else if(rule.startsWith("true")) {
+            argumentString = "true";
+            return 4;
+        } else if(rule.startsWith("false")) {
+            argumentString = "false";
+            return 5;
         }
+        throw new InvalidRuleStructureException(rule, "Constant Node");
     }
 
     public static void main(String[] args) {

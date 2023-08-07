@@ -6,13 +6,11 @@ import tw.jruletest.parse.ruletree.TreeNode;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class VariableNode implements TreeNode {
-
-    private String variableString;
+public class VariableNode extends ArgumentNode implements TreeNode {
 
     @Override
     public String generateCode() {
-        return variableString;
+        return argumentString;
     }
 
     @Override
@@ -21,7 +19,7 @@ public class VariableNode implements TreeNode {
         // TODO Check whether variable exists
         Matcher matcher = Pattern.compile("^(([a-z][A-Z0-9a-z]*)|(([A-Z][A-Z0-9a-z]*)\\.([a-z][A-Z0-9a-z]*)))").matcher(rule);
         if(matcher.find()) {
-            variableString = matcher.group();
+            argumentString = matcher.group();
             return matcher.end();
         } else {
             throw new InvalidRuleStructureException(rule, "Variable Node");

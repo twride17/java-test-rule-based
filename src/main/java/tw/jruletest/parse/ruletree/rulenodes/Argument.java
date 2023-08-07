@@ -21,13 +21,8 @@ public class Argument {
         } else {
             Matcher matcher = Pattern.compile("^([a-z][a-z0-9A-Z]*)").matcher(argument);
             if(matcher.find()){
-                argument = argument.substring(0, matcher.end());
                 possibleNode = new VariableNode();
             } else {
-                int nextSpaceIndex = argument.indexOf(' ');
-                if(nextSpaceIndex != -1) {
-                    argument = argument.substring(0, nextSpaceIndex);
-                }
                 possibleNode = new ConstantNode();
             }
         }
