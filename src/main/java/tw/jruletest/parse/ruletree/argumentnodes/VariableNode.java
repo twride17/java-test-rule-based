@@ -19,10 +19,11 @@ public class VariableNode extends ArgumentNode implements TreeNode {
         // TODO Check whether variable exists
         Matcher matcher = Pattern.compile("^(([a-z][A-Z0-9a-z]*)|(([A-Z][A-Z0-9a-z]*)\\.([a-z][A-Z0-9a-z]*)))").matcher(rule);
         if(matcher.find()) {
-            argumentString = matcher.group();
-            return matcher.end();
-        } else {
-            throw new InvalidRuleStructureException(rule, "Variable Node");
+            if(!((matcher.end() != rule.length()) && (rule.charAt(matcher.end()) != ' ') && (rule.charAt(matcher.end()) != ','))) {
+                argumentString = matcher.group();
+                return matcher.end();
+            }
         }
+        throw new InvalidRuleStructureException(rule, "Variable Node");
     }
 }
