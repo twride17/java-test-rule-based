@@ -9,18 +9,63 @@ public class TestStringNode {
 
     @Test
     public void testValidString() {
+        String rule = "`Hello world.`";
         try {
-            node.validateRule("`Hello world.`");
+            Assert.assertEquals(rule.length(), node.validateRule(rule));
+            Assert.assertEquals(rule, node.generateCode());
         } catch(InvalidRuleStructureException e) {
-            Assert.fail("Rule '`Hello world.`': failed");
+            Assert.fail("Rule '" + rule + "': failed");
         }
     }
 
     @Test
-    public void testInvalidString() {
+    public void testValidStringPlusExtraEndRule() {
+        String rule = "`Hello world` and store";
+        try {
+            Assert.assertEquals(13, node.validateRule(rule));
+            Assert.assertEquals("`Hello world`", node.generateCode());
+        } catch(InvalidRuleStructureException e) {
+            Assert.fail("Rule '" + rule + "': failed");
+        }
+    }
+
+    @Test
+    public void testStringWithSpeechMark() {
         try {
             node.validateRule("`Hello \" world.`");
             Assert.fail("Rule '`Hello \" world.`': passed");
+        } catch(InvalidRuleStructureException e) { }
+    }
+
+    @Test
+    public void testExptyRule() {
+        try {
+            node.validateRule("");
+            Assert.fail("Rule '': passed");
+        } catch(InvalidRuleStructureException e) { }
+    }
+
+    @Test
+    public void testStringWithOnlyLeftQuote() {
+        try {
+            node.validateRule("`Hello world");
+            Assert.fail("Rule '`Hello world': passed");
+        } catch(InvalidRuleStructureException e) { }
+    }
+
+    @Test
+    public void testStringWithOnlyRightQuote() {
+        try {
+            node.validateRule("Hello world`");
+            Assert.fail("Rule 'Hello world`': passed");
+        } catch(InvalidRuleStructureException e) { }
+    }
+
+    @Test
+    public void testStringWithNoQuotes() {
+        try {
+            node.validateRule("Hello world");
+            Assert.fail("Rule Hello world': passed");
         } catch(InvalidRuleStructureException e) { }
     }
 }

@@ -12,12 +12,19 @@ public class StringNode extends ArgumentNode implements TreeNode {
 
     @Override
     public int validateRule(String rule) throws InvalidRuleStructureException {
-        if(!rule.contains("\"")) {
-            argumentString = rule;
-            return rule.length();
-        } else {
-            throw new InvalidRuleStructureException(rule, "String Node");
+        int possibleQuoteIndex = rule.indexOf('`');
+        if(possibleQuoteIndex == 0) {
+            try {
+                int nextQuoteIndex = rule.substring(1).indexOf('`') + 1;
+                if(nextQuoteIndex > possibleQuoteIndex) {
+                    argumentString = rule.substring(0, nextQuoteIndex + 1);
+                    if(!argumentString.contains("\"")) {
+                        return nextQuoteIndex + 1;
+                    }
+                }
+            } catch(StringIndexOutOfBoundsException e) { }
         }
+        throw new InvalidRuleStructureException(rule, "String Node");
     }
 
     public static void main(String[] args) {
