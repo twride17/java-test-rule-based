@@ -98,6 +98,29 @@ public class TestArgument {
     }
 
     @Test
+    public void testConstantNodeReturned() {
+        try {
+            TreeNode node = Argument.getArgumentNode("true");
+            Assert.assertTrue(node instanceof ConstantNode);
+            Assert.assertEquals("true", node.generateCode());
+        } catch(InvalidRuleStructureException e) {
+            Assert.fail("Rule 'true': failed");
+        }
+    }
+
+    @Test
+    public void testVariableNodeReturned() {
+        try {
+            TreeNode node = Argument.getArgumentNode("Example.x");
+            Assert.assertTrue(node instanceof VariableNode);
+            Assert.assertEquals("Example.x", node.generateCode());
+        } catch(InvalidRuleStructureException e) {
+            Assert.fail("Rule 'Example.x': failed");
+        }
+    }
+
+
+    @Test
     public void testEmptyArgument() {
         try {
             Argument.getArgumentNode("");

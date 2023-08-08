@@ -2,33 +2,19 @@ package tw.jruletest.parse.ruletree.rulenodes;
 
 import tw.jruletest.exceptions.InvalidRuleStructureException;
 import tw.jruletest.parse.ruletree.TreeNode;
-import tw.jruletest.parse.ruletree.argumentnodes.ConstantNode;
-import tw.jruletest.parse.ruletree.argumentnodes.StringNode;
-import tw.jruletest.parse.ruletree.argumentnodes.VariableNode;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import tw.jruletest.parse.ruletree.argumentnodes.*;
 
 public class Argument {
 
     public static TreeNode getArgumentNode(String argument) throws InvalidRuleStructureException {
-        TreeNode possibleNode;
-
-        int possibleQuoteIndex = argument.indexOf("`");
-        if((possibleQuoteIndex == 0) && (argument.substring(1).indexOf('`') != -1)) {
-            argument = argument.substring(0, argument.substring(1).indexOf('`') + 2);
-            possibleNode = new StringNode();
-        } else {
-            Matcher matcher = Pattern.compile("^([a-z][a-z0-9A-Z]*)").matcher(argument);
-            if(matcher.find()){
-                possibleNode = new VariableNode();
-            } else {
-                possibleNode = new ConstantNode();
-            }
+        TreeNode[] possibleNodes = {new StringNode(), new ConstantNode(), new VariableNode()};
+        for(TreeNode possibleNode: possibleNodes) {
+            try {
+                possibleNode.validateRule(argument);
+                return possibleNode;
+            } catch(InvalidRuleStructureException e) { }
         }
-
-        possibleNode.validateRule(argument);
-        return possibleNode;
+        throw new InvalidRuleStructureException(argument, "Argument Type Selector");
     }
 
     public static void main(String[] args) {
