@@ -9,36 +9,56 @@ public class TestVariableNode {
 
     @Test
     public void testValidLocalVariable() {
+        String rule = "xValue1";
         try {
-            node.validateRule("xValue1");
+            Assert.assertEquals(rule.length(), node.validateRule(rule));
+            Assert.assertEquals(rule, node.generateCode());
         } catch(InvalidRuleStructureException e) {
-            Assert.fail("Rule 'xValue1': failed");
+            Assert.fail("Rule '" + rule + "': failed");
         }
     }
 
     @Test
     public void testValidField() {
+        String rule = "Example.x";
         try {
-            node.validateRule("Example.x");
+            Assert.assertEquals(rule.length(), node.validateRule(rule));
+            Assert.assertEquals(rule, node.generateCode());
         } catch(InvalidRuleStructureException e) {
-            Assert.fail("Rule 'Example.x': failed");
+            Assert.fail("Rule '" + rule + "': failed");
         }
     }
 
     @Test
     public void testValidLocalVariablePlusExtraRule() {
+        String rule = "xValue and other stuff";
         try {
-            Assert.assertEquals(6, node.validateRule("xValue and other stuff"));
+            Assert.assertEquals(6, node.validateRule(rule));
+            Assert.assertEquals("xValue", node.generateCode());
         } catch(InvalidRuleStructureException e) {
-            Assert.fail("Rule 'xValue and other stuff': failed");
+            Assert.fail("Rule '" + rule + "': failed");
         }
     }
 
     @Test
-    public void testInvalidVariable() {
+    public void testValidFieldPlusExtraRule() {
+        String rule = "Example.x, other stuff";
         try {
-            node.validateRule("10x");
-            Assert.fail("Rule '10x': passed");
-        } catch(InvalidRuleStructureException e) { }
+            Assert.assertEquals(9, node.validateRule(rule));
+            Assert.assertEquals("Example.x", node.generateCode());
+        } catch(InvalidRuleStructureException e) {
+            Assert.fail("Rule '" + rule + "': failed");
+        }
+    }
+
+    @Test
+    public void testInvalidVariables() {
+        String[] rules = {"10x", "", "1", "example.X", "Xvalue"};
+        for(String rule: rules) {
+            try {
+                node.validateRule(rule);
+                Assert.fail("Rule '" + rule + "': passed when expected to fal");
+            } catch (InvalidRuleStructureException e) {}
+        }
     }
 }

@@ -107,22 +107,22 @@ public class TestConstantNode {
     }
 
     @Test
-    public void testInvalidConstant() {
+    public void testValidBooleanPlusExtraAtRuleEnd() {
         try {
-            node.validateRule("f");
-            Assert.fail("Rule 'f': passed");
-            node.validateRule(".");
-            Assert.fail("Rule '.': passed");
-            node.validateRule(".67");
-            Assert.fail("Rule '.67': passed");
-            node.validateRule("67.");
-            Assert.fail("Rule '67.': passed");
-            node.validateRule("-67.f");
-            Assert.fail("Rule '-67.f': passed");
-            node.validateRule("-.67f");
-            Assert.fail("Rule '-.67f': passed");
-            node.validateRule("-.67");
-            Assert.fail("Rule '-.67': passed");
-        } catch(InvalidRuleStructureException e) { }
+            Assert.assertEquals(5, node.validateRule("false, something else"));
+        } catch(InvalidRuleStructureException e) {
+            Assert.fail("Rule 'false, something else': failed");
+        }
+    }
+
+    @Test
+    public void testInvalidConstant() {
+        String[] rules = {"f", ".", ".67", "67.", "-67.f", "-.67", "-.67f"};
+        for(String rule: rules) {
+            try {
+                node.validateRule(rule);
+                Assert.fail("Rule '" + rule + "': passed");
+            } catch (InvalidRuleStructureException e) { }
+        }
     }
 }

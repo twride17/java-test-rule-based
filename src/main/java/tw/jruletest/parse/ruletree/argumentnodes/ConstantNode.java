@@ -22,10 +22,10 @@ public class ConstantNode extends ArgumentNode implements TreeNode {
                 argumentString = matcher.group();
                 return matcher.end();
             }
-        } else if(rule.startsWith("true") & !((rule.length() > 4) && (rule.charAt(4) != ' '))) {
+        } else if(rule.startsWith("true") & !((rule.length() > 4) && (rule.charAt(4) != ' ') && (rule.charAt(4) != ','))) {
             argumentString = "true";
             return 4;
-        } else if(rule.startsWith("false") & !((rule.length() > 5) && (rule.charAt(5) != ' '))) {
+        } else if(rule.startsWith("false") & !((rule.length() > 5) && (rule.charAt(5) != ' ') && (rule.charAt(5) != ','))) {
             argumentString = "false";
             return 5;
         }
