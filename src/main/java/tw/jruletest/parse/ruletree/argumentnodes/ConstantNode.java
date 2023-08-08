@@ -18,14 +18,14 @@ public class ConstantNode extends ArgumentNode implements TreeNode {
         // TODO Previously defined constants???
         Matcher matcher = Pattern.compile("^((-?)([0-9]+)((\\.[0-9]+)?)(f?))").matcher(rule);
         if(matcher.find()) {
-            if(!((matcher.end() != rule.length()) && (rule.charAt(matcher.end()) != ' ') && (rule.charAt(matcher.end()) != ','))) {
+            if(!(!matcher.group().equals(rule) && (rule.charAt(matcher.end()) != ' ') && (rule.charAt(matcher.end()) != ','))) {
                 argumentString = matcher.group();
                 return matcher.end();
             }
-        } else if(rule.startsWith("true")) {
+        } else if(rule.startsWith("true") & !((rule.length() > 4) && (rule.charAt(4) != ' '))) {
             argumentString = "true";
             return 4;
-        } else if(rule.startsWith("false")) {
+        } else if(rule.startsWith("false") & !((rule.length() > 5) && (rule.charAt(5) != ' '))) {
             argumentString = "false";
             return 5;
         }
