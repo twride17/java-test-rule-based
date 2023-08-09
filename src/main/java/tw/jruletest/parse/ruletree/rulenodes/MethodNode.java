@@ -17,6 +17,9 @@ public class MethodNode implements TreeNode {
 
     public int validateRule(String ruleContent) throws InvalidRuleStructureException {
         int methodCallStart = 0;
+        if(ruleContent.charAt(0) == ' ') {
+            throw new InvalidRuleStructureException(ruleContent, "Method Node");
+        }
 
         if(ruleContent.toLowerCase().startsWith("call ")) {
             methodCallStart += 5;
@@ -37,7 +40,11 @@ public class MethodNode implements TreeNode {
 
         int nextSpaceIndex = methodCall.indexOf(' ');
         if(nextSpaceIndex != -1) {
-            methodCall = methodCall.substring(0, nextSpaceIndex);
+            if(methodCall.charAt(nextSpaceIndex - 1) == ',') {
+                methodCall = methodCall.substring(0, nextSpaceIndex-1);
+            } else {
+                methodCall = methodCall.substring(0, nextSpaceIndex);
+            }
         }
 
         Matcher matcher = Pattern.compile("([A-Z][a-z0-9A-z]+)\\.([a-z][A-Z0-9a-z]+)").matcher(methodCall);
