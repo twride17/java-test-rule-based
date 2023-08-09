@@ -70,7 +70,7 @@ public class TestMethodNode {
                             "Class.method and store", "call Example.method: 1, -2 and 45.6f, true and `New` and 56 in xValue"};
         int[] indices = {52, 17, 15, 44, 12, 59};
         MethodNode node = new MethodNode();
-        for(int i = 0; i < 3; i++) {
+        for(int i = 0; i < 6; i++) {
             try {
                 Assert.assertEquals(indices[i], node.validateRule(rules[i]));
             } catch (InvalidRuleStructureException e) {
@@ -84,7 +84,7 @@ public class TestMethodNode {
         String[] rules = {"call", "call method", "call method method", "call xValue", "call Example.method with x",
                             "call Example.x with arguments x and y", "method Example.x: x, and y", "call Class.",
                             "Call Example.method with arguments: and 7", "Call Example.method with arguments: 7 and",
-                            "Example.method arguments: x", /*Not working*/ " call Example.method with: x", "Example.method : x", ": x",
+                            "Example.method arguments: x", " call Example.method with: x", "Example.method : x", ": x",
                             "call example.method", "call example.Method", "call Example.Method", "Call method .method"};
         MethodNode node = new MethodNode();
         for(String rule: rules) {

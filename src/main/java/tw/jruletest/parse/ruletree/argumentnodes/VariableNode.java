@@ -20,8 +20,10 @@ public class VariableNode extends ArgumentNode implements TreeNode {
         Matcher matcher = Pattern.compile("^(([a-z][A-Z0-9a-z]*)|(([A-Z][A-Z0-9a-z]*)\\.([a-z][A-Z0-9a-z]*)))").matcher(rule);
         if(matcher.find()) {
             if(!((matcher.end() != rule.length()) && (rule.charAt(matcher.end()) != ' ') && (rule.charAt(matcher.end()) != ','))) {
-                argumentString = matcher.group();
-                return matcher.end();
+                if (!(matcher.group().equals("true") || matcher.group().equals("false"))) {
+                    argumentString = matcher.group();
+                    return matcher.end();
+                }
             }
         }
         throw new InvalidRuleStructureException(rule, "Variable Node");

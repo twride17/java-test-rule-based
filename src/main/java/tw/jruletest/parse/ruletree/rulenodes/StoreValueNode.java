@@ -21,7 +21,7 @@ public class StoreValueNode implements TreeNode {
     }
 
     public int validateRule(String ruleContent) throws InvalidRuleStructureException {
-        Matcher matcher = Pattern.compile("^(((S|s)tore\\s)?(.+))\\s(in)\\s([a-z][a-zA-Z0-9]+)").matcher(ruleContent);
+        Matcher matcher = Pattern.compile("^(((S|s)tore\\s)?(.+))\\s(in)\\s([a-z][a-zA-Z0-9]*)").matcher(ruleContent);
         if(matcher.find()) {
             String requiredSegment;
             int endIndex;
