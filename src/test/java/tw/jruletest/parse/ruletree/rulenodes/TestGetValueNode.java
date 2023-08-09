@@ -38,7 +38,7 @@ public class TestGetValueNode {
 
     @Test
     public void testGetValueOfInvalidMethod() {
-        String rule = "get value of class.Method";
+        String rule = "get result of class.Method";
         try {
             (new GetValueNode()).validateRule(rule);
             Assert.fail("Failed: '" + rule + "' passed but should have failed");
@@ -87,7 +87,7 @@ public class TestGetValueNode {
 
     @Test
     public void testInvalidGetValueRuleStructures() {
-        String[] rules = {"get", "get value x", "get of x", "value x", "of x"};
+        String[] rules = {"get", "get value x", "get of x", "value x", "of x", "get result", "result"};
         ExpectationNode node = new ExpectationNode();
         for(String rule: rules) {
             try {
