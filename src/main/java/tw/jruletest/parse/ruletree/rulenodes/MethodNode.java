@@ -26,10 +26,6 @@ public class MethodNode implements TreeNode {
             throw new InvalidRuleStructureException(ruleContent, "Method Node");
         }
 
-        if(ruleContent.toLowerCase().startsWith("call ")) {
-            methodCallStart += 5;
-        }
-
         if(ruleContent.substring(methodCallStart).startsWith("method ")) {
             methodCallStart += 7;
         }
