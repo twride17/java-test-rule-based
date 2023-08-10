@@ -7,7 +7,7 @@ public class TestMethodArgumentNode {
 
     private MethodArgumentNode node;
 
-    /* Testing rule validation for String node */
+    /* Testing rule validation for Method Argument node */
 
     @Test
     public void testSingleStringArguments() {
@@ -113,7 +113,7 @@ public class TestMethodArgumentNode {
         }
     }
 
-    /* Testing code generation for String node */
+    /* Testing code generation for Method Argument node */
     @Test
     public void testCodeGeneration() {
         String[] rules = {"`Hello world`", "-10.67f", "`hello, and goodbye` and 67", "-0.567f, xValue", "false and `new string`",

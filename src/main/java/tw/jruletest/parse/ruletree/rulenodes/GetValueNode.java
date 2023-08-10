@@ -13,7 +13,7 @@ public class GetValueNode implements TreeNode {
 
     @Override
     public String generateCode() {
-        return null;
+        return callTree.generateCode();
     }
 
     public int validateRule(String ruleContent) throws InvalidRuleStructureException {

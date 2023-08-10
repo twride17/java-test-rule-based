@@ -7,6 +7,8 @@ public class TestMethodNode {
 
     private MethodNode node;
 
+    /* Testing rule validation for Method node */
+
     @Test
     public void testMethodCallNoArguments() {
         String[] rules = {"Call method Class.method", "call method Class.method", "method Class.method", "Call Class.method",
@@ -102,7 +104,7 @@ public class TestMethodNode {
         }
     }
 
-    /* Testing code generation for String node */
+    /* Testing code generation for Method node */
     @Test
     public void testCodeGeneration() {
         String[] rules = {"Call method Class.method", "call Test.exampleMethod", "Call method Class.method: `Hello world`",
@@ -115,14 +117,14 @@ public class TestMethodNode {
                             "Class.method: 1 in dummy", "Class.method and store", "call Example.method: 1, -2 and 45.6f, true and `New` and 56 in xValue",
                             "Call method Class.method and call method Example.method with arguments: `Hello` and `World`"};
 
-        String[] expectedStrings = {"Class.method();", "Test.exampleMethod();", "Class.method(\"Hello world\");",
-                                    "Class.method(101.971f);", "Class.method(-24);", "Class.method(xValue);",
-                                    "Class.method(-90.45f);", "Class.method(true);", "Class.method(\"Hello, world and his wife\", -90.5f);",
-                                    "Class.method(101.971f, false);", "Class.method(true, 123.45);", "Class.method(\"Hello and goodbye\", \"String\");",
-                                    "Class.method(12.3, xValue);", "Class.method(true, 0);", "Class.method(\"Hello world\", 32, -67.5f);",
-                                    "Class.method(101.971f, true, \"This\");", "Class.method(123, \"hello, it's me\", -0.98f, true);",
-                                    "Class.method();", "Class.method(1);", "Class.method();",
-                                    "Example.method(1, -2, 45.6f, true, \"New\", 56);", "Class.method();"};
+        String[] expectedStrings = {"Class.method()", "Test.exampleMethod()", "Class.method(\"Hello world\")",
+                                    "Class.method(101.971f)", "Class.method(-24)", "Class.method(xValue)",
+                                    "Class.method(-90.45f)", "Class.method(true)", "Class.method(\"Hello, world and his wife\", -90.5f)",
+                                    "Class.method(101.971f, false)", "Class.method(true, 123.45)", "Class.method(\"Hello and goodbye\", \"String\")",
+                                    "Class.method(12.3, xValue)", "Class.method(true, 0)", "Class.method(\"Hello world\", 32, -67.5f)",
+                                    "Class.method(101.971f, true, \"This\")", "Class.method(123, \"hello, it's me\", -0.98f, true)",
+                                    "Class.method()", "Class.method(1)", "Class.method()",
+                                    "Example.method(1, -2, 45.6f, true, \"New\", 56)", "Class.method()"};
 
         for(int i = 0; i < rules.length; i++) {
             node = new MethodNode();

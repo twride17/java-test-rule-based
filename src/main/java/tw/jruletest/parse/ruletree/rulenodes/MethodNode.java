@@ -17,7 +17,7 @@ public class MethodNode implements TreeNode {
         if(arguments != null) {
             code += arguments.generateCode();
         }
-        return code + ");";
+        return code + ")";
     }
 
     public int validateRule(String ruleContent) throws InvalidRuleStructureException {
