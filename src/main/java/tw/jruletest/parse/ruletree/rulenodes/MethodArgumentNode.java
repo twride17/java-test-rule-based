@@ -12,7 +12,11 @@ public class MethodArgumentNode implements TreeNode {
 
     @Override
     public String generateCode() {
-        return null;
+        String code = arguments.get(0).generateCode();
+        for(int i = 1; i < arguments.size(); i++) {
+            code += ", " + arguments.get(i).generateCode();
+        }
+        return code;
     }
 
     public int validateRule(String ruleContent) throws InvalidRuleStructureException {
