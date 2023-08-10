@@ -185,7 +185,7 @@ public class TestExpectationNode {
                             "expect value to not equal `Hello World`", "expect 1 to equal x", "expect -11.567 to not equal xValue",
                             "expect -11.5f to equal value", "true to not equal x", "expect `Hello World` to not equal xValue",
                             "expect Class.method: 5, -0.9f and `String` to not equal -98f", "Expect 8765.5678 to equal value of Class.method",
-                            "Expect -4501.2345f to equal value of Class.method: 12.5f and `New string`, false and 123 and expect..."};
+                            "Expect -4501.2345f to equal value of Class.method: 12.5f and `New string`, false and 123 and expect x to equal 2"};
 
         String[] expectedStrings = {"Expectations.expect(value).toEqual(1);", "Expectations.expect(value).toEqual(-11.567);",
                                     "Expectations.expect(value).toEqual(-11.5f);", "Expectations.expect(value).toEqual(true);",

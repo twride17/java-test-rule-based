@@ -24,7 +24,13 @@ public class ExpectationNode implements TreeNode {
 
     @Override
     public String generateCode() {
-        return null;
+        String code = "Expectations.expect(" + expectedValueTree.generateCode() + ").to";
+        if(negated) {
+            code += "Not";
+        }
+        comparator = comparator.trim();
+        code += comparator.substring(0, 1).toUpperCase() + comparator.substring(1) + "(";
+        return code + actualValueTree.generateCode() + ");";
     }
 
     public int validateRule(String ruleContent) throws InvalidRuleStructureException  {
