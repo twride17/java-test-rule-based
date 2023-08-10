@@ -30,7 +30,7 @@ public class Parser {
     }
 
     public static String parseRule(String rule) {
-        String[] subRules = rule.split("\\. ");
+        String[] subRules = rule.split("\\.\\s");
         String codeBlock = "";
         for(String subRule: subRules) {
             try {
@@ -96,6 +96,7 @@ public class Parser {
                 default:
                     throw new UnparsableRuleException(rule);
             }
+            rules.add(node);
             return node.validateRule(rule);
         } catch(InvalidRuleStructureException e) {
             e.printError();

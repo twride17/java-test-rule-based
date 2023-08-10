@@ -68,7 +68,7 @@ public class MethodArgumentNode implements TreeNode {
                             nextWord = remainingRule.substring(1, nextSpaceIndex + 1);
                         }
 
-                        if(Parser.KEYWORDS.contains(nextWord)) {
+                        if(Parser.KEYWORDS.contains(nextWord.toLowerCase())) {
                             valid = true;
                         } else {
                             currentEnd += connective.length() + 1;

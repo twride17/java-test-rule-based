@@ -1,11 +1,12 @@
-package tw.jruletest.parse;
+package tw.jruletest.parse.parser;
 
 import org.junit.*;
 import tw.jruletest.exceptions.UnparsableRuleException;
+import tw.jruletest.parse.Parser;
 
 import java.util.ArrayList;
 
-public class TestParser {
+public class TestParserRuleValidations {
 
     public void testRules(String[] rules, String[][] expectedSubRules) {
         for(int i = 0; i < rules.length; i++) {
