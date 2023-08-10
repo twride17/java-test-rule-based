@@ -8,11 +8,16 @@ import java.util.regex.Pattern;
 
 public class MethodNode implements TreeNode {
 
+    private String method;
     private MethodArgumentNode arguments = null;
 
     @Override
     public String generateCode() {
-        return null;
+        String code = method + "(";
+        if(arguments != null) {
+            code += arguments.generateCode();
+        }
+        return code + ");";
     }
 
     public int validateRule(String ruleContent) throws InvalidRuleStructureException {
@@ -50,6 +55,8 @@ public class MethodNode implements TreeNode {
         Matcher matcher = Pattern.compile("([A-Z][a-z0-9A-z]*)\\.([a-z][A-Z0-9a-z]*)").matcher(methodCall);
         if(!matcher.matches()) {
             throw new InvalidRuleStructureException(methodCall, "Method Node");
+        } else {
+            method = methodCall;
         }
 
         if(colonIndex == -1) {
