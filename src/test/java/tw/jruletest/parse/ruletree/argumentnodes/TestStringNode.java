@@ -14,7 +14,7 @@ public class TestStringNode {
         String rule = "`Hello world.`";
         try {
             Assert.assertEquals(rule.length(), node.validateRule(rule));
-            Assert.assertEquals(rule, node.generateCode());
+            Assert.assertEquals(rule, node.getArgumentString());
         } catch(InvalidRuleStructureException e) {
             Assert.fail("Rule '" + rule + "': failed");
         }
@@ -25,7 +25,7 @@ public class TestStringNode {
         String rule = "`Hello world` and store";
         try {
             Assert.assertEquals(13, node.validateRule(rule));
-            Assert.assertEquals("`Hello world`", node.generateCode());
+            Assert.assertEquals("`Hello world`", node.getArgumentString());
         } catch(InvalidRuleStructureException e) {
             Assert.fail("Rule '" + rule + "': failed");
         }
@@ -40,7 +40,7 @@ public class TestStringNode {
     }
 
     @Test
-    public void testExptyRule() {
+    public void testEmptyRule() {
         try {
             node.validateRule("");
             Assert.fail("Rule '': passed");

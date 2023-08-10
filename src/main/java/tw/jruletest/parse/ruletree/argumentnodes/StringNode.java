@@ -7,7 +7,7 @@ public class StringNode extends ArgumentNode implements TreeNode {
 
     @Override
     public String generateCode() {
-        return argumentString;
+        return argumentString.replace("`", "\"");
     }
 
     @Override
@@ -25,5 +25,10 @@ public class StringNode extends ArgumentNode implements TreeNode {
             } catch(StringIndexOutOfBoundsException e) { }
         }
         throw new InvalidRuleStructureException(rule, "String Node");
+    }
+
+    /* Only required for testing */
+    public String getArgumentString() {
+        return argumentString;
     }
 }
