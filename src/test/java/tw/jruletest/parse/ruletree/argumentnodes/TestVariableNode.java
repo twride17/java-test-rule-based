@@ -7,6 +7,7 @@ public class TestVariableNode {
 
     private VariableNode node = new VariableNode();
 
+    /* Testing rule validation for Variable node */
     @Test
     public void testValidLocalVariable() {
         String rule = "xValue1";
@@ -59,6 +60,21 @@ public class TestVariableNode {
                 node.validateRule(rule);
                 Assert.fail("Rule '" + rule + "': passed when expected to fal");
             } catch (InvalidRuleStructureException e) {}
+        }
+    }
+
+    /* Testing code generation for Variable node */
+    @Test
+    public void testCodeGeneration() {
+        String[] rules = {"value1 and value2", "xValue", "x, y", "value1", "x1 and x2 and x3", "floatValue", "Example.x"};
+        String[] expectedConstants = {"value1", "xValue", "x", "value1", "x1", "floatValue", "Example.x"};
+        for(int i = 0; i < rules.length; i++) {
+            try {
+                node.validateRule(rules[i]);
+                Assert.assertEquals(node.generateCode(), expectedConstants[i]);
+            } catch(InvalidRuleStructureException e) {
+                Assert.fail(rules[i] + ": failed");
+            }
         }
     }
 }

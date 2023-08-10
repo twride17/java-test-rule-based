@@ -7,6 +7,8 @@ public class TestStringNode {
 
     private StringNode node = new StringNode();
 
+    /* Testing rule validation for String node */
+
     @Test
     public void testValidString() {
         String rule = "`Hello world.`";
@@ -67,5 +69,20 @@ public class TestStringNode {
             node.validateRule("Hello world");
             Assert.fail("Rule Hello world': passed");
         } catch(InvalidRuleStructureException e) { }
+    }
+
+    /* Testing code generation for String node */
+    @Test
+    public void testCodeGeneration() {
+        String[] rules = {"`Hello world`", "`New String`", "`It's a cool string`", "`Hello` and store"};
+        String[] expectedStrings = {"\"Hello world\"", "\"New String\"", "\"It's a cool string\"", "\"Hello\""};
+        for(int i = 0; i < rules.length; i++) {
+            try {
+                node.validateRule(rules[i]);
+                Assert.assertEquals(node.generateCode(), expectedStrings[i]);
+            } catch(InvalidRuleStructureException e) {
+                Assert.fail(rules[i] + ": failed");
+            }
+        }
     }
 }

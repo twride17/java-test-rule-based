@@ -7,6 +7,7 @@ public class TestConstantNode {
 
     private ConstantNode node = new ConstantNode();
 
+    /* Testing rule validation for Constant node */
     @Test
     public void testValidTrueConstant() {
         try {
@@ -123,6 +124,21 @@ public class TestConstantNode {
                 node.validateRule(rule);
                 Assert.fail("Rule '" + rule + "': passed");
             } catch (InvalidRuleStructureException e) { }
+        }
+    }
+
+    /* Testing code generation for Constant node */
+    @Test
+    public void testCodeGeneration() {
+        String[] rules = {"true and false", "-0.56", "100f", "false and", "10.45f", "0.5, -0.9f", "-0.98f"};
+        String[] expectedConstants = {"true", "-0.56", "100f", "false", "10.45f", "0.5", "-0.98f"};
+        for(int i = 0; i < rules.length; i++) {
+            try {
+                node.validateRule(rules[i]);
+                Assert.assertEquals(node.generateCode(), expectedConstants[i]);
+            } catch(InvalidRuleStructureException e) {
+                Assert.fail(rules[i] + ": failed");
+            }
         }
     }
 }
