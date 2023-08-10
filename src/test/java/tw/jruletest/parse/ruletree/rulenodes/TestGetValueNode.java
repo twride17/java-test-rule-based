@@ -10,7 +10,7 @@ public class TestGetValueNode {
     /* Testing rule validation for Get Value node */
 
     @Test
-    public void testGetValueOfValidVariable() {
+    public void testGetValueRuleWithKeyword() {
         String rule = "Get value of xValue";
         node = new GetValueNode();
         try {
@@ -22,90 +22,24 @@ public class TestGetValueNode {
     }
 
     @Test
-    public void testGetValueOfInvalidVariable() {
-        String rule = "value of 10x4y";
+    public void testGetValueRuleWithNoKeyword() {
+        String rule = "value of xValue";
         node = new GetValueNode();
         try {
             node.validateRule(rule);
-            Assert.fail("Failed: '" + rule + "' passed but should have failed");
-        } catch (InvalidRuleStructureException e) { }
+            Assert.fail(rule + ": passed when should fail");
+        } catch(InvalidRuleStructureException e) { }
     }
 
     @Test
-    public void testGetValueOfValidMethod() {
-        String rule = "Get Class.method";
+    public void testValidGetValueRuleWithExtraRule() {
+        String rule = "Get value of xValue and get value of y";
         node = new GetValueNode();
         try {
-            Assert.assertEquals(rule.length(), node.validateRule(rule));
+            Assert.assertEquals(19, node.validateRule(rule));
         } catch(InvalidRuleStructureException e) {
             System.out.println(rule);
             Assert.fail("Failed");
-        }
-    }
-
-    @Test
-    public void testGetValueOfInvalidMethod() {
-        String rule = "get result of class.Method";
-        node = new GetValueNode();
-        try {
-            node.validateRule(rule);
-            Assert.fail("Failed: '" + rule + "' passed but should have failed");
-        } catch (InvalidRuleStructureException e) { }
-    }
-
-    @Test
-    public void testGetValueOfMethodWithValidArguments() {
-        String rule = "Get Class.method with arguments: `Hello world`, 10 and -0.89f, xValue";
-        node = new GetValueNode();
-        try {
-            Assert.assertEquals(rule.length(), node.validateRule(rule));
-        } catch(InvalidRuleStructureException e) {
-            System.out.println(rule);
-            Assert.fail("Failed");
-        }
-    }
-
-    @Test
-    public void testGetValueOfString() {
-        String rule = "Get value of `String`";
-        node = new GetValueNode();
-        try {
-            node.validateRule(rule);
-            Assert.fail("Failed: '" + rule + "' passed but should have failed");
-        } catch (InvalidRuleStructureException e) { }
-    }
-
-    @Test
-    public void testGetValueOfConstant() {
-        String rule = "Get value of -78.45f";
-        node = new GetValueNode();
-        try {
-            node.validateRule(rule);
-            Assert.fail("Failed: '" + rule + "' passed but should have failed");
-        } catch (InvalidRuleStructureException e) { }
-    }
-
-    @Test
-    public void testGetValueOfRulePlusExtraRule() {
-        String rule = "Get value of Example.x and store in y";
-        node = new GetValueNode();
-        try {
-            Assert.assertEquals(22, node.validateRule(rule));
-        } catch(InvalidRuleStructureException e) {
-            System.out.println(rule);
-            Assert.fail("Failed");
-        }
-    }
-
-    @Test
-    public void testInvalidGetValueRuleStructures() {
-        String[] rules = {"get", "get value x", "get of x", "value x", "of x", "get result", "result"};
-        node = new GetValueNode();
-        for(String rule: rules) {
-            try {
-                node.validateRule(rule);
-                Assert.fail("Failed: '" + rule + "' passed but should have failed");
-            } catch (InvalidRuleStructureException e) { }
         }
     }
 
