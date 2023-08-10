@@ -20,4 +20,9 @@ public class CallMethodNode implements TreeNode {
             throw new InvalidRuleStructureException(ruleContent, "Method Call Node");
         }
     }
+
+    public static void main(String[] args) throws InvalidRuleStructureException {
+        System.out.println("call method Example.method: 5, 6".length());
+        System.out.println((new CallMethodNode()).validateRule("call method Example.method: 5, 6"));
+    }
 }

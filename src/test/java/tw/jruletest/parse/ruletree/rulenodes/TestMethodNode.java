@@ -11,8 +11,7 @@ public class TestMethodNode {
 
     @Test
     public void testMethodCallNoArguments() {
-        String[] rules = {"Call method Class.method", "call method Class.method", "method Class.method", "Call Class.method",
-                            "call Class.method", "Class.method", "call Example.m"};
+        String[] rules = {"method Class.method", "Class.method2", "Example.m"};
         node = new MethodNode();
         for(String rule: rules) {
             try {
@@ -25,8 +24,8 @@ public class TestMethodNode {
 
     @Test
     public void testMethodCallOneArgument() {
-        String[] rules = {"Call method Class.method: `Hello world`", "method Class.method with arguments: 101.971f",
-                            "call Class.method with: -24", "Class.method: xValue", "Class.method: -90.45f", "Class.method: true"};
+        String[] rules = {"method Class.method: `Hello world`", "method Class.method with arguments: 101.971f",
+                            "Class.method with: -24", "Class.method: xValue", "Class.method: -90.45f", "Class.method: true"};
         node = new MethodNode();
         for(String rule: rules) {
             try {
@@ -39,9 +38,9 @@ public class TestMethodNode {
 
     @Test
     public void testMethodCallTwoArguments() {
-        String[] rules = {"Call method Class.method: `Hello, world and his wife`, -90.5f",
+        String[] rules = {"method Class.method: `Hello, world and his wife`, -90.5f",
                             "method Class.method with arguments: 101.971f and false", "Class.method: x1 and x2",
-                            "Class.method: true, 123.45", "call Class.method with: `Hello and goodbye` and `String`",
+                            "Class.method: true, 123.45", "Class.method with: `Hello and goodbye` and `String`",
                             "Class.method: 12.3 and xValue", "Class.method: -90.45f and true", "Class.method: true and 0"};
         node = new MethodNode();
         for(String rule: rules) {
@@ -55,8 +54,8 @@ public class TestMethodNode {
 
     @Test
     public void testMethodCallThreeArguments() {
-        String[] rules = {"Call method Class.method: `Hello world`, 32, -67.5f", "Class.method with: 101.971f, true and `This`",
-                            "Class.method with arguments: 24 and false, xValue", "call Class.method: xValue and -0.9f and false"};
+        String[] rules = {"method Class.method: `Hello world`, 32, -67.5f", "Class.method with: 101.971f, true and `This`",
+                            "Class.method with arguments: 24 and false, xValue", "Class.method: xValue and -0.9f and false"};
         node = new MethodNode();
         for(String rule: rules) {
             try {
@@ -69,14 +68,14 @@ public class TestMethodNode {
 
     @Test
     public void testValidRulesPlusExtraRule() {
-        String[] rules = {"Class.method: 123, `hello, it's me`, -0.98f and true and store value in y", "call Class.method, store",
+        String[] rules = {"Class.method: 123, `hello, it's me`, -0.98f and true and store value in y", "Class.method, store",
                             "Class.method: 1 in dummy", "Class.example with arguments: 0.0f, `String` and store",
-                            "Class.method and store", "call Example.method: 1, -2 and 45.6f, true and `New` and 56 in xValue",
-                            "Call method Class.method, call method Example.method with arguments: `Hello` and `World`",
-                            "Call method Class.method and call method Example.method with arguments: `Hello` and `World`"};
-        int[] indices = {52, 17, 15, 44, 12, 59, 24};
+                            "Class.method and store", "Example.method: 1, -2 and 45.6f, true and `New` and 56 in xValue",
+                            "method Class.method, call method Example.method with arguments: `Hello` and `World`",
+                            "method Class.method and call method Example.method with arguments: `Hello` and `World`"};
+        int[] indices = {52, 12, 15, 44, 12, 54, 19, 19};
         node = new MethodNode();
-        for(int i = 0; i < 7; i++) {
+        for(int i = 0; i < rules.length; i++) {
             try {
                 Assert.assertEquals(indices[i], node.validateRule(rules[i]));
             } catch (InvalidRuleStructureException e) {
@@ -93,7 +92,7 @@ public class TestMethodNode {
                             "Example.method arguments: x", " call Example.method with: x", "Example.method : x", ": x",
                             "call example.method", "call example.Method", "call Example.Method", "Call method .method",
                             "call example.method, with arguments: 1", "call example.method and with arguments: 1",
-                            "call example.method in with arguments: 1", "call example.method then with arguments: 1"};
+                            "call example.method with arguments: 1", "call example.method then with arguments: 1"};
         node = new MethodNode();
         for(String rule: rules) {
             try {
@@ -107,15 +106,15 @@ public class TestMethodNode {
     /* Testing code generation for Method node */
     @Test
     public void testCodeGeneration() {
-        String[] rules = {"Call method Class.method", "call Test.exampleMethod", "Call method Class.method: `Hello world`",
-                            "method Class.method with arguments: 101.971f", "call Class.method with: -24", "Class.method: xValue",
-                            "Class.method: -90.45f", "method Class.method: true", "Call method Class.method: `Hello, world and his wife`, -90.5f",
+        String[] rules = {"method Class.method", "Test.exampleMethod", "method Class.method: `Hello world`",
+                            "method Class.method with arguments: 101.971f", "Class.method with: -24", "Class.method: xValue",
+                            "Class.method: -90.45f", "method Class.method: true", "method Class.method: `Hello, world and his wife`, -90.5f",
                             "method Class.method with arguments: 101.971f and false", "Class.method: true, 123.45",
-                            "call Class.method with: `Hello and goodbye` and `String`", "Class.method: 12.3 and xValue", "Class.method: true and 0",
-                            "Call method Class.method: `Hello world`, 32, -67.5f", "Class.method with: 101.971f, true and `This`",
-                            "Class.method: 123, `hello, it's me`, -0.98f and true and store value in y", "call Class.method, store",
-                            "Class.method: 1 in dummy", "Class.method and store", "call Example.method: 1, -2 and 45.6f, true and `New` and 56 in xValue",
-                            "Call method Class.method and call method Example.method with arguments: `Hello` and `World`"};
+                            "Class.method with: `Hello and goodbye` and `String`", "Class.method: 12.3 and xValue", "Class.method: true and 0",
+                            "method Class.method: `Hello world`, 32, -67.5f", "Class.method with: 101.971f, true and `This`",
+                            "Class.method: 123, `hello, it's me`, -0.98f and true and store value in y", "Class.method, store",
+                            "Class.method: 1 in dummy", "Class.method and store", "Example.method: 1, -2 and 45.6f, true and `New` and 56 in xValue",
+                            "method Class.method and call method Example.method with arguments: `Hello` and `World`"};
 
         String[] expectedStrings = {"Class.method()", "Test.exampleMethod()", "Class.method(\"Hello world\")",
                                     "Class.method(101.971f)", "Class.method(-24)", "Class.method(xValue)",

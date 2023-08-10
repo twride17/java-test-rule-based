@@ -91,7 +91,7 @@ public class Parser {
                     node = new StoreValueNode();
                     break;
                 case "call":
-                    node = new MethodNode();
+                    node = new CallMethodNode();
                     break;
                 default:
                     throw new UnparsableRuleException(rule);

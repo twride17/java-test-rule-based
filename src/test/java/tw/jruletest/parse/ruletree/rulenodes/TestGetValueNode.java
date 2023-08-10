@@ -117,7 +117,8 @@ public class TestGetValueNode {
         String[] rules = {"Get value of xValue", "Get Class.method", /*"Get value of Example.x and store in y",*/
                             "Get Class.method with arguments: `Hello world`, 10 and -0.89f, xValue"};
 
-        String[] expectedStrings = {"xValue", "Class.method()", /*"Example.x",*/ "Class.method(\"Hello world\", 10, -0.89f, xValue)"};
+        String[] expectedStrings = {"variable = xValue;", "variable = Class.method();", /*"Example.x",*/
+                                    "variable = Class.method(\"Hello world\", 10, -0.89f, xValue);"};
 
         for(int i = 0; i < rules.length; i++) {
             node = new GetValueNode();

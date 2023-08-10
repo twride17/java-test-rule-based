@@ -71,7 +71,7 @@ public class ExpectationNode implements TreeNode {
         TreeNode currentNode;
 
         try {
-            currentNode = new GetValueNode();
+            currentNode = new ValueNode();
             firstArgumentIndex = currentNode.validateRule(expectedSegment);
             expectedValueTree = currentNode;
         } catch(InvalidRuleStructureException e) {
@@ -85,7 +85,7 @@ public class ExpectationNode implements TreeNode {
         }
 
         try {
-            currentNode = new GetValueNode();
+            currentNode = new ValueNode();
             secondArgumentIndex = currentNode.validateRule(actualSegment);
             actualValueTree = currentNode;
         } catch(InvalidRuleStructureException e) {

@@ -34,7 +34,7 @@ public class StoreValueNode implements TreeNode {
                 throw new InvalidRuleStructureException(ruleContent, "Store Value Node");
             }
 
-            valueTree = new GetValueNode();
+            valueTree = new ValueNode();
             try {
                 endIndex += valueTree.validateRule(requiredSegment);
             } catch(InvalidRuleStructureException e) {

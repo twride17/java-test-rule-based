@@ -13,11 +13,11 @@ public class TestParserCodeGeneration {
                             "  Store -100 in x, store 0.5f in y, store value of Example.method with arguments: false and `New string`, -3.4 in test",
                             "Get value of xValue, store Example.method2 with: `Hello and goodbye`, 1.5 and false in z then expect x to equal z  "};
 
-        String[] expectedCodeBlocks = {"Class.method(1, \"Hello\")\nxValue = value;\nExpectations.expect(xValue).toEqual(1);\n",
-                                        "Example.method()\nxValue = xValue2;\nExpectations.expect(xValue).toEqual(\"New string\");\n",
-                                        "Example.method(-0.987f)\nExample.method2()\nx = Example.method3(true);\nExpectations.expect(x).toNotEqual(\"String\");\n",
+        String[] expectedCodeBlocks = {"variable = Class.method(1, \"Hello\");\nxValue = value;\nExpectations.expect(xValue).toEqual(1);\n",
+                                        "Example.method();\nxValue = xValue2;\nExpectations.expect(xValue).toEqual(\"New string\");\n",
+                                        "Example.method(-0.987f);\nExample.method2();\nx = Example.method3(true);\nExpectations.expect(x).toNotEqual(\"String\");\n",
                                         "x = -100;\ny = 0.5f;\ntest = Example.method(false, \"New string\", -3.4);\n",
-                                        "xValue\nz = Example.method2(\"Hello and goodbye\", 1.5, false);\nExpectations.expect(x).toEqual(z);\n"};
+                                        "variable = xValue;\nz = Example.method2(\"Hello and goodbye\", 1.5, false);\nExpectations.expect(x).toEqual(z);\n"};
 
         for(int i = 0; i < rules.length; i++) {
             Assert.assertEquals(expectedCodeBlocks[i], Parser.parseRule(rules[i]));
@@ -32,11 +32,11 @@ public class TestParserCodeGeneration {
                 "  Store -100 in x, store 0.5f in y, store value of Example.method with arguments: false and `New string`, -3.4 in test",
                 "Get value of xValue, store Example.method2 with: `Hello and goodbye`, 1.5 and false in z then expect x to equal z  "};
 
-        String expectedCode = "Class.method(1, \"Hello\")\nxValue = value;\nExpectations.expect(xValue).toEqual(1);\n"
-                            + "Example.method()\nxValue = xValue2;\nExpectations.expect(xValue).toEqual(\"New string\");\n"
-                            + "Example.method(-0.987f)\nExample.method2()\nx = Example.method3(true);\nExpectations.expect(x).toNotEqual(\"String\");\n"
+        String expectedCode = "variable = Class.method(1, \"Hello\");\nxValue = value;\nExpectations.expect(xValue).toEqual(1);\n"
+                            + "Example.method();\nxValue = xValue2;\nExpectations.expect(xValue).toEqual(\"New string\");\n"
+                            + "Example.method(-0.987f);\nExample.method2();\nx = Example.method3(true);\nExpectations.expect(x).toNotEqual(\"String\");\n"
                             + "x = -100;\ny = 0.5f;\ntest = Example.method(false, \"New string\", -3.4);\n"
-                            + "xValue\nz = Example.method2(\"Hello and goodbye\", 1.5, false);\nExpectations.expect(x).toEqual(z);\n";
+                            + "variable = xValue;\nz = Example.method2(\"Hello and goodbye\", 1.5, false);\nExpectations.expect(x).toEqual(z);\n";
 
         Assert.assertEquals(expectedCode, Parser.parseRules(rules));
     }
