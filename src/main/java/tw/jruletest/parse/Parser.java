@@ -1,6 +1,5 @@
 package tw.jruletest.parse;
 
-import com.sun.media.sound.RIFFReader;
 import tw.jruletest.exceptions.InvalidRuleStructureException;
 import tw.jruletest.exceptions.UnparsableRuleException;
 import tw.jruletest.parse.ruletree.TreeNode;

@@ -1,7 +1,6 @@
 package tw.jruletest.parse.ruletree;
 
 import tw.jruletest.exceptions.InvalidRuleStructureException;
-import tw.jruletest.exceptions.UnparsableRuleException;
 
 public interface TreeNode {
 

@@ -31,29 +31,4 @@ public class ConstantNode extends ArgumentNode implements TreeNode {
         }
         throw new InvalidRuleStructureException(rule, "Constant Node");
     }
-
-    public static void main(String[] args) {
-        // All work properly
-        testValid("100");
-        testValid("-100");
-        testValid("-10.7");
-        testValid("0.7f");
-        testValid("-4.708765f");
-        testValid("true");
-        testValid("false");
-        testValid("f");
-        testValid(".");
-        testValid("5.08nd");
-    }
-
-    public static void testValid(String rule) {
-        try {
-            ConstantNode n = new ConstantNode();
-            n.validateRule(rule);
-            System.out.println(rule);
-        } catch(InvalidRuleStructureException e) {
-            e.printError();
-        }
-        System.out.println();
-    }
 }

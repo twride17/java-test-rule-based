@@ -22,10 +22,6 @@ public class ExpectationNode implements TreeNode {
 
     private static final String[] POSSIBLE_COMPARATORS = {" equal "};
 
-    public ExpectationNode() {
-
-    }
-
     @Override
     public String generateCode() {
         return null;
@@ -101,37 +97,5 @@ public class ExpectationNode implements TreeNode {
         } else {
             return comparatorIndex + secondArgumentIndex;
         }
-    }
-
-    public static void testValid(String rule) {
-        try {
-            ExpectationNode n = new ExpectationNode();
-            System.out.println(rule);
-            System.out.println(n.validateRule(rule));
-            System.out.println(rule.length());
-        } catch(InvalidRuleStructureException e) {
-            e.printError();
-        }
-        System.out.println();
-    }
-
-    public static void main(String[] args) {
-        testValid("Expect 2 to equal 4");
-        testValid("Expect x to equal -0.9874f");
-        testValid("Expect string to equal `Hello there`");
-        testValid("Expect value of Class.method with: `Hello, this is cool` to equal 4");
-        testValid("Expect Class.method to equal 3");
-        testValid("Expect Class.method: to equal 3");
-        testValid("Expect result of Class.method to equal `New and cool string`");
-        testValid("Expect -982 to not equal 4");
-        testValid("Expect xValue1 to equal 5");
-        testValid("Expect Example.method with arguments: 3, 56 and `Hello` to equal 4");
-        testValid("Expect Example.method: 3, 56 and Hello` to equal 4");
-        testValid("Expect 4 to not equal Example.method: 3, 56 and `Hello`");
-        testValid("Expect value Example.method: 3, 56 and `Hello` to equal 4");
-        testValid("Expect of Example.method: 3, 56 and `Hello` to equal 4");
-        testValid("Expect value of Example.method: `Hello and 56 to equal 4");
-        testValid("0 to not equal value of Class.method");
-        testValid("0 to equal value of Class.method");
     }
 }

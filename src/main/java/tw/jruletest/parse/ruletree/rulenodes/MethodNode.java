@@ -84,33 +84,4 @@ public class MethodNode implements TreeNode {
             return arguments.validateRule(ruleContent.substring(colonIndex+2)) + colonIndex + 2;
         }
     }
-
-    public static void testValid(String rule) {
-        try {
-            MethodNode n = new MethodNode();
-            System.out.println(rule);
-            System.out.println(n.validateRule(rule));
-            System.out.println(rule.length());
-        } catch(InvalidRuleStructureException e) {
-            e.printError();
-        }
-        System.out.println();
-    }
-
-    public static void main(String[] args) {
-        testValid("Call Example.method with arguments: value1, 10.5 and value3");
-        testValid("Call Example.method with: 1, 2");
-        testValid("Call Example.method: 10.5");
-        testValid("Example.method");
-        testValid("method Example.method with: value1, -100, value3 and store");
-        testValid("call method Example.method with: value1, value2, value3 and store");
-        testValid("call method Example.method with: value1, value2, value3, and store");
-        testValid("call method Example.method with: `This and this`, value2, value3 and store");
-        testValid("call method Example.method with: value1, value2, `Hello, it's me` and get value of");
-        testValid("call method Example.method with: value1 and `Lol, value3");
-        testValid("call method method with: value1 and `Lol`, value3");
-        testValid("call method Example.method with value1 and `Lol`, value3");
-        testValid("call method Example.method with arguments value1 and `Lol`, value3");
-        testValid("call Example.method:");
-    }
 }

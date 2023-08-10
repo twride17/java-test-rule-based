@@ -26,22 +26,4 @@ public class StringNode extends ArgumentNode implements TreeNode {
         }
         throw new InvalidRuleStructureException(rule, "String Node");
     }
-
-    public static void main(String[] args) {
-        // All work properly
-        testValid("'Hello world'");
-        testValid("'Hello \" this \" world'");
-        testValid("'Hello world.'");
-    }
-
-    public static void testValid(String rule) {
-        try {
-            StringNode n = new StringNode();
-            n.validateRule(rule);
-            System.out.println(rule);
-        } catch(InvalidRuleStructureException e) {
-            e.printError();
-        }
-        System.out.println();
-    }
 }

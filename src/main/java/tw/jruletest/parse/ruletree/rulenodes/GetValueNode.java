@@ -58,38 +58,4 @@ public class GetValueNode implements TreeNode {
             }
         }
     }
-
-    public static void testValid(String rule) {
-        try {
-            GetValueNode n = new GetValueNode();
-            System.out.println(rule);
-            System.out.println(n.validateRule(rule));
-            System.out.println(rule.length());
-        } catch(InvalidRuleStructureException e) {
-            e.printError();
-        }
-        System.out.println();
-    }
-
-    public static void main(String[] args) {
-        testValid("Get value of x");
-        testValid("value of x");
-        testValid("Get value of Class.method with: 2 and -75.2, 63");
-        testValid("Get value of Class.method with arguments: `This is great, lol` and `Hello`, 63");
-        testValid("Get value of Class.method: 2 and -75.2, 63");
-        testValid("Get value of Class.method with: 2 and -75.2, Lol`");
-        testValid("Get value of Class.method with: `New string and new test`, value3 and 63 and store in z");
-        testValid("Get value of Class.method with: `New string and new test`, value3 and `Hello` and store in z");
-        testValid("Get result of Class.method and store in y");
-        testValid("Get result of Class.method: and store in y");
-        testValid("x and store");
-        testValid("Get of x");
-        testValid("Get of");
-        testValid("Get value");
-        testValid("Get result");
-        testValid("Get result of 1");
-        testValid("Get result of 'Hello'");
-        testValid("Get result of xxx");
-        testValid("Get value of");
-    }
 }
