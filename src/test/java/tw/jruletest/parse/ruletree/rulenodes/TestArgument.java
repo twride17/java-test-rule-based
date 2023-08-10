@@ -12,7 +12,7 @@ public class TestArgument {
         try {
             TreeNode node = Argument.getArgumentNode("`Hello World`");
             Assert.assertTrue(node instanceof StringNode);
-            Assert.assertEquals("`Hello World`", node.generateCode());
+            Assert.assertEquals("`Hello World`", ((StringNode) node).getArgumentString());
         } catch(InvalidRuleStructureException e) {
             Assert.fail("Rule '`Hello World`': failed");
         }
@@ -23,7 +23,7 @@ public class TestArgument {
         try {
             TreeNode node = Argument.getArgumentNode("`Hello world's` and stuff");
             Assert.assertTrue(node instanceof StringNode);
-            Assert.assertEquals("`Hello world's`", node.generateCode());
+            Assert.assertEquals("`Hello world's`", ((StringNode) node).getArgumentString());
         } catch(InvalidRuleStructureException e) {
             Assert.fail("Rule '`Hello world's` and stuff': failed");
         }
