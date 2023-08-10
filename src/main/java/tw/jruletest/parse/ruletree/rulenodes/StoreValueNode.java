@@ -14,7 +14,8 @@ public class StoreValueNode implements TreeNode {
 
     @Override
     public String generateCode() {
-        return null;
+        // TODO add typing of variables
+        return variableTree.generateCode() + " = " + valueTree.generateCode() + ";";
     }
 
     public int validateRule(String ruleContent) throws InvalidRuleStructureException {
