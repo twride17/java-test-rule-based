@@ -8,7 +8,7 @@ public class TestMethodNode {
     @Test
     public void testMethodCallNoArguments() {
         String[] rules = {"Call method Class.method", "call method Class.method", "method Class.method", "Call Class.method",
-                            "call Class.method", "Class.method"};
+                            "call Class.method", "Class.method", "call Example.m"};
         MethodNode node = new MethodNode();
         for(String rule: rules) {
             try {
@@ -67,10 +67,12 @@ public class TestMethodNode {
     public void testValidRulesPlusExtraRule() {
         String[] rules = {"Class.method: 123, `hello, it's me`, -0.98f and true and store value in y", "call Class.method, store",
                             "Class.method: 1 in dummy", "Class.example with arguments: 0.0f, `String` and store",
-                            "Class.method and store", "call Example.method: 1, -2 and 45.6f, true and `New` and 56 in xValue"};
-        int[] indices = {52, 17, 15, 44, 12, 59};
+                            "Class.method and store", "call Example.method: 1, -2 and 45.6f, true and `New` and 56 in xValue",
+                            "Call method Class.method, call method Example.method with arguments: `Hello` and `World`",
+                            "Call method Class.method and call method Example.method with arguments: `Hello` and `World`"};
+        int[] indices = {52, 17, 15, 44, 12, 59, 24};
         MethodNode node = new MethodNode();
-        for(int i = 0; i < 6; i++) {
+        for(int i = 0; i < 7; i++) {
             try {
                 Assert.assertEquals(indices[i], node.validateRule(rules[i]));
             } catch (InvalidRuleStructureException e) {
@@ -85,10 +87,13 @@ public class TestMethodNode {
                             "call Example.x with arguments x and y", "method Example.x: x, and y", "call Class.",
                             "Call Example.method with arguments: and 7", "Call Example.method with arguments: 7 and",
                             "Example.method arguments: x", " call Example.method with: x", "Example.method : x", ": x",
-                            "call example.method", "call example.Method", "call Example.Method", "Call method .method"};
+                            "call example.method", "call example.Method", "call Example.Method", "Call method .method",
+                            "call example.method, with arguments: 1", "call example.method and with arguments: 1",
+                            "call example.method in with arguments: 1", "call example.method then with arguments: 1"};
         MethodNode node = new MethodNode();
         for(String rule: rules) {
             try {
+                System.out.println(rule);
                 node.validateRule(rule);
                 Assert.fail("Failed: '" + rule + "' passed but should have failed");
             } catch (InvalidRuleStructureException e) { }
