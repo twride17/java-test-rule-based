@@ -47,7 +47,7 @@ public class MethodNode implements TreeNode {
             }
         }
 
-        Matcher matcher = Pattern.compile("([A-Z][a-z0-9A-z]+)\\.([a-z][A-Z0-9a-z]+)").matcher(methodCall);
+        Matcher matcher = Pattern.compile("([A-Z][a-z0-9A-z]*)\\.([a-z][A-Z0-9a-z]*)").matcher(methodCall);
         if(!matcher.matches()) {
             throw new InvalidRuleStructureException(methodCall, "Method Node");
         }
@@ -56,7 +56,7 @@ public class MethodNode implements TreeNode {
             int currentEnd = methodCallStart + methodCall.length();
             if(currentEnd != ruleContent.length()) {
                 String remainingRule = ruleContent.substring(currentEnd);
-                if(!remainingRule.startsWith(" and ") && !remainingRule.startsWith(" in ") && !remainingRule.startsWith(", ")) {
+                if(!remainingRule.startsWith(" and ") && !remainingRule.startsWith(" in ") && !remainingRule.startsWith(", ") && !remainingRule.startsWith(" then ")) {
                     throw new InvalidRuleStructureException(ruleContent, "Method Node");
                 }
             }
@@ -64,8 +64,15 @@ public class MethodNode implements TreeNode {
         } else {
             String middleWords = ruleContent.substring(methodCallStart + methodCall.length(), colonIndex);
             if(!middleWords.isEmpty()) {
-                if (!(middleWords.equals(" with arguments") || middleWords.equals(" with"))) {
+                if(middleWords.trim().isEmpty()) {
                     throw new InvalidRuleStructureException(ruleContent, "Method Node");
+                } else {
+                    String firstWord = middleWords.trim().split(" ")[0];
+                    if (firstWord.equals(",") || firstWord.equals("and") || firstWord.equals("in") || firstWord.equals("then")) {
+                        return methodCallStart + methodCall.length();
+                    } else if (!(middleWords.equals(" with arguments") || middleWords.equals(" with"))) {
+                        throw new InvalidRuleStructureException(ruleContent, "Method Node");
+                    }
                 }
             }
 

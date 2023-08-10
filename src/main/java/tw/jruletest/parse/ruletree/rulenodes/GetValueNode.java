@@ -26,6 +26,8 @@ public class GetValueNode implements TreeNode {
             if(nextSegment.toLowerCase().startsWith("get ")) {
                 nextSegment = nextSegment.substring(4);
                 currentEnd += 4;
+            } else if(nextSegment.equals("get") || nextSegment.equals("Get")) {
+                throw new InvalidRuleStructureException(ruleContent, "Get Value Node");
             }
 
             if(nextSegment.startsWith("of ") || (nextSegment.equals("of"))) {

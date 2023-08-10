@@ -45,7 +45,7 @@ public class MethodArgumentNode implements TreeNode {
                     connective = " and";
                 } else if(remainingRule.startsWith(",")) {
                     connective = ",";
-                } else if(remainingRule.startsWith(" in")) {
+                } else if(remainingRule.startsWith(" in") || remainingRule.startsWith(" then")) {
                     return currentEnd;
                 } else {
                     throw new InvalidRuleStructureException(ruleContent, "Method Argument Node");
