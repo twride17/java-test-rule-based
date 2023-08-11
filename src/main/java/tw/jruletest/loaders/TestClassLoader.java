@@ -23,6 +23,7 @@ public class TestClassLoader extends ClassLoader {
     }
 
     private Class<?> getClass(String name) throws ClassNotFoundException {
+        setFilePath(System.getProperty("user.dir") + "\\src\\main\\java\\" + name.replaceAll("\\.", "\\\\") + ".class");
         //String file = name.replace('.', File.separatorChar) + ".class";
         try {
             // This loads the byte code data from the file
@@ -48,7 +49,7 @@ public class TestClassLoader extends ClassLoader {
     private byte[] loadClassFileData() throws IOException {
         InputStream stream = Files.newInputStream(Paths.get(filePath));
         int size = stream.available();
-        byte buff[] = new byte[size];
+        byte[] buff = new byte[size];
         DataInputStream in = new DataInputStream(stream);
         in.readFully(buff);
         in.close();

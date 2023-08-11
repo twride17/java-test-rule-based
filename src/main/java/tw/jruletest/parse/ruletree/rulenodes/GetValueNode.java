@@ -1,6 +1,10 @@
 package tw.jruletest.parse.ruletree.rulenodes;
 
+import tw.jruletest.analyzers.JavaClassAnalyzer;
+import tw.jruletest.analyzers.TypeIdentifier;
+import tw.jruletest.exceptions.AmbiguousMemberException;
 import tw.jruletest.exceptions.InvalidRuleStructureException;
+import tw.jruletest.exceptions.UnidentifiedCallException;
 import tw.jruletest.parse.ruletree.TreeNode;
 import tw.jruletest.parse.ruletree.argumentnodes.VariableNode;
 import tw.jruletest.translation.VariableStore;
@@ -16,24 +20,31 @@ public class GetValueNode implements TreeNode {
 
     @Override
     public String generateCode() {
-        // TODO derive required variable type
         TreeNode subNode = ((ValueNode) valueNode).getSubNode();
-        // Find method call if method - use valueNode
         String valueCall;
+        String type = "";
+        String call;
         if(subNode instanceof MethodNode) {
-            String methodCall = ((MethodNode) subNode).getMethod();
-            valueCall = methodCall.split("\\.")[1];
+            call = ((MethodNode) subNode).getMethod();
+            valueCall = call.split("\\.")[1];
         } else {
-            valueCall = ((VariableNode) subNode).getArgument();
+            call = ((VariableNode) subNode).getArgument();
+            valueCall = call;
         }
 
-        // Append 'value' to call/variable/field
-        if(!(valueCall.endsWith("Value") || valueCall.endsWith("value"))) {
-            valueCall += "Value";
+        try {
+            type = TypeIdentifier.getType(JavaClassAnalyzer.getReturnType(call)) + " ";
+
+            // Append 'value' to call/variable/field
+            if (!(valueCall.endsWith("Value") || valueCall.endsWith("value"))) {
+                valueCall += "Value";
+            }
+        } catch(AmbiguousMemberException | UnidentifiedCallException e) {
+            System.out.println(e.getMessage());
         }
 
         // Find next variable for VariableStore and add to code
-        return VariableStore.getNextUnusedVariableName(methodName, valueCall) + " = " + valueNode.generateCode() + ";";
+        return type + VariableStore.getNextUnusedVariableName(methodName, valueCall) + " = " + valueNode.generateCode() + ";";
     }
 
     public int validateRule(String ruleContent) throws InvalidRuleStructureException {

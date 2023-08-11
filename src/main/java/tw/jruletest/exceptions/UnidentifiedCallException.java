@@ -11,4 +11,8 @@ public class UnidentifiedCallException extends Exception {
     public String getUnidentifiedCall() {
         return "No such field or method: " + call;
     }
+
+    public void printError() {
+        System.out.println("Unknown field: " + call);
+    }
 }
