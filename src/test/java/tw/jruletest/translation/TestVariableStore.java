@@ -24,12 +24,12 @@ public class TestVariableStore {
 
     @Test
     public void testGetVariableNameWithNoDuplicates() {
-        Assert.assertEquals("variable", VariableStore.getNextUnusedName("newTest", "variable"));
+        Assert.assertEquals("variable", VariableStore.getNextUnusedVariableName("newTest", "variable"));
     }
 
     @Test
     public void testGetVariableNameWithDuplicates() {
-        Assert.assertEquals("variable2", VariableStore.getNextUnusedName("test", "variable"));
+        Assert.assertEquals("variable2", VariableStore.getNextUnusedVariableName("test", "variable"));
     }
 
     @After

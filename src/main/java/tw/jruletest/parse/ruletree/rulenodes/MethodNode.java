@@ -87,4 +87,8 @@ public class MethodNode implements TreeNode {
             return arguments.validateRule(ruleContent.substring(colonIndex+2)) + colonIndex + 2;
         }
     }
+
+    public String getMethod() {
+        return method;
+    }
 }

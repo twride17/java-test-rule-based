@@ -7,7 +7,7 @@ public class TestCallMethodNode {
 
     private CallMethodNode node;
 
-    /* Testing rule validation for Get Value node */
+    /* Testing rule validation for Call Method node */
 
     @Test
     public void testCallMethodRuleWithKeyword() {
@@ -43,7 +43,7 @@ public class TestCallMethodNode {
         }
     }
 
-    /* Testing code generation for Get Value node */
+    /* Testing code generation for Call Method node */
     @Test
     public void testCodeGeneration() {
         String[] rules = {"call method Class.method", "call method Class.method: `Hello world`", "call method Class.method with arguments: 101.971f",

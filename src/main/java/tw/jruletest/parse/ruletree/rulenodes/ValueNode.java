@@ -51,4 +51,8 @@ public class ValueNode implements TreeNode {
             }
         }
     }
+
+    public TreeNode getSubNode() {
+        return valueSourceNode;
+    }
 }

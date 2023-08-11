@@ -2,6 +2,7 @@ package tw.jruletest.parse.ruletree.rulenodes;
 
 import org.junit.*;
 import tw.jruletest.exceptions.InvalidRuleStructureException;
+import tw.jruletest.translation.VariableStore;
 
 public class TestGetValueNode {
 
@@ -12,7 +13,7 @@ public class TestGetValueNode {
     @Test
     public void testGetValueRuleWithKeyword() {
         String rule = "Get value of xValue";
-        node = new GetValueNode();
+        node = new GetValueNode("");
         try {
             Assert.assertEquals(rule.length(), node.validateRule(rule));
         } catch(InvalidRuleStructureException e) {
@@ -24,7 +25,7 @@ public class TestGetValueNode {
     @Test
     public void testGetValueRuleWithNoKeyword() {
         String rule = "value of xValue";
-        node = new GetValueNode();
+        node = new GetValueNode("");
         try {
             node.validateRule(rule);
             Assert.fail(rule + ": passed when should fail");
@@ -34,7 +35,7 @@ public class TestGetValueNode {
     @Test
     public void testValidGetValueRuleWithExtraRule() {
         String rule = "Get value of xValue and get value of y";
-        node = new GetValueNode();
+        node = new GetValueNode("");
         try {
             Assert.assertEquals(19, node.validateRule(rule));
         } catch(InvalidRuleStructureException e) {
@@ -51,17 +52,24 @@ public class TestGetValueNode {
         String[] rules = {"Get value of xValue", "Get Class.method", /*"Get value of Example.x and store in y",*/
                             "Get Class.method with arguments: `Hello world`, 10 and -0.89f, xValue"};
 
-        String[] expectedStrings = {"variable = xValue;", "variable = Class.method();", /*"Example.x",*/
-                                    "variable = Class.method(\"Hello world\", 10, -0.89f, xValue);"};
+        String[] expectedStrings = {"xValue2 = xValue;", "methodValue = Class.method();", /*"Example.x",*/
+                                    "methodValue = Class.method(\"Hello world\", 10, -0.89f, xValue);"};
 
         for(int i = 0; i < rules.length; i++) {
-            node = new GetValueNode();
+            node = new GetValueNode("");
             try {
+                VariableStore.addVariable("", "xValue");
                 node.validateRule(rules[i]);
                 Assert.assertEquals(node.generateCode(), expectedStrings[i]);
+                VariableStore.reset();
             } catch(InvalidRuleStructureException e) {
                 Assert.fail(rules[i] + ": failed");
             }
         }
+    }
+
+    @After
+    public void teardown() {
+        VariableStore.reset();
     }
 }

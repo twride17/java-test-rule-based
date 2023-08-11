@@ -14,33 +14,36 @@ public class VariableStore {
         }
     }
 
-    public static String getNextUnusedName(String method, String variableName) {
+    public static String getNextUnusedVariableName(String method, String variableName) {
         try {
-            int numberSimilar = 0;
-            ArrayList<String> methodVars = variables.get(method);
-            for (String variable : methodVars) {
-                if (variableExists(variable, method)) {
-                    numberSimilar++;
-                }
+            ArrayList<String> methodVars = getVars(method);
+            if(methodVars.contains(variableName)) {
+                variableName += countSimilar(methodVars, variableName);
             }
-            String newName = variableName + (numberSimilar + 1);
-            addVariable(method, newName);
-            return newName;
-        } catch(NullPointerException e) {
-            addVariable(method, variableName);
-            return variableName;
-        }
+        } catch(NullPointerException e) { }
+
+        addVariable(method, variableName);
+        return variableName;
     }
 
-    private static boolean variableExists(String variable, String method) {
-        return variables.get(method).contains(variable);
+    private static int countSimilar(ArrayList<String> vars, String variable) {
+        int numSimilar = 1;
+        for(String var: vars) {
+            if(var.startsWith(variable)) {
+                numSimilar ++;
+            }
+        }
+        return numSimilar;
+    }
+
+    private static boolean variableExists(ArrayList<String> variables, String variable) {
+        return variables.contains(variable);
     }
 
     public static void reset() {
         variables = new HashMap<>();
     }
 
-    // Required for testing
     public static ArrayList<String> getVars(String method) {
         return variables.get(method);
     }

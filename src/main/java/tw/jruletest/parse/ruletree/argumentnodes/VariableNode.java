@@ -28,4 +28,8 @@ public class VariableNode extends ArgumentNode implements TreeNode {
         }
         throw new InvalidRuleStructureException(rule, "Variable Node");
     }
+
+    public String getArgument() {
+        return argumentString;
+    }
 }
