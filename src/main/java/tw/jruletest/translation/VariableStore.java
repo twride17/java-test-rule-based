@@ -36,10 +36,6 @@ public class VariableStore {
         return numSimilar;
     }
 
-    private static boolean variableExists(ArrayList<String> variables, String variable) {
-        return variables.contains(variable);
-    }
-
     public static void reset() {
         variables = new HashMap<>();
     }
