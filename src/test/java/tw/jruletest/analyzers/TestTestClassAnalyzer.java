@@ -3,6 +3,7 @@ package tw.jruletest.analyzers;
 import tw.jruletest.Runner;
 import org.junit.*;
 import tw.jruletest.files.FileFinder;
+import tw.jruletest.files.source.SourceClass;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,6 +33,8 @@ public class TestTestClassAnalyzer {
         files = FileFinder.getFiles("examples");
         Runner.runCommand("javac -cp src src\\test\\java\\tw\\jruletest\\examples\\*.java");
         Runner.createTestClassLoader();
+        Runner.getLoader().setTopPackage("tw");
+        Runner.getLoader().changeDirectory();
     }
 
     @Test
@@ -65,10 +68,11 @@ public class TestTestClassAnalyzer {
     }
 
     private void conductTest(int testNumber) {
+        String className = "tw.jruletest.examples.TestClass" + (testNumber+1);
+
         RuleExtractor.extractRules(new ArrayList<>(Collections.singleton(files.get(testNumber))));
         Map<String, Map<String, String>> rules = Runner.getRuleSets();
 
-        String className = "tw.jruletest.examples.TestClass" + (testNumber+1);
         Map<String, String> ruleSet = rules.get(className);
         Assert.assertEquals(EXPECTED_RULES[testNumber].length, ruleSet.size());
 
