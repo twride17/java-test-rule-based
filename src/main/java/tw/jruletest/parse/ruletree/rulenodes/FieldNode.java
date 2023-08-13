@@ -33,7 +33,17 @@ public class FieldNode implements TreeNode {
 
         Matcher matcher = Pattern.compile("([A-Z][a-z0-9A-z]*)\\.([a-z][A-Z0-9a-z]*)").matcher(fieldCall);
         if(!matcher.matches()) {
-            throw new InvalidRuleStructureException(fieldCall, "Field Node");
+            if(fieldCall.charAt(fieldCall.length()-1) == ',') {
+                matcher = Pattern.compile("([A-Z][a-z0-9A-z]*)\\.([a-z][A-Z0-9a-z]*)").matcher(fieldCall.substring(0, fieldCall.length()-1));
+                if(!matcher.matches()) {
+                    throw new InvalidRuleStructureException(fieldCall, "Field Node");
+                } else {
+                    fieldCall = fieldCall.substring(0, fieldCall.length()-1);
+                    nextSpaceIndex -= 1;
+                }
+            } else {
+                throw new InvalidRuleStructureException(fieldCall, "Field Node");
+            }
         }
 
         SourceMember field;
