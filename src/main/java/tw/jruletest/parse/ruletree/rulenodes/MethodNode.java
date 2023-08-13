@@ -1,6 +1,12 @@
 package tw.jruletest.parse.ruletree.rulenodes;
 
+import tw.jruletest.analyzers.JavaClassAnalyzer;
+import tw.jruletest.exceptions.AmbiguousMemberException;
 import tw.jruletest.exceptions.InvalidRuleStructureException;
+import tw.jruletest.exceptions.UnidentifiedCallException;
+import tw.jruletest.files.source.SourceField;
+import tw.jruletest.files.source.SourceMember;
+import tw.jruletest.files.source.SourceMethod;
 import tw.jruletest.parse.ruletree.TreeNode;
 
 import java.util.regex.Matcher;
@@ -8,12 +14,14 @@ import java.util.regex.Pattern;
 
 public class MethodNode implements TreeNode {
 
-    private String method;
+    private SourceMethod method;
+
+    private String methodName;
     private MethodArgumentNode arguments = null;
 
     @Override
     public String generateCode() {
-        String code = method + "(";
+        String code = methodName + "(";
         if(arguments != null) {
             code += arguments.generateCode();
         }
@@ -52,7 +60,20 @@ public class MethodNode implements TreeNode {
         if(!matcher.matches()) {
             throw new InvalidRuleStructureException(methodCall, "Method Node");
         } else {
-            method = methodCall;
+            methodName = methodCall;
+        }
+
+        // Test method call exists
+        SourceMember method;
+        try {
+            method = JavaClassAnalyzer.identifySourceClass(methodCall.split("\\.")[0]).getMember(methodCall.split("\\.")[1]);
+            if(method instanceof SourceMethod) {
+                this.method = (SourceMethod) method;
+            } else {
+                throw new InvalidRuleStructureException(methodCall, "Method Node");
+            }
+        } catch(AmbiguousMemberException | UnidentifiedCallException e) {
+            throw new InvalidRuleStructureException(methodCall, "Method Node");
         }
 
         if(colonIndex == -1) {
@@ -88,7 +109,7 @@ public class MethodNode implements TreeNode {
         }
     }
 
-    public String getMethod() {
+    public SourceMethod getMethod() {
         return method;
     }
 }
