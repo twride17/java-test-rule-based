@@ -3,6 +3,8 @@ package tw.jruletest.parse.ruletree.argumentnodes;
 import tw.jruletest.exceptions.InvalidRuleStructureException;
 import tw.jruletest.parse.ruletree.TreeNode;
 
+import java.lang.reflect.Type;
+
 public class StringNode extends ArgumentNode implements TreeNode {
 
     @Override
@@ -25,6 +27,10 @@ public class StringNode extends ArgumentNode implements TreeNode {
             } catch(StringIndexOutOfBoundsException e) { }
         }
         throw new InvalidRuleStructureException(rule, "String Node");
+    }
+
+    public Type getType() {
+        return String.class;
     }
 
     /* Only required for testing */
