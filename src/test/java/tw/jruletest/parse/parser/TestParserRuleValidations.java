@@ -7,6 +7,7 @@ import tw.jruletest.exceptions.UnparsableRuleException;
 import tw.jruletest.files.FileFinder;
 import tw.jruletest.files.source.SourceClass;
 import tw.jruletest.parse.Parser;
+import tw.jruletest.translation.VariableStore;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -33,6 +34,11 @@ public class TestParserRuleValidations {
         Runner.createTestClassLoader();
         Runner.runCommand("javac -cp src " + System.getProperty("user.dir") + "\\src\\main\\java\\tw\\jruletest\\testexamples\\testprograms\\*.java ");
         Runner.getLoader().setTopPackage("tw");
+
+        String[] variables = {"x", "y", "z", "xValue", "value2", "yValue", "value", "value1", "string"};
+        for(String variable: variables) {
+            VariableStore.addVariable(Runner.getCurrentMethod(), variable, int.class);
+        }
     }
 
     public void testRules(String[] rules, String[][] expectedSubRules) {
@@ -73,6 +79,7 @@ public class TestParserRuleValidations {
     @Test
     public void testGetValueRules() {
         loadCLass("tw.jruletest.testexamples.testprograms.Class");
+        loadCLass("tw.jruletest.testexamples.testprograms.Example");
         String[][] subRules = {{"Get value of Class.method with arguments: 67, `Hello world`, true and -0.5f"},
                                {"get xValue", "get value of Class.method with arguments: -0.98f, 45, false and `New string`", "get yValue"},
                                {"Get result of Example.x", "get Class.method with: `New string`, 56", "get Class.method"},
@@ -112,13 +119,13 @@ public class TestParserRuleValidations {
     public void testExpectationRules() {
         loadCLass("tw.jruletest.testexamples.testprograms.Class");
         loadCLass("tw.jruletest.testexamples.testprograms.Example");
-        String[][] subRules = {{"Expect 1 to equal xValue", "Expect value2 to not equal 3", "expect value of CLass.method to equal -0.98f"},
+        String[][] subRules = {{"Expect 1 to equal xValue", "Expect value2 to not equal 3", "expect value of Class.method to equal -0.98f"},
                                {"Expect x to equal 1", "expect y to not equal `Hello`", "expect result of Example.exampleMethod to equal false"},
                                {"Expect value of Example.exampleMethod with: 56 and 0.98 to equal 3", "expect xValue to equal `New string`"},
                                {"expect Class.method with arguments: 109, `New and cool string, this is` and -90.2f to not equal -0.9f"},
                                {"Expect 30.5 to not equal xValue", "expect string to equal Class.method", "expect Class.method: 1 to equal 0"}};
 
-        String[] rules = {"Expect 1 to equal xValue, Expect value2 to not equal 3 and expect value of CLass.method to equal -0.98f",
+        String[] rules = {"Expect 1 to equal xValue, Expect value2 to not equal 3 and expect value of Class.method to equal -0.98f",
                           "  Expect x to equal 1, expect y to not equal `Hello` then expect result of Example.exampleMethod to equal false",
                           "Expect value of Example.exampleMethod with: 56 and 0.98 to equal 3 and expect xValue to equal `New string`     ",
                           "      expect Class.method with arguments: 109, `New and cool string, this is` and -90.2f to not equal -0.9f",
@@ -163,6 +170,7 @@ public class TestParserRuleValidations {
 
     @After
     public void teardown() {
+        VariableStore.reset();
         JavaClassAnalyzer.sourceFiles = new HashMap<>();
         try {
             Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/main/java/tw/jruletest/testexamples/testprograms/Example.class"));

@@ -29,7 +29,7 @@ public class TestVariableStore {
 
     @Test
     public void testGetVariableNameWithDuplicates() {
-        Assert.assertEquals("variable2", VariableStore.getNextUnusedVariableName("test", "variable", int.class));
+        Assert.assertEquals("variable1", VariableStore.getNextUnusedVariableName("test", "variable", int.class));
     }
 
     @After

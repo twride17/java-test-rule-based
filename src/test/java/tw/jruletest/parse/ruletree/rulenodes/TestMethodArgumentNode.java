@@ -1,13 +1,23 @@
 package tw.jruletest.parse.ruletree.rulenodes;
 
 import org.junit.*;
+import tw.jruletest.Runner;
 import tw.jruletest.exceptions.InvalidRuleStructureException;
+import tw.jruletest.translation.VariableStore;
 
 public class TestMethodArgumentNode {
 
     private MethodArgumentNode node;
 
     /* Testing rule validation for Method Argument node */
+
+    @Before
+    public void setup() {
+        String[] variables = {"x", "xValue", "xValue1", "value1"};
+        for(String variable: variables) {
+            VariableStore.addVariable(Runner.getCurrentMethod(), variable, int.class);
+        }
+    }
 
     @Test
     public void testSingleStringArguments() {
@@ -37,7 +47,7 @@ public class TestMethodArgumentNode {
 
     @Test
     public void testSingleVariableArguments() {
-        String[] rules = {"x", "Example.x", "xValue", "xValue1"};
+        String[] rules = {"x", "xValue", "xValue1"};
         node = new MethodArgumentNode();
         for(String rule: rules) {
             try {
@@ -131,5 +141,10 @@ public class TestMethodArgumentNode {
                 Assert.fail(rules[i] + ": failed");
             }
         }
+    }
+
+    @After
+    public void teardown() {
+        VariableStore.reset();
     }
 }

@@ -36,12 +36,14 @@ public class TestGetValueNode {
         Runner.createTestClassLoader();
         Runner.runCommand("javac -cp src " + System.getProperty("user.dir") + "\\src\\main\\java\\tw\\jruletest\\testexamples\\testprograms\\*.java ");
         Runner.getLoader().setTopPackage("tw");
+
+        VariableStore.addVariable(Runner.getCurrentMethod(), "xValue", int.class);
     }
 
     @Test
     public void testGetValueRuleWithKeyword() {
         String rule = "Get value of xValue";
-        node = new GetValueNode("");
+        node = new GetValueNode();
         try {
             Assert.assertEquals(rule.length(), node.validateRule(rule));
         } catch(InvalidRuleStructureException e) {
@@ -53,7 +55,7 @@ public class TestGetValueNode {
     @Test
     public void testGetValueRuleWithNoKeyword() {
         String rule = "value of xValue";
-        node = new GetValueNode("");
+        node = new GetValueNode();
         try {
             node.validateRule(rule);
             Assert.fail(rule + ": passed when should fail");
@@ -64,7 +66,7 @@ public class TestGetValueNode {
     public void testValidGetValueRuleWithExtraRule() {
         loadCLass("tw.jruletest.testexamples.testprograms.Class");
         String rule = "Get value of Class.method and get value of y";
-        node = new GetValueNode("");
+        node = new GetValueNode();
         try {
             Assert.assertEquals(25, node.validateRule(rule));
         } catch(InvalidRuleStructureException e) {
@@ -81,16 +83,14 @@ public class TestGetValueNode {
         String[] rules = {"Get value of xValue", "Get Class.method", "Get value of Example.x and store in y",
                             "Get Class.method with arguments: `Hello world`, 10 and -0.89f, xValue"};
 
-        String[] expectedStrings = {"int xValue2 = xValue;", "int methodValue = Class.method();", "int xValue2 = Example.x;",
-                                    "int methodValue = Class.method(\"Hello world\", 10, -0.89f, xValue);"};
+        String[] expectedStrings = {"int xValue1 = xValue;", "int methodValue = Class.method();", "int xValue2 = Example.x;",
+                                    "int methodValue1 = Class.method(\"Hello world\", 10, -0.89f, xValue);"};
 
         for(int i = 0; i < rules.length; i++) {
-            node = new GetValueNode("");
+            node = new GetValueNode();
             try {
-                VariableStore.addVariable("", "xValue", int.class);
                 node.validateRule(rules[i]);
                 Assert.assertEquals(node.generateCode(), expectedStrings[i]);
-                VariableStore.reset();
             } catch(InvalidRuleStructureException e) {
                 Assert.fail(rules[i] + ": failed");
             }

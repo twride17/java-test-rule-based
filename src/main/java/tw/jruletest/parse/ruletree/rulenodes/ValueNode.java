@@ -78,8 +78,4 @@ ValueNode implements TreeNode {
             return ((VariableNode) valueSourceNode).getArgument();
         }
     }
-
-    public TreeNode getSubNode() {
-        return valueSourceNode;
-    }
 }

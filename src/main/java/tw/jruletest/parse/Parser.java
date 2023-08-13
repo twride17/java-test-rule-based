@@ -85,10 +85,10 @@ public class Parser {
                     node = new ExpectationNode();
                     break;
                 case "get":
-                    node = new GetValueNode("");
+                    node = new GetValueNode();
                     break;
                 case "store":
-                    node = new StoreValueNode("");
+                    node = new StoreValueNode();
                     break;
                 case "call":
                     node = new CallMethodNode();

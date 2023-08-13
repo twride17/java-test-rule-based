@@ -1,11 +1,9 @@
 package tw.jruletest.parse.ruletree.rulenodes;
 
+import tw.jruletest.Runner;
 import tw.jruletest.analyzers.TypeIdentifier;
 import tw.jruletest.exceptions.InvalidRuleStructureException;
-import tw.jruletest.files.source.SourceField;
-import tw.jruletest.files.source.SourceMethod;
 import tw.jruletest.parse.ruletree.TreeNode;
-import tw.jruletest.parse.ruletree.argumentnodes.VariableNode;
 import tw.jruletest.translation.VariableStore;
 
 import java.lang.reflect.Type;
@@ -13,11 +11,6 @@ import java.lang.reflect.Type;
 public class GetValueNode implements TreeNode {
 
     private ValueNode valueNode;
-    private String methodName;
-
-    public GetValueNode(String method) {
-        methodName = method;
-    }
 
     @Override
     public String generateCode() {
@@ -28,7 +21,7 @@ public class GetValueNode implements TreeNode {
             valueCall += "Value";
         }
 
-        return TypeIdentifier.getType(type) + " " + VariableStore.getNextUnusedVariableName(methodName, valueCall, type) +
+        return TypeIdentifier.getType(type) + " " + VariableStore.getNextUnusedVariableName(Runner.getCurrentMethod(), valueCall, type) +
                                                 " = " + valueNode.generateCode() + ";";
     }
 

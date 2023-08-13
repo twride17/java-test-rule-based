@@ -36,6 +36,8 @@ public class TestCallMethodNode {
         Runner.createTestClassLoader();
         Runner.runCommand("javac -cp src " + System.getProperty("user.dir") + "\\src\\main\\java\\tw\\jruletest\\testexamples\\testprograms\\*.java ");
         Runner.getLoader().setTopPackage("tw");
+
+        VariableStore.addVariable(Runner.getCurrentMethod(), "xValue", int.class);
     }
 
     @Test

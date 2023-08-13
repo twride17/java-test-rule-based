@@ -6,6 +6,7 @@ import tw.jruletest.analyzers.JavaClassAnalyzer;
 import tw.jruletest.exceptions.InvalidRuleStructureException;
 import tw.jruletest.files.FileFinder;
 import tw.jruletest.files.source.SourceClass;
+import tw.jruletest.translation.VariableStore;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -35,6 +36,8 @@ public class TestValueNode {
         Runner.createTestClassLoader();
         Runner.runCommand("javac -cp src " + System.getProperty("user.dir") + "\\src\\main\\java\\tw\\jruletest\\testexamples\\testprograms\\*.java ");
         Runner.getLoader().setTopPackage("tw");
+
+        VariableStore.addVariable(Runner.getCurrentMethod(), "xValue", int.class);
     }
 
     @Test
@@ -144,6 +147,7 @@ public class TestValueNode {
 
     @After
     public void teardown() {
+        VariableStore.reset();
         JavaClassAnalyzer.sourceFiles = new HashMap<>();
         try {
             Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/main/java/tw/jruletest/testexamples/testprograms/Example.class"));

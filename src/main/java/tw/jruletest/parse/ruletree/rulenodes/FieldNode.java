@@ -50,7 +50,12 @@ public class FieldNode implements TreeNode {
             throw new InvalidRuleStructureException(fieldCall, "Field Node");
         }
 
-        return nextSpaceIndex;
+        if(nextSpaceIndex == -1) {
+            return fieldCall.length();
+        } else {
+            return nextSpaceIndex;
+        }
+
     }
 
     public Type getType() {

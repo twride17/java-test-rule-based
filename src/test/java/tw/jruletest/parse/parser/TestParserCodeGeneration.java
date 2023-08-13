@@ -29,7 +29,6 @@ public class TestParserCodeGeneration {
     @Before
     public void setup() {
         VariableStore.addVariable("", "value", int.class);
-        VariableStore.addVariable("", "xValue", double.class);
         FileFinder.collectFiles(System.getProperty("user.dir") + "\\src\\main\\java");
         Runner.createTestClassLoader();
         Runner.runCommand("javac -cp src " + System.getProperty("user.dir") + "\\src\\main\\java\\tw\\jruletest\\testexamples\\testprograms\\*.java ");
@@ -48,10 +47,10 @@ public class TestParserCodeGeneration {
                             "Get value of xValue, store Class.method with: `Hello and goodbye`, 1.5 and false in z then expect x to equal z  "};
 
         String[] expectedCodeBlocks = {"int methodValue = Class.method(1, \"Hello\");\nint xValue = value;\nExpectations.expect(xValue).toEqual(1);\n",
-                                        "Example.exampleMethod();\ndouble xValue1 = xValue;\nExpectations.expect(xValue1).toEqual(\"New string\");\n",
+                                        "Example.exampleMethod();\nint xValue1 = xValue;\nExpectations.expect(xValue1).toEqual(\"New string\");\n",
                                         "Example.exampleMethod(-0.987f);\nClass.method();\nString x = Example.m(true);\nExpectations.expect(x).toNotEqual(\"String\");\n",
-                                        "int x = -100;\nfloat y = 0.5f;\nint test = Class.method(false, \"New string\", -3.4);\n",
-                                        "double xValue2 = xValue;\nint z = Class.method(\"Hello and goodbye\", 1.5, false);\nExpectations.expect(x).toEqual(z);\n"};
+                                        "x = -100;\nfloat y = 0.5f;\nint test = Class.method(false, \"New string\", -3.4);\n",
+                                        "int xValue2 = xValue;\nint z = Class.method(\"Hello and goodbye\", 1.5, false);\nExpectations.expect(x).toEqual(z);\n"};
 
         for(int i = 0; i < rules.length; i++) {
             System.out.println(rules[i]);
@@ -71,10 +70,10 @@ public class TestParserCodeGeneration {
                 "Get value of xValue, store Class.method with: `Hello and goodbye`, 1.5 and false in z then expect x to equal z  "};
 
         String expectedCode = "int methodValue = Class.method(1, \"Hello\");\nint xValue = value;\nExpectations.expect(xValue).toEqual(1);\n"
-                            + "Example.exampleMethod();\ndouble xValue1 = xValue;\nExpectations.expect(xValue1).toEqual(\"New string\");\n"
+                            + "Example.exampleMethod();\nint xValue1 = xValue;\nExpectations.expect(xValue1).toEqual(\"New string\");\n"
                             + "Example.exampleMethod(-0.987f);\nClass.method();\nString x = Example.m(true);\nExpectations.expect(x).toNotEqual(\"String\");\n"
-                            + "int x = -100;\nfloat y = 0.5f;\nint test = Class.method(false, \"New string\", -3.4);\n"
-                            + "double xValue2 = xValue;\nint z = Class.method(\"Hello and goodbye\", 1.5, false);\nExpectations.expect(x).toEqual(z);\n";
+                            + "x = -100;\nfloat y = 0.5f;\nint test = Class.method(false, \"New string\", -3.4);\n"
+                            + "int xValue2 = xValue;\nint z = Class.method(\"Hello and goodbye\", 1.5, false);\nExpectations.expect(x).toEqual(z);\n";
 
         Assert.assertEquals(expectedCode, Parser.parseRules(rules));
     }

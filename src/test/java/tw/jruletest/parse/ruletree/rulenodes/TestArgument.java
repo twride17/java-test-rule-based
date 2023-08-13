@@ -1,11 +1,21 @@
 package tw.jruletest.parse.ruletree.rulenodes;
 
 import org.junit.*;
+import tw.jruletest.Runner;
 import tw.jruletest.exceptions.InvalidRuleStructureException;
 import tw.jruletest.parse.ruletree.TreeNode;
 import tw.jruletest.parse.ruletree.argumentnodes.*;
+import tw.jruletest.translation.VariableStore;
 
 public class TestArgument {
+
+    @Before
+    public void setup() {
+        String[] variables = {"x", "xValue"};
+        for(String variable: variables) {
+            VariableStore.addVariable(Runner.getCurrentMethod(), variable, int.class);
+        }
+    }
 
     @Test
     public void testValidString() {
@@ -111,9 +121,9 @@ public class TestArgument {
     @Test
     public void testVariableNodeReturned() {
         try {
-            TreeNode node = Argument.getArgumentNode("Example.x");
+            TreeNode node = Argument.getArgumentNode("x");
             Assert.assertTrue(node instanceof VariableNode);
-            Assert.assertEquals("Example.x", node.generateCode());
+            Assert.assertEquals("x", node.generateCode());
         } catch(InvalidRuleStructureException e) {
             Assert.fail("Rule 'Example.x': failed");
         }
@@ -126,5 +136,10 @@ public class TestArgument {
             Argument.getArgumentNode("");
             Assert.fail("Rule '': passed");
         } catch(InvalidRuleStructureException e) { }
+    }
+
+    @After
+    public void teardown() {
+        VariableStore.reset();
     }
 }
