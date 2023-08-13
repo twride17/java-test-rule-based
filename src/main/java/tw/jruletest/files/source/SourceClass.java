@@ -11,6 +11,7 @@ import java.util.ArrayList;
 
 public class SourceClass {
 
+    private String className;
     private ArrayList<SourceMethod> methods = new ArrayList<>();
     private ArrayList<SourceField> fields = new ArrayList<>();
 
@@ -18,6 +19,8 @@ public class SourceClass {
         Class<?> cls = Class.forName(className);
         Field[] classFields = cls.getDeclaredFields();
         Method[] classMethods = cls.getDeclaredMethods();
+
+        this.className = className.substring(className.lastIndexOf(".") + 1);
 
         for(Field field: classFields) {
             fields.add(new SourceField(field));
@@ -29,6 +32,10 @@ public class SourceClass {
     }
 
     public Type findType(String call) throws AmbiguousMemberException, UnidentifiedCallException {
+        return getMember(call).getType();
+    }
+
+    public SourceMember getMember(String call) throws UnidentifiedCallException, AmbiguousMemberException {
         SourceMethod requiredMethod = findMethod(call);
         SourceField requiredField = findField(call);
 
@@ -37,12 +44,11 @@ public class SourceClass {
                 throw new UnidentifiedCallException(call);
             }
             else {
-                return requiredMethod.getType();
+                return requiredMethod;
             }
         } else {
             if(requiredMethod == null) {
-                Type t = requiredField.getType();
-                return t;
+                return requiredField;
             }
             else {
                 throw new AmbiguousMemberException(call);
@@ -66,5 +72,9 @@ public class SourceClass {
             }
         }
         return null;
+    }
+
+    public String getClassName() {
+        return className;
     }
 }

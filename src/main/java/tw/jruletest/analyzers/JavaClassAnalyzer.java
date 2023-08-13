@@ -51,21 +51,25 @@ public class JavaClassAnalyzer {
         String className = call.split("\\.")[0];
         String memberName = call.split("\\.")[1];
 
+        return identifySourceClass(className).findType(memberName);
+    }
+
+    public static SourceClass identifySourceClass(String cls) throws AmbiguousMemberException, UnidentifiedCallException {
         SourceClass source = null;
         for(String sourceName: sourceFiles.keySet()) {
-            if(sourceName.endsWith(className)) {
+            if(sourceName.endsWith(cls)) {
                 if(source == null) {
                     source = sourceFiles.get(sourceName);
                 } else {
-                    throw new AmbiguousMemberException(memberName);
+                    throw new AmbiguousMemberException(cls);
                 }
             }
         }
 
         if(source == null) {
-            throw new UnidentifiedCallException(className);
+            throw new UnidentifiedCallException(cls);
         } else {
-            return source.findType(memberName);
+            return source;
         }
     }
 }
