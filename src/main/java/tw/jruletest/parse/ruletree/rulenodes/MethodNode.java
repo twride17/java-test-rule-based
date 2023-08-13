@@ -9,6 +9,7 @@ import tw.jruletest.files.source.SourceMember;
 import tw.jruletest.files.source.SourceMethod;
 import tw.jruletest.parse.ruletree.TreeNode;
 
+import java.lang.reflect.Type;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -107,6 +108,10 @@ public class MethodNode implements TreeNode {
             arguments = new MethodArgumentNode();
             return arguments.validateRule(ruleContent.substring(colonIndex+2)) + colonIndex + 2;
         }
+    }
+
+    public Type getType() {
+        return method.getType();
     }
 
     public SourceMethod getMethod() {

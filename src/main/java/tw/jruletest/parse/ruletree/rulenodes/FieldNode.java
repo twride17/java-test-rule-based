@@ -9,6 +9,7 @@ import tw.jruletest.files.source.SourceField;
 import tw.jruletest.files.source.SourceMember;
 import tw.jruletest.parse.ruletree.TreeNode;
 
+import java.lang.reflect.Type;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,6 +51,10 @@ public class FieldNode implements TreeNode {
         }
 
         return nextSpaceIndex;
+    }
+
+    public Type getType() {
+        return field.getType();
     }
 
     public SourceField getField() {
