@@ -1,9 +1,15 @@
 package tw.jruletest.parse.ruletree.rulenodes;
 
+import tw.jruletest.analyzers.TypeIdentifier;
 import tw.jruletest.exceptions.InvalidRuleStructureException;
+import tw.jruletest.files.source.SourceField;
+import tw.jruletest.files.source.SourceMethod;
 import tw.jruletest.parse.ruletree.TreeNode;
+import tw.jruletest.parse.ruletree.argumentnodes.ArgumentNode;
 import tw.jruletest.parse.ruletree.argumentnodes.VariableNode;
+import tw.jruletest.translation.VariableStore;
 
+import java.lang.reflect.Type;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -12,10 +18,23 @@ public class StoreValueNode implements TreeNode {
     private TreeNode valueTree;
     private TreeNode variableTree;
 
+    private String methodName;
+
+    public StoreValueNode(String methodName) {
+        this.methodName = methodName;
+    }
+
     @Override
     public String generateCode() {
-        // TODO add typing of variables
-        return variableTree.generateCode() + " = " + valueTree.generateCode() + ";";
+        Type type;
+        if(valueTree instanceof ValueNode) {
+            type = ((ValueNode) valueTree).getType();
+        } else {
+            type = ((ArgumentNode) valueTree).getType();
+        }
+
+        return TypeIdentifier.getType(type) + " " + variableTree.generateCode() +
+                " = " + valueTree.generateCode() + ";";
     }
 
     public int validateRule(String ruleContent) throws InvalidRuleStructureException {

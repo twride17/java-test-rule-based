@@ -1,10 +1,14 @@
 package tw.jruletest.parse.ruletree.argumentnodes;
 
-public class ArgumentNode {
+import java.lang.reflect.Type;
+
+public abstract class ArgumentNode {
 
     protected String argumentString;
 
     public int getEndIndex() {
         return argumentString.length() - 1;
     }
+
+    public abstract Type getType();
 }
