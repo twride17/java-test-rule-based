@@ -1,13 +1,41 @@
 package tw.jruletest.parse.ruletree.rulenodes;
 
 import org.junit.*;
+import tw.jruletest.Runner;
+import tw.jruletest.analyzers.JavaClassAnalyzer;
 import tw.jruletest.exceptions.InvalidRuleStructureException;
+import tw.jruletest.files.FileFinder;
+import tw.jruletest.files.source.SourceClass;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.HashMap;
 
 public class TestExpectationNode {
 
     private ExpectationNode node;
 
     /* Testing rule validation for Expectation node */
+
+    private void loadCLass(String className) {
+        try {
+            Runner.getLoader().loadClass(className);
+            JavaClassAnalyzer.sourceFiles.put(className, new SourceClass(className));
+        } catch (ClassNotFoundException e) {
+            System.out.println("Could not find " + className);
+        } catch (LinkageError e) {
+            System.out.println("Linkage error detected for: " + className);
+        }
+    }
+
+    @Before
+    public void setup() {
+        FileFinder.collectFiles(System.getProperty("user.dir") + "\\src\\main\\java");
+        Runner.createTestClassLoader();
+        Runner.runCommand("javac -cp src " + System.getProperty("user.dir") + "\\src\\main\\java\\tw\\jruletest\\testexamples\\testprograms\\*.java ");
+        Runner.getLoader().setTopPackage("tw");
+    }
 
     @Test
     public void testIntegerValueAsActual() {
@@ -131,6 +159,7 @@ public class TestExpectationNode {
 
     @Test
     public void testMethodReturnValueAsExpected() {
+        loadCLass("tw.jruletest.testexamples.testprograms.Class");
         String rule = "expect Class.method: 5, -0.9f and `String` to not equal -98f";
         node = new ExpectationNode();
         try {
@@ -181,13 +210,14 @@ public class TestExpectationNode {
     /* Testing code generation for Expectation node */
     @Test
     public void testCodeGeneration() {
-        String[] rules = {"expect value to equal 1", "value to equal -11.567", "expect value to equal -11.5f", "value to equal true",
+        loadCLass("tw.jruletest.testexamples.testprograms.Class");
+        String[] rules = {"expect Example.x to equal 1", "value to equal -11.567", "expect value to equal -11.5f", "value to equal true",
                             "expect value to not equal `Hello World`", "expect 1 to equal x", "expect -11.567 to not equal xValue",
                             "expect -11.5f to equal value", "true to not equal x", "expect `Hello World` to not equal xValue",
                             "expect Class.method: 5, -0.9f and `String` to not equal -98f", "Expect 8765.5678 to equal value of Class.method",
                             "Expect -4501.2345f to equal value of Class.method: 12.5f and `New string`, false and 123 and expect x to equal 2"};
 
-        String[] expectedStrings = {"Expectations.expect(value).toEqual(1);", "Expectations.expect(value).toEqual(-11.567);",
+        String[] expectedStrings = {"Expectations.expect(Example.x).toEqual(1);", "Expectations.expect(value).toEqual(-11.567);",
                                     "Expectations.expect(value).toEqual(-11.5f);", "Expectations.expect(value).toEqual(true);",
                                     "Expectations.expect(value).toNotEqual(\"Hello World\");", "Expectations.expect(1).toEqual(x);",
                                     "Expectations.expect(-11.567).toNotEqual(xValue);", "Expectations.expect(-11.5f).toEqual(value);",
@@ -204,6 +234,18 @@ public class TestExpectationNode {
             } catch(InvalidRuleStructureException e) {
                 Assert.fail(rules[i] + ": failed");
             }
+        }
+    }
+
+    @After
+    public void teardown() {
+        JavaClassAnalyzer.sourceFiles = new HashMap<>();
+        try {
+            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/main/java/tw/jruletest/testexamples/testprograms/Example.class"));
+            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/main/java/tw/jruletest/testexamples/testprograms/Test.class"));
+            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/main/java/tw/jruletest/testexamples/testprograms/Class.class"));
+        } catch(IOException e) {
+            System.out.println("Couldn't delete file.");
         }
     }
 }

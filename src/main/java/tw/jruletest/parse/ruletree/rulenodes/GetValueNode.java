@@ -28,7 +28,7 @@ public class GetValueNode implements TreeNode {
             valueCall += "Value";
         }
 
-        return TypeIdentifier.getType(type) + VariableStore.getNextUnusedVariableName(methodName, valueCall, type) +
+        return TypeIdentifier.getType(type) + " " + VariableStore.getNextUnusedVariableName(methodName, valueCall, type) +
                                                 " = " + valueNode.generateCode() + ";";
     }
 

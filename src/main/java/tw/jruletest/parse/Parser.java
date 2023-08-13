@@ -88,7 +88,7 @@ public class Parser {
                     node = new GetValueNode("");
                     break;
                 case "store":
-                    node = new StoreValueNode();
+                    node = new StoreValueNode("");
                     break;
                 case "call":
                     node = new CallMethodNode();
