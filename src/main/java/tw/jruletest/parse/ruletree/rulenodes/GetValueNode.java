@@ -1,13 +1,14 @@
 package tw.jruletest.parse.ruletree.rulenodes;
 
-import tw.jruletest.analyzers.JavaClassAnalyzer;
 import tw.jruletest.analyzers.TypeIdentifier;
-import tw.jruletest.exceptions.AmbiguousMemberException;
 import tw.jruletest.exceptions.InvalidRuleStructureException;
-import tw.jruletest.exceptions.UnidentifiedCallException;
+import tw.jruletest.files.source.SourceField;
+import tw.jruletest.files.source.SourceMethod;
 import tw.jruletest.parse.ruletree.TreeNode;
 import tw.jruletest.parse.ruletree.argumentnodes.VariableNode;
 import tw.jruletest.translation.VariableStore;
+
+import java.lang.reflect.Type;
 
 public class GetValueNode implements TreeNode {
 
@@ -23,28 +24,27 @@ public class GetValueNode implements TreeNode {
         TreeNode subNode = ((ValueNode) valueNode).getSubNode();
         String valueCall;
         String type = "";
-        String call;
+        Type valueType;
         if(subNode instanceof MethodNode) {
-            call = ((MethodNode) subNode).getMethod();
-            valueCall = call.split("\\.")[1];
+            SourceMethod method = ((MethodNode) subNode).getMethod();
+            valueType = method.getType();
+            valueCall = method.getName();
+        } else if(subNode instanceof FieldNode) {
+            SourceField field = ((FieldNode) subNode).getField();
+            valueType = field.getType();
+            valueCall = field.getName();
         } else {
-            call = ((VariableNode) subNode).getArgument();
-            valueCall = call;
+            valueCall = ((VariableNode)subNode).getArgument();
+            valueType = VariableStore.findVariable(methodName, valueCall).getType();
         }
 
-        try {
-            type = TypeIdentifier.getType(JavaClassAnalyzer.getReturnType(call)) + " ";
+        type = TypeIdentifier.getType(valueType) + " ";
 
-            // Append 'value' to call/variable/field
-            if (!(valueCall.endsWith("Value") || valueCall.endsWith("value"))) {
-                valueCall += "Value";
-            }
-        } catch(AmbiguousMemberException | UnidentifiedCallException e) {
-            System.out.println(e.getMessage());
+        if (!(valueCall.endsWith("Value") || valueCall.endsWith("value"))) {
+            valueCall += "Value";
         }
 
-        // Find next variable for VariableStore and add to code
-        return type + VariableStore.getNextUnusedVariableName(methodName, valueCall) + " = " + valueNode.generateCode() + ";";
+        return type + VariableStore.getNextUnusedVariableName(methodName, valueCall, valueType) + " = " + valueNode.generateCode() + ";";
     }
 
     public int validateRule(String ruleContent) throws InvalidRuleStructureException {
