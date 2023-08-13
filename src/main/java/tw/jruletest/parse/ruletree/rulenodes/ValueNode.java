@@ -4,6 +4,7 @@ import tw.jruletest.exceptions.InvalidRuleStructureException;
 import tw.jruletest.parse.ruletree.TreeNode;
 import tw.jruletest.parse.ruletree.argumentnodes.VariableNode;
 
+import java.lang.reflect.Type;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -55,6 +56,16 @@ ValueNode implements TreeNode {
                     throw new InvalidRuleStructureException(nextSegment, "Value Node");
                 }
             }
+        }
+    }
+
+    public Type getType() {
+        if(valueSourceNode instanceof MethodNode) {
+            return ((MethodNode) valueSourceNode).getType();
+        } else if(valueSourceNode instanceof FieldNode) {
+            return ((FieldNode) valueSourceNode).getType();
+        } else {
+            return ((VariableNode) valueSourceNode).getType();
         }
     }
 
