@@ -6,10 +6,12 @@ public class Variable {
 
     private String name;
     private Type type;
+    private boolean declared = false;
 
-    public Variable(String name, Type type) {
+    public Variable(String name, Type type, boolean declared) {
         this.name = name;
         this.type = type;
+        this.declared = declared;
     }
 
     public String getName() {
@@ -18,5 +20,13 @@ public class Variable {
 
     public Type getType() {
         return type;
+    }
+
+    public boolean isDeclared() {
+        return declared;
+    }
+
+    public void makeDeclared() {
+        declared = true;
     }
 }

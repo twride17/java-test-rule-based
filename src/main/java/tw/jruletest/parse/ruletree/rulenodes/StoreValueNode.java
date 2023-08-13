@@ -1,5 +1,6 @@
 package tw.jruletest.parse.ruletree.rulenodes;
 
+import tw.jruletest.Runner;
 import tw.jruletest.analyzers.TypeIdentifier;
 import tw.jruletest.exceptions.InvalidRuleStructureException;
 import tw.jruletest.files.source.SourceField;
@@ -7,6 +8,7 @@ import tw.jruletest.files.source.SourceMethod;
 import tw.jruletest.parse.ruletree.TreeNode;
 import tw.jruletest.parse.ruletree.argumentnodes.ArgumentNode;
 import tw.jruletest.parse.ruletree.argumentnodes.VariableNode;
+import tw.jruletest.translation.Variable;
 import tw.jruletest.translation.VariableStore;
 
 import java.lang.reflect.Type;
@@ -16,25 +18,20 @@ import java.util.regex.Pattern;
 public class StoreValueNode implements TreeNode {
 
     private TreeNode valueTree;
-    private TreeNode variableTree;
-
-    private String methodName;
-
-    public StoreValueNode(String methodName) {
-        this.methodName = methodName;
-    }
+    private VariableNode variableTree;
 
     @Override
     public String generateCode() {
-        Type type;
-        if(valueTree instanceof ValueNode) {
-            type = ((ValueNode) valueTree).getType();
-        } else {
-            type = ((ArgumentNode) valueTree).getType();
+        String variableName = variableTree.getArgument();
+        String code = variableName + " = " + valueTree.generateCode() + ";";
+
+        Variable variable = VariableStore.findVariable(Runner.getCurrentMethod(), variableName);
+        if(!variable.isDeclared()) {
+            code = TypeIdentifier.getType(getType()) + " " + code;
+            variable.makeDeclared();
         }
 
-        return TypeIdentifier.getType(type) + " " + variableTree.generateCode() +
-                " = " + valueTree.generateCode() + ";";
+        return code;
     }
 
     public int validateRule(String ruleContent) throws InvalidRuleStructureException {
@@ -72,9 +69,21 @@ public class StoreValueNode implements TreeNode {
             }
 
             variableTree = new VariableNode();
-            return endIndex + variableTree.validateRule(requiredSegment);
+            endIndex += variableTree.validateStructure(requiredSegment);
+            if(!VariableStore.variableExists(Runner.getCurrentMethod(), variableTree.getArgument())) {
+                VariableStore.addVariable(Runner.getCurrentMethod(), variableTree.getArgument(), getType(), false);
+            }
+            return endIndex;
         } else {
             throw new InvalidRuleStructureException(ruleContent, "Store Value Node");
+        }
+    }
+
+    private Type getType() {
+        if(valueTree instanceof ValueNode) {
+            return ((ValueNode) valueTree).getType();
+        } else {
+            return ((ArgumentNode) valueTree).getType();
         }
     }
 }

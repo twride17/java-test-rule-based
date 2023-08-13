@@ -7,12 +7,16 @@ public class VariableStore {
 
     private static Map<String, ArrayList<Variable>> variables = new HashMap<>();
 
-    public static void addVariable(String method, String varName, Type varType) {
+    public static void addVariable(String method, String varName, Type varType, boolean declared) {
         try {
-            variables.get(method).add(new Variable(varName, varType));
+            variables.get(method).add(new Variable(varName, varType, declared));
         } catch(NullPointerException e) {
-            variables.put(method, new ArrayList<>(Collections.singleton(new Variable(varName, varType))));
+            variables.put(method, new ArrayList<>(Collections.singleton(new Variable(varName, varType, declared))));
         }
+    }
+
+    public static void addVariable(String method, String varName, Type varType) {
+        addVariable(method, varName, varType, true);
     }
 
     public static String getNextUnusedVariableName(String method, String variableName, Type type) {
@@ -28,7 +32,7 @@ public class VariableStore {
     }
 
     private static int countSimilar(ArrayList<String> vars, String variable) {
-        int numSimilar = 1;
+        int numSimilar = 0;
         for(String var: vars) {
             if(var.startsWith(variable)) {
                 numSimilar ++;
@@ -50,12 +54,18 @@ public class VariableStore {
     }
 
     public static Variable findVariable(String method, String variableName) {
-        ArrayList<Variable> vars = variables.get(method);
-        for(Variable var: vars) {
-            if(var.getName().equals(variableName)) {
-                return var;
+        try {
+            ArrayList<Variable> vars = variables.get(method);
+            for (Variable var : vars) {
+                if (var.getName().equals(variableName)) {
+                    return var;
+                }
             }
-        }
+        } catch(NullPointerException e) {}
         return null;
+    }
+
+    public static boolean variableExists(String method, String variableName) {
+        return findVariable(method, variableName) != null;
     }
 }
