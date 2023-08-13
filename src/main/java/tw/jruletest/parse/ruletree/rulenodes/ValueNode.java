@@ -7,7 +7,8 @@ import tw.jruletest.parse.ruletree.argumentnodes.VariableNode;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ValueNode implements TreeNode {
+public class
+ValueNode implements TreeNode {
 
     private TreeNode valueSourceNode;
 
@@ -44,10 +45,15 @@ public class ValueNode implements TreeNode {
             return valueSourceNode.validateRule(nextSegment) + currentEnd;
         } catch(InvalidRuleStructureException e) {
             try {
-                valueSourceNode = new VariableNode();
-                return currentEnd + valueSourceNode.validateRule(nextSegment);
-            } catch(InvalidRuleStructureException e2) {
-                throw new InvalidRuleStructureException(nextSegment, "Value Node");
+                valueSourceNode = new FieldNode();
+                return valueSourceNode.validateRule(nextSegment) + currentEnd;
+            } catch(InvalidRuleStructureException e1) {
+                try {
+                    valueSourceNode = new VariableNode();
+                    return currentEnd + valueSourceNode.validateRule(nextSegment);
+                } catch(InvalidRuleStructureException e2) {
+                    throw new InvalidRuleStructureException(nextSegment, "Value Node");
+                }
             }
         }
     }
