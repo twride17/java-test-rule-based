@@ -114,6 +114,10 @@ public class MethodNode implements TreeNode {
         return method.getType();
     }
 
+    public String getMethodName() {
+        return method.getName();
+    }
+
     public SourceMethod getMethod() {
         return method;
     }

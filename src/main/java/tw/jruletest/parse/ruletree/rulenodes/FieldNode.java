@@ -57,6 +57,10 @@ public class FieldNode implements TreeNode {
         return field.getType();
     }
 
+    public String getFieldName() {
+        return field.getName();
+    }
+
     public SourceField getField() {
         return field;
     }

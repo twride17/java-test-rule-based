@@ -12,7 +12,7 @@ import java.lang.reflect.Type;
 
 public class GetValueNode implements TreeNode {
 
-    private TreeNode valueNode;
+    private ValueNode valueNode;
     private String methodName;
 
     public GetValueNode(String method) {
@@ -21,30 +21,15 @@ public class GetValueNode implements TreeNode {
 
     @Override
     public String generateCode() {
-        TreeNode subNode = ((ValueNode) valueNode).getSubNode();
-        String valueCall;
-        String type = "";
-        Type valueType;
-        if(subNode instanceof MethodNode) {
-            SourceMethod method = ((MethodNode) subNode).getMethod();
-            valueType = method.getType();
-            valueCall = method.getName();
-        } else if(subNode instanceof FieldNode) {
-            SourceField field = ((FieldNode) subNode).getField();
-            valueType = field.getType();
-            valueCall = field.getName();
-        } else {
-            valueCall = ((VariableNode)subNode).getArgument();
-            valueType = VariableStore.findVariable(methodName, valueCall).getType();
-        }
-
-        type = TypeIdentifier.getType(valueType) + " ";
+        Type type = valueNode.getType();
+        String valueCall = valueNode.getCallName();
 
         if (!(valueCall.endsWith("Value") || valueCall.endsWith("value"))) {
             valueCall += "Value";
         }
 
-        return type + VariableStore.getNextUnusedVariableName(methodName, valueCall, valueType) + " = " + valueNode.generateCode() + ";";
+        return TypeIdentifier.getType(type) + VariableStore.getNextUnusedVariableName(methodName, valueCall, type) +
+                                                " = " + valueNode.generateCode() + ";";
     }
 
     public int validateRule(String ruleContent) throws InvalidRuleStructureException {

@@ -69,6 +69,16 @@ ValueNode implements TreeNode {
         }
     }
 
+    public String getCallName() {
+        if(valueSourceNode instanceof MethodNode) {
+            return ((MethodNode) valueSourceNode).getMethodName();
+        } else if(valueSourceNode instanceof FieldNode) {
+            return ((FieldNode) valueSourceNode).getFieldName();
+        } else {
+            return ((VariableNode) valueSourceNode).getArgument();
+        }
+    }
+
     public TreeNode getSubNode() {
         return valueSourceNode;
     }
