@@ -1,5 +1,6 @@
 package tw.jruletest;
 
+import tw.jruletest.analyzers.JavaClassAnalyzer;
 import tw.jruletest.analyzers.RuleExtractor;
 import tw.jruletest.files.FileFinder;
 import tw.jruletest.generators.TestSuiteGenerator;
@@ -50,6 +51,8 @@ public class Runner {
             runCommand("javac -cp src " + file.getPath().substring(file.getPath().indexOf("src")));
         }
         RuleExtractor.extractRules(files);
+
+        JavaClassAnalyzer.compileSourceFiles();
 
         for(String className: ruleSets.keySet()) {
             Map<String, String> rules = ruleSets.get(className);
