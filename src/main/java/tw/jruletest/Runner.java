@@ -1,5 +1,6 @@
 package tw.jruletest;
 
+import tw.jruletest.analyzers.ImportCollector;
 import tw.jruletest.analyzers.JavaClassAnalyzer;
 import tw.jruletest.analyzers.RuleExtractor;
 import tw.jruletest.files.FileFinder;
@@ -64,6 +65,7 @@ public class Runner {
             TestSuiteGenerator.writeSuiteToFile(rules, className);
             VariableStore.reset();
             currentMethod = "";
+            ImportCollector.resetImports();
         }
 
         TestExecutor.executeTests();

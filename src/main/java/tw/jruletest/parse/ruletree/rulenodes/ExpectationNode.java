@@ -1,5 +1,6 @@
 package tw.jruletest.parse.ruletree.rulenodes;
 
+import tw.jruletest.analyzers.ImportCollector;
 import tw.jruletest.exceptions.InvalidRuleStructureException;
 import tw.jruletest.parse.ruletree.TreeNode;
 import tw.jruletest.parse.ruletree.argumentnodes.ArgumentNode;
@@ -24,6 +25,8 @@ public class ExpectationNode implements TreeNode {
 
     @Override
     public String generateCode() {
+        ImportCollector.addImport("import tw.jruletest.expectations.*;");
+
         String code = "Expectations.expect(" + expectedValueTree.generateCode() + ").to";
         if(negated) {
             code += "Not";

@@ -23,11 +23,11 @@ public class SourceClass {
         this.className = className.substring(className.lastIndexOf(".") + 1);
 
         for(Field field: classFields) {
-            fields.add(new SourceField(field));
+            fields.add(new SourceField(field, className));
         }
 
         for(Method method: classMethods) {
-            methods.add(new SourceMethod(method));
+            methods.add(new SourceMethod(method, className));
         }
     }
 

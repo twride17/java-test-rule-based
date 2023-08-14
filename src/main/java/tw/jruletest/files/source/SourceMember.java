@@ -7,12 +7,15 @@ import java.lang.reflect.Type;
 
 public class SourceMember {
 
+    protected String fullClassName;
+
     protected String name;
     protected Type type;
     protected boolean isStatic = false;
     protected boolean isPublic = false;
 
-    public SourceMember(Member member) {
+    public SourceMember(Member member, String className) {
+        fullClassName = className;
         name = member.getName();
         switch(member.getModifiers()) {
             case Modifier.PUBLIC:
@@ -34,5 +37,9 @@ public class SourceMember {
 
     public Type getType() {
         return type;
+    }
+
+    public String getFullClassName() {
+        return fullClassName;
     }
 }

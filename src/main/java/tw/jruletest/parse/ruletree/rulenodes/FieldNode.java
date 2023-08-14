@@ -1,5 +1,6 @@
 package tw.jruletest.parse.ruletree.rulenodes;
 
+import tw.jruletest.analyzers.ImportCollector;
 import tw.jruletest.analyzers.JavaClassAnalyzer;
 import tw.jruletest.exceptions.AmbiguousMemberException;
 import tw.jruletest.exceptions.InvalidRuleStructureException;
@@ -20,6 +21,7 @@ public class FieldNode implements TreeNode {
 
     @Override
     public String generateCode() {
+        ImportCollector.addImport("import " + field.getFullClassName() + ";");
         return className + "." + field.getName();
     }
 
