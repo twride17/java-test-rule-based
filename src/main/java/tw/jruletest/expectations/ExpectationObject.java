@@ -11,6 +11,8 @@ public class ExpectationObject<T> {
     public void toEqual(T secondValue) {
         if(!firstValue.equals(secondValue)) {
             Expectations.failed("Unsatisfied Expectation: " + firstValue + " is not equal to " + secondValue + " when expected to be");
+        } else {
+            System.out.println("Expectation Satisfied: " + firstValue + " = " + secondValue);
         }
     }
 

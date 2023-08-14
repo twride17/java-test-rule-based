@@ -1,12 +1,18 @@
 package tw.jruletest;
 
+import tw.jruletest.analyzers.ImportCollector;
+import tw.jruletest.analyzers.JavaClassAnalyzer;
 import tw.jruletest.analyzers.RuleExtractor;
 import tw.jruletest.files.FileFinder;
 import tw.jruletest.generators.TestSuiteGenerator;
-import tw.jruletest.loaders.TestClassLoader;
 import tw.jruletest.parse.Parser;
+import tw.jruletest.variables.VariableStore;
+import tw.jruletest.virtualmachine.JavaClassCompiler;
+import tw.jruletest.virtualmachine.JavaClassLoader;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 
 /**
@@ -22,7 +28,9 @@ public class Runner {
     // Use framework classes to create own runner
 
     private static String path;
-    private static TestClassLoader loader;
+    private static JavaClassLoader loader;
+
+    private static String currentMethod = "";
 
     private static Map<String, Map<String, String>> ruleSets = new HashMap<>();
 
@@ -41,23 +49,38 @@ public class Runner {
 
         createTestClassLoader();
 
-        FileFinder.collectFiles(path);
+        removeExistingGeneratedTests();
         List<File> files = FileFinder.getFiles(path + "\\test\\java");
         for(File file: files) {
             runCommand("javac -cp src " + file.getPath().substring(file.getPath().indexOf("src")));
         }
+
+        loader.changeDirectory();
         RuleExtractor.extractRules(files);
+        JavaClassCompiler.compileJavaClasses();
+
+        loader.changeDirectory();
+        JavaClassAnalyzer.compileSourceFiles();
 
         for(String className: ruleSets.keySet()) {
             Map<String, String> rules = ruleSets.get(className);
-            System.out.println("Writing tests for " + className);
             for(String methodName: rules.keySet()) {
+                currentMethod = methodName;
                 rules.replace(methodName, Parser.parseRules(rules.get(methodName).split("\n")));
             }
             TestSuiteGenerator.writeSuiteToFile(rules, className);
+            VariableStore.reset();
+            currentMethod = "";
+            ImportCollector.resetImports();
         }
+        FileFinder.collectFiles(path);
 
+        loader.changeDirectory();
         TestExecutor.executeTests();
+    }
+
+    public static String getCurrentMethod() {
+        return currentMethod;
     }
 
     public static void runCommand(String command) {
@@ -82,6 +105,32 @@ public class Runner {
         }
     }
 
+    public static void clearClassFiles() {
+        List<File> files = FileFinder.getFiles("src");
+        for(File file: files) {
+            deleteFile(file.getPath().replace(".java", ".class"));
+            //System.out.println(file.getPath().replace(".java", ".class"));
+        }
+    }
+
+    private static void removeExistingGeneratedTests() {
+        FileFinder.collectFiles(path);
+        try {
+            List<File> testFiles = FileFinder.getFiles("generated");
+            for (File file : testFiles) {
+                deleteFile(file.getPath());
+            }
+            deleteFile(path + "\\test\\java\\generated\\TestResults.log");
+            FileFinder.collectFiles(path);
+        } catch(NullPointerException e) {}
+    }
+
+    private static void deleteFile(String filename) {
+        try {
+            Files.deleteIfExists(Paths.get(filename));
+        } catch (IOException e) {}
+    }
+
     public static String getPath() {
         return path;
     }
@@ -90,7 +139,7 @@ public class Runner {
         ruleSets.put(className, rules);
     }
 
-    public static TestClassLoader getLoader() {
+    public static JavaClassLoader getLoader() {
         return loader;
     }
 
@@ -99,7 +148,7 @@ public class Runner {
     }
 
     public static void createTestClassLoader(ClassLoader parent) {
-        loader = new TestClassLoader(parent);
+        loader = new JavaClassLoader(parent);
     }
 
     public static Map<String, Map<String, String>> getRuleSets() {

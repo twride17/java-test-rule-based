@@ -1,7 +1,9 @@
 package tw.jruletest.parse;
 
+import tw.jruletest.exceptions.InvalidRuleStructureException;
 import tw.jruletest.exceptions.UnparsableRuleException;
-import tw.jruletest.parse.rules.*;
+import tw.jruletest.parse.ruletree.TreeNode;
+import tw.jruletest.parse.ruletree.rulenodes.*;
 
 import java.util.*;
 
@@ -14,8 +16,10 @@ public class Parser {
      * Parses the rules from a test case
      */
 
-    private static final String[] KEYWORDS = {"Call", "Get", "Expect"};
-    private static final HashMap<String, Rule> KEYWORD_HANDLERS = mapKeywordsToHandlers();
+    public static final ArrayList<String> KEYWORDS = new ArrayList<>(Arrays.asList("call", "get", "store", "expect"));
+    private static final ArrayList<String> POSSIBLE_CONNECTIVES = new ArrayList<>(Arrays.asList(",", "and", "then"));
+
+    private static LinkedList<TreeNode> rules = new LinkedList<>();
 
     public static String parseRules(String[] rules) {
         String generatedCode = "";
@@ -26,57 +30,77 @@ public class Parser {
     }
 
     public static String parseRule(String rule) {
+        String[] subRules = rule.split("\\.\\s");
         String codeBlock = "";
-        ArrayList<String> ruleSegments = getRuleSegments(rule);
-        // Currently sequential commands
-        // TODO deal with different control flows
-        try {
-            for (String segment : ruleSegments) {
-                String keyword = segment.split(" ")[0];
-                String remains = segment.substring(segment.indexOf(" "));
-                codeBlock += KEYWORD_HANDLERS.get(keyword).decodeRule(remains) + "\n";
+        for(String subRule: subRules) {
+            try {
+                generateTrees(subRule);
+                for (TreeNode ruleNode : rules) {
+                    codeBlock += ruleNode.generateCode() + "\n";
+                }
+            } catch(UnparsableRuleException e) {
+                e.printError();
             }
-        } catch(UnparsableRuleException e) {
-            e.printError();
+            rules = new LinkedList<>();
         }
         return codeBlock;
     }
 
-    private static ArrayList<String> getRuleSegments(String rule) {
+    public static ArrayList<String> generateTrees(String rule) throws UnparsableRuleException {
+        String remainingRule = rule.trim();
         ArrayList<String> subRules = new ArrayList<>();
-        TreeMap<Integer, String> keywordLocations = new TreeMap<>();
-        for(String keyword: KEYWORDS) {
-            keywordLocations.put(rule.indexOf(keyword), keyword);
-        }
 
-        Integer[] indices = keywordLocations.keySet().toArray(new Integer[0]);
-        for(int i = 0; i < indices.length-1; i++) {
-            int location = indices[i];
-            if(location >= 0) {
-                subRules.add(rule.substring(location, indices[i+1]).trim());
+        // TODO Get first command, use it in case of non-existent subsequent keywords
+        do {
+            int subRuleIndex = getEndOfSubRule(remainingRule, remainingRule.split(" ")[0]);
+            subRules.add(remainingRule.substring(0, subRuleIndex));
+            remainingRule = remainingRule.substring(subRuleIndex).trim();
+
+            String connective = "";
+            for(String possibleConnective: POSSIBLE_CONNECTIVES) {
+                if(remainingRule.startsWith(possibleConnective)) {
+                    connective = possibleConnective;
+                }
             }
-        }
-        subRules.add(rule.substring(indices[indices.length-1]).trim());
+
+            if(!connective.isEmpty()) {
+                remainingRule = remainingRule.substring(connective.length()).trim();
+
+                if(remainingRule.isEmpty()) {
+                    throw new UnparsableRuleException(remainingRule);
+                }
+            } else if(!remainingRule.isEmpty()) {
+                throw new UnparsableRuleException(remainingRule);
+            }
+        } while(!remainingRule.isEmpty());
+
         return subRules;
     }
 
-    private static HashMap<String, Rule> mapKeywordsToHandlers() {
-        HashMap<String, Rule> keywordHandlers = new HashMap<>();
-        for(String keyword: KEYWORDS) {
-            Rule handler = null;
-            switch (keyword) {
-                case "Get":
-                    handler = new GetValueRule();
+    private static int getEndOfSubRule(String rule, String startCommand) throws UnparsableRuleException {
+        TreeNode node;
+        try {
+            switch (startCommand.toLowerCase()) {
+                case "expect":
+                    node = new ExpectationNode();
                     break;
-                case "Call":
-                    handler = new MethodCallRule();
+                case "get":
+                    node = new GetValueNode();
                     break;
-                case "Expect":
-                    handler = new ExpectationRule();
+                case "store":
+                    node = new StoreValueNode();
                     break;
+                case "call":
+                    node = new CallMethodNode();
+                    break;
+                default:
+                    throw new UnparsableRuleException(rule);
             }
-            keywordHandlers.put(keyword, handler);
+            rules.add(node);
+            return node.validateRule(rule);
+        } catch(InvalidRuleStructureException e) {
+            e.printError();
+            throw new UnparsableRuleException(rule);
         }
-        return keywordHandlers;
     }
 }
