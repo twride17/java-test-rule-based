@@ -11,6 +11,8 @@ public class ExpectationObject<T> {
     public void toEqual(T actualValue) throws UnsatisfiedExpectationError {
         if(!expectedValue.equals(actualValue)) {
             toFail("Unsatisfied Expectation: " + expectedValue + " is not equal to " + actualValue);
+        } else {
+            System.out.println("Expectation Satisfied: " + expectedValue + " = " + actualValue);
         }
     }
 

@@ -18,15 +18,6 @@ public class TestExecutor {
     public static void executeTests() {
         ClassCompiler.compileGeneratedClasses();
 
-        List<String> classNames = FileFinder.getClassNames(FileFinder.getFiles(System.getProperty("user.dir") + "\\src\\main\\java"), "src\\main\\java\\");
-        for(String className: classNames) {
-            try {
-                Runner.getLoader().loadClass(className);
-            } catch (ClassNotFoundException e) {
-                System.out.println("Could not find " + className);
-            } catch (LinkageError e) {}
-        }
-
         Runner.getLoader().setTopPackage("generated");
         List<File> generatedTestFiles = FileFinder.getFiles("generated");
         for(File generatedFile: generatedTestFiles) {

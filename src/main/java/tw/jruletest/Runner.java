@@ -1,11 +1,14 @@
 package tw.jruletest;
 
+import tw.jruletest.analyzers.ImportCollector;
+import tw.jruletest.analyzers.JavaClassAnalyzer;
 import tw.jruletest.analyzers.RuleExtractor;
 import tw.jruletest.compilers.ClassCompiler;
 import tw.jruletest.files.FileFinder;
 import tw.jruletest.generators.TestSuiteGenerator;
 import tw.jruletest.loaders.TestClassLoader;
 import tw.jruletest.parse.Parser;
+import tw.jruletest.variables.VariableStore;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -26,6 +29,8 @@ public class Runner {
 
     private static String path;
     private static TestClassLoader loader;
+
+    private static String currentMethod = "";
 
     private static Map<String, Map<String, String>> ruleSets = new HashMap<>();
 
@@ -49,19 +54,33 @@ public class Runner {
         for(File file: files) {
             runCommand("javac -cp src " + file.getPath().substring(file.getPath().indexOf("src")));
         }
+
+        loader.changeDirectory();
         RuleExtractor.extractRules(files);
         ClassCompiler.compileJavaClasses();
+
+        loader.changeDirectory();
+        JavaClassAnalyzer.compileSourceFiles();
 
         for(String className: ruleSets.keySet()) {
             Map<String, String> rules = ruleSets.get(className);
             for(String methodName: rules.keySet()) {
+                currentMethod = methodName;
                 rules.replace(methodName, Parser.parseRules(rules.get(methodName).split("\n")));
             }
             TestSuiteGenerator.writeSuiteToFile(rules, className);
+            VariableStore.reset();
+            currentMethod = "";
+            ImportCollector.resetImports();
         }
         FileFinder.collectFiles(path);
 
+        loader.changeDirectory();
         TestExecutor.executeTests();
+    }
+
+    public static String getCurrentMethod() {
+        return currentMethod;
     }
 
     public static void runCommand(String command) {

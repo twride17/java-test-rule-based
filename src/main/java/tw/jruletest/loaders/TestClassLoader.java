@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 
 public class TestClassLoader extends ClassLoader {
 
+    private String sourceDirectory = "main";
     private String topPackage;
     private String filePath;
 
@@ -23,7 +24,7 @@ public class TestClassLoader extends ClassLoader {
     }
 
     private Class<?> getClass(String name) throws ClassNotFoundException {
-        //String file = name.replace('.', File.separatorChar) + ".class";
+        setFilePath(System.getProperty("user.dir") + "\\src\\" + sourceDirectory + "\\java\\" + name.replaceAll("\\.", "\\\\") + ".class");
         try {
             // This loads the byte code data from the file
             byte[] b = loadClassFileData();
@@ -32,7 +33,7 @@ public class TestClassLoader extends ClassLoader {
             resolveClass(c);
             return c;
         } catch (IOException e) {
-            System.out.println("Couldn't find: " + name);
+            System.out.println("Couldn't find: " + filePath);
             throw new ClassNotFoundException();
         }
     }
@@ -48,10 +49,18 @@ public class TestClassLoader extends ClassLoader {
     private byte[] loadClassFileData() throws IOException {
         InputStream stream = Files.newInputStream(Paths.get(filePath));
         int size = stream.available();
-        byte buff[] = new byte[size];
+        byte[] buff = new byte[size];
         DataInputStream in = new DataInputStream(stream);
         in.readFully(buff);
         in.close();
         return buff;
+    }
+
+    public void changeDirectory() {
+        if(sourceDirectory.equals("main")) {
+            sourceDirectory = "test";
+        } else {
+            sourceDirectory = "main";
+        }
     }
 }

@@ -24,7 +24,6 @@ public class TestClassAnalyzer {
         int packageNameIndex = filePath.indexOf("test\\java\\")+10;
         className = filePath.substring(packageNameIndex, classNameIndex).replaceAll("\\\\", ".");
         Runner.getLoader().setTopPackage(className.substring(0, className.indexOf(".")));
-        Runner.getLoader().setFilePath(filePath.replace(".java", ".class"));
         testClassFile = new TestClassFile(className);
     }
 

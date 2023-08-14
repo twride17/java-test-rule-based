@@ -2,7 +2,7 @@ package tw.jruletest.expectations;
 
 import org.junit.*;
 
-import tw.jruletest.testprograms.Example;
+import tw.jruletest.testexamples.testprograms.Example;
 import tw.jruletest.files.FileFinder;
 
 import java.io.IOException;
