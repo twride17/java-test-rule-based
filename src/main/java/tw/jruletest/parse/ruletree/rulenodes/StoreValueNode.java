@@ -3,13 +3,11 @@ package tw.jruletest.parse.ruletree.rulenodes;
 import tw.jruletest.Runner;
 import tw.jruletest.analyzers.TypeIdentifier;
 import tw.jruletest.exceptions.InvalidRuleStructureException;
-import tw.jruletest.files.source.SourceField;
-import tw.jruletest.files.source.SourceMethod;
 import tw.jruletest.parse.ruletree.TreeNode;
 import tw.jruletest.parse.ruletree.argumentnodes.ArgumentNode;
 import tw.jruletest.parse.ruletree.argumentnodes.VariableNode;
-import tw.jruletest.translation.Variable;
-import tw.jruletest.translation.VariableStore;
+import tw.jruletest.variables.Variable;
+import tw.jruletest.variables.VariableStore;
 
 import java.lang.reflect.Type;
 import java.util.regex.Matcher;

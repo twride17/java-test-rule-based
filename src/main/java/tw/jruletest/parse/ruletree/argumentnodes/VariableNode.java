@@ -3,7 +3,7 @@ package tw.jruletest.parse.ruletree.argumentnodes;
 import tw.jruletest.Runner;
 import tw.jruletest.exceptions.InvalidRuleStructureException;
 import tw.jruletest.parse.ruletree.TreeNode;
-import tw.jruletest.translation.VariableStore;
+import tw.jruletest.variables.VariableStore;
 
 import java.lang.reflect.Type;
 import java.util.regex.Matcher;

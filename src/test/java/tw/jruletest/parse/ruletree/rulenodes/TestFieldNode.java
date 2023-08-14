@@ -6,7 +6,6 @@ import tw.jruletest.analyzers.JavaClassAnalyzer;
 import tw.jruletest.exceptions.InvalidRuleStructureException;
 import tw.jruletest.files.FileFinder;
 import tw.jruletest.files.source.SourceClass;
-import tw.jruletest.translation.VariableStore;
 
 import java.io.IOException;
 import java.nio.file.Files;

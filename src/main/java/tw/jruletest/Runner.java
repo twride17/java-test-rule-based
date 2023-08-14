@@ -7,7 +7,7 @@ import tw.jruletest.files.FileFinder;
 import tw.jruletest.generators.TestSuiteGenerator;
 import tw.jruletest.loaders.TestClassLoader;
 import tw.jruletest.parse.Parser;
-import tw.jruletest.translation.VariableStore;
+import tw.jruletest.variables.VariableStore;
 
 import java.io.*;
 import java.util.*;

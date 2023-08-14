@@ -1,4 +1,4 @@
-package tw.jruletest.translation;
+package tw.jruletest.variables;
 
 import org.junit.*;
 

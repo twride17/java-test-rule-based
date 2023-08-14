@@ -5,7 +5,7 @@ import tw.jruletest.Runner;
 import tw.jruletest.exceptions.InvalidRuleStructureException;
 import tw.jruletest.parse.ruletree.TreeNode;
 import tw.jruletest.parse.ruletree.argumentnodes.*;
-import tw.jruletest.translation.VariableStore;
+import tw.jruletest.variables.VariableStore;
 
 public class TestArgument {
 
