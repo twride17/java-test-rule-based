@@ -27,7 +27,6 @@ public class TestJavaClassAnalyzer {
 
     @Before
     public void setup() {
-        Runner.runCommand("javac -cp src src/test/java/tw/jruletest/testprograms/Example.java");
         FileFinder.collectFiles(System.getProperty("user.dir") + "\\src\\test\\java");
         Runner.createTestClassLoader();
         Runner.runCommand("javac -cp src " +
@@ -38,25 +37,12 @@ public class TestJavaClassAnalyzer {
     }
 
     @Test
-    public void testMethodCallType() {
+    public void testSourceIdentification() {
         try {
             loadCLass("tw.jruletest.testexamples.ExampleClass");
-            Assert.assertEquals("java.lang.String", JavaClassAnalyzer.getReturnType("ExampleClass.testString").getTypeName());
-            Assert.assertEquals("int", JavaClassAnalyzer.getReturnType("ExampleClass.testInt").getTypeName());
-            Assert.assertEquals("char", JavaClassAnalyzer.getReturnType("ExampleClass.testChar").getTypeName());
-        } catch(AmbiguousMemberException | UnidentifiedCallException e) {
-            Assert.fail("Failed");
-        }
-    }
-
-    @Test
-    public void testFieldType(){
-        try {
-            loadCLass("tw.jruletest.testexamples.ExampleClass");
-            Assert.assertEquals("int", JavaClassAnalyzer.getReturnType("ExampleClass.intValue").getTypeName());
-            Assert.assertEquals("float", JavaClassAnalyzer.getReturnType("ExampleClass.floatValue").getTypeName());
-            Assert.assertEquals("double", JavaClassAnalyzer.getReturnType("ExampleClass.doubleValue").getTypeName());
-        } catch(AmbiguousMemberException | UnidentifiedCallException e) {
+            SourceClass cls = JavaClassAnalyzer.identifySourceClass("ExampleClass");
+            Assert.assertEquals("ExampleClass", cls.getClassName());
+        } catch(UnidentifiedCallException | AmbiguousMemberException e) {
             Assert.fail("Failed");
         }
     }
@@ -66,47 +52,23 @@ public class TestJavaClassAnalyzer {
         try {
             loadCLass("tw.jruletest.testexamples.subpackage1.Example");
             loadCLass("tw.jruletest.testexamples.subpackage2.Example");
-            JavaClassAnalyzer.getReturnType("Example.dummy").getTypeName();
-            Assert.fail("Passed");
+            JavaClassAnalyzer.identifySourceClass("Example");
+            Assert.fail("Passed when should fail");
         } catch(AmbiguousMemberException e) { }
         catch(UnidentifiedCallException e) {
-            Assert.fail("Failed");
-        }
-    }
-
-    @Test
-    public void testAmbiguousCall() {
-        try {
-            loadCLass("tw.jruletest.testexamples.Example2");
-            JavaClassAnalyzer.getReturnType("Example2.dummy1").getTypeName();
-            Assert.fail("Passed");
-        } catch(AmbiguousMemberException e) { }
-        catch(UnidentifiedCallException e) {
-            Assert.fail("Failed");
+            Assert.fail("Failed for wrong reason");
         }
     }
 
     @Test
     public void testUnidentifiedSource() {
         try {
-            JavaClassAnalyzer.getReturnType("Example2.dummy").getTypeName();
-            Assert.fail("Passed");
-        } catch(UnidentifiedCallException e) { }
-        catch(AmbiguousMemberException e) {
-            Assert.fail("Failed");
-        }
-    }
-
-    @Test
-    public void testUnidentifiedCall() {
-        try {
-            loadCLass("tw.jruletest.testexamples.subpackage1.Example2");
-            JavaClassAnalyzer.getReturnType("Example2.dummy").getTypeName();
-            Assert.fail("Passed");
-        } catch(UnidentifiedCallException e) { }
-        catch(AmbiguousMemberException e) {
-            Assert.fail("Failed");
-        }
+            loadCLass("tw.jruletest.testexamples.subpackage1.Example");
+            JavaClassAnalyzer.identifySourceClass("Example3");
+            Assert.fail("Passed when should fail");
+        } catch(AmbiguousMemberException e) {
+            Assert.fail("Failed for wrong reason");
+        }  catch(UnidentifiedCallException e) { }
     }
 
     @After

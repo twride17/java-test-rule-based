@@ -1,22 +1,19 @@
 package tw.jruletest;
 
-import tw.jruletest.compilers.ClassCompiler;
 import tw.jruletest.expectations.UnsatisfiedExpectationError;
 import tw.jruletest.files.FileFinder;
 import tw.jruletest.logging.TestLogger;
+import tw.jruletest.virtualmachine.JavaClassCompiler;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
 
 public class TestExecutor {
 
     public static void executeTests() {
-        ClassCompiler.compileGeneratedClasses();
+        JavaClassCompiler.compileGeneratedClasses();
 
         Runner.getLoader().setTopPackage("generated");
         List<File> generatedTestFiles = FileFinder.getFiles("generated");

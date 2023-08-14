@@ -1,11 +1,11 @@
-package tw.jruletest.compilers;
+package tw.jruletest.virtualmachine;
 
 import tw.jruletest.Runner;
 import tw.jruletest.files.FileFinder;
 
 import java.util.ArrayList;
 
-public class ClassCompiler {
+public class JavaClassCompiler {
 
     public static void compileClasses(ArrayList<String> packages) {
         String command = "javac -cp " + System.getProperty("java.class.path");

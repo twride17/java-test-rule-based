@@ -1,17 +1,17 @@
-package tw.jruletest.loaders;
+package tw.jruletest.virtualmachine;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-public class TestClassLoader extends ClassLoader {
+public class JavaClassLoader extends ClassLoader {
 
     private String sourceDirectory = "main";
     private String topPackage;
     private String filePath;
 
-    public TestClassLoader(ClassLoader parent) {
+    public JavaClassLoader(ClassLoader parent) {
         super(parent);
     }
 

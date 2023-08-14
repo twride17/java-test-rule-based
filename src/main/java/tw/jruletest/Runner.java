@@ -3,12 +3,12 @@ package tw.jruletest;
 import tw.jruletest.analyzers.ImportCollector;
 import tw.jruletest.analyzers.JavaClassAnalyzer;
 import tw.jruletest.analyzers.RuleExtractor;
-import tw.jruletest.compilers.ClassCompiler;
 import tw.jruletest.files.FileFinder;
 import tw.jruletest.generators.TestSuiteGenerator;
-import tw.jruletest.loaders.TestClassLoader;
 import tw.jruletest.parse.Parser;
 import tw.jruletest.variables.VariableStore;
+import tw.jruletest.virtualmachine.JavaClassCompiler;
+import tw.jruletest.virtualmachine.JavaClassLoader;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -28,7 +28,7 @@ public class Runner {
     // Use framework classes to create own runner
 
     private static String path;
-    private static TestClassLoader loader;
+    private static JavaClassLoader loader;
 
     private static String currentMethod = "";
 
@@ -57,7 +57,7 @@ public class Runner {
 
         loader.changeDirectory();
         RuleExtractor.extractRules(files);
-        ClassCompiler.compileJavaClasses();
+        JavaClassCompiler.compileJavaClasses();
 
         loader.changeDirectory();
         JavaClassAnalyzer.compileSourceFiles();
@@ -139,7 +139,7 @@ public class Runner {
         ruleSets.put(className, rules);
     }
 
-    public static TestClassLoader getLoader() {
+    public static JavaClassLoader getLoader() {
         return loader;
     }
 
@@ -148,7 +148,7 @@ public class Runner {
     }
 
     public static void createTestClassLoader(ClassLoader parent) {
-        loader = new TestClassLoader(parent);
+        loader = new JavaClassLoader(parent);
     }
 
     public static Map<String, Map<String, String>> getRuleSets() {
