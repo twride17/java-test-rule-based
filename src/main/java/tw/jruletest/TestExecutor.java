@@ -51,7 +51,7 @@ public class TestExecutor {
                 executeTest(instance, test);
                 TestLogger.passedTest(test.getName());
             } catch(Throwable e) {
-                String error = ((UnsatisfiedExpectationError)e).explainError();
+                String error = ((UnsatisfiedExpectationError)e).getErrorMessage();
                 TestLogger.failedTest(test.getName(), error);
             }
         }
