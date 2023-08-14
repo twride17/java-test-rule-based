@@ -15,8 +15,7 @@ public class SourceClass {
     private ArrayList<SourceMethod> methods = new ArrayList<>();
     private ArrayList<SourceField> fields = new ArrayList<>();
 
-    public SourceClass(String className) throws ClassNotFoundException {
-        Class<?> cls = Class.forName(className);
+    public SourceClass(String className, Class<?> cls) throws ClassNotFoundException {
         Field[] classFields = cls.getDeclaredFields();
         Method[] classMethods = cls.getDeclaredMethods();
 

@@ -25,7 +25,6 @@ public class TestClassLoader extends ClassLoader {
 
     private Class<?> getClass(String name) throws ClassNotFoundException {
         setFilePath(System.getProperty("user.dir") + "\\src\\" + sourceDirectory + "\\java\\" + name.replaceAll("\\.", "\\\\") + ".class");
-        //String file = name.replace('.', File.separatorChar) + ".class";
         try {
             // This loads the byte code data from the file
             byte[] b = loadClassFileData();
@@ -34,7 +33,7 @@ public class TestClassLoader extends ClassLoader {
             resolveClass(c);
             return c;
         } catch (IOException e) {
-            System.out.println("Couldn't find: " + name);
+            System.out.println("Couldn't find: " + filePath);
             throw new ClassNotFoundException();
         }
     }

@@ -51,8 +51,11 @@ public class Runner {
         for(File file: files) {
             runCommand("javac -cp src " + file.getPath().substring(file.getPath().indexOf("src")));
         }
+
+        loader.changeDirectory();
         RuleExtractor.extractRules(files);
 
+        loader.changeDirectory();
         JavaClassAnalyzer.compileSourceFiles();
 
         for(String className: ruleSets.keySet()) {
@@ -68,6 +71,7 @@ public class Runner {
             ImportCollector.resetImports();
         }
 
+        loader.changeDirectory();
         TestExecutor.executeTests();
     }
 

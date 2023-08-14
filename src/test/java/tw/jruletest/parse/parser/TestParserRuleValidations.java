@@ -19,8 +19,8 @@ public class TestParserRuleValidations {
 
     private void loadCLass(String className) {
         try {
-            Runner.getLoader().loadClass(className);
-            JavaClassAnalyzer.sourceFiles.put(className, new SourceClass(className));
+            Class<?> c = Runner.getLoader().loadClass(className);
+            JavaClassAnalyzer.sourceFiles.put(className, new SourceClass(className, c));
         } catch (ClassNotFoundException e) {
             System.out.println("Could not find " + className);
         } catch (LinkageError e) {

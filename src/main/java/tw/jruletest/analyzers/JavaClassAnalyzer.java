@@ -34,11 +34,11 @@ public class JavaClassAnalyzer {
         Runner.runCommand(command);
 
         List<String> classNames = FileFinder.getClassNames(FileFinder.getFiles(System.getProperty("user.dir") + ROOT), ROOT);
-        Runner.getLoader().setTopPackage("tw");
+        Runner.getLoader().setTopPackage(classNames.get(0).substring(0, classNames.get(0).indexOf('.')));
         for(String className: classNames) {
             try {
-                Runner.getLoader().loadClass(className);
-                sourceFiles.put(className, new SourceClass(className));
+                Class<?> c = Runner.getLoader().loadClass(className);
+                sourceFiles.put(className, new SourceClass(className, c));
             } catch (ClassNotFoundException e) {
                 System.out.println("Could not find " + className);
             } catch (LinkageError e) {
