@@ -28,40 +28,34 @@ public class Runner {
     // Use framework classes to create own runner
 
     private static String path;
-    private static JavaClassLoader loader;
 
     private static String currentMethod = "";
 
     private static Map<String, Map<String, String>> ruleSets = new HashMap<>();
 
     public static void main(String[] args) {
+        // TODO Separate main function logic into separate classes/methods
         if(args.length == 0) {
             // assuming JAR in same place as source
             path = System.getProperty("user.dir");
         }
         else {
             // assuming JAR in different place as source
-            System.out.println("args given");
             path = args[0];
         }
-        //path += "\\src\\test\\java\\examples";
         path += "\\src";
 
-        createTestClassLoader();
-
         removeExistingGeneratedTests();
-        List<File> files = FileFinder.getFiles(path + "\\test\\java");
-        for(File file: files) {
-            runCommand("javac -cp src " + file.getPath().substring(file.getPath().indexOf("src")));
-        }
 
-        loader.changeDirectory();
-        RuleExtractor.extractRules(files);
-        JavaClassCompiler.compileJavaClasses();
+        FileFinder.collectFiles(path);
 
-        loader.changeDirectory();
-        JavaClassAnalyzer.compileSourceFiles();
+        JavaClassLoader.createLoader();
+        String firstClass = FileFinder.getClassNames(FileFinder.getFiles(path + "\\main\\java"), "\\main\\java\\").get(0);
+        JavaClassLoader.setLoaderRootPackage(firstClass.substring(0, firstClass.indexOf('.')));
+        JavaClassLoader.loadTestClasses();
+        RuleExtractor.extractRules();
 
+        JavaClassLoader.loadSourceClasses();
         for(String className: ruleSets.keySet()) {
             Map<String, String> rules = ruleSets.get(className);
             for(String methodName: rules.keySet()) {
@@ -73,9 +67,7 @@ public class Runner {
             currentMethod = "";
             ImportCollector.resetImports();
         }
-        FileFinder.collectFiles(path);
 
-        loader.changeDirectory();
         TestExecutor.executeTests();
     }
 
@@ -85,10 +77,10 @@ public class Runner {
 
     public static void runCommand(String command) {
         try {
-            //System.out.println(command);
+            System.out.println(command);
             Process process = Runtime.getRuntime().exec(command);
             //displayOutput(command + " stdout:", process.getInputStream());
-            //displayOutput(command + " stderr:", process.getErrorStream());
+            displayOutput(command + " stderr:", process.getErrorStream());
             process.waitFor();
             //System.out.println(command + " exitValue() " + process.exitValue());
         } catch(Exception e) {
@@ -131,27 +123,19 @@ public class Runner {
         } catch (IOException e) {}
     }
 
-    public static String getPath() {
-        return path;
-    }
-
     public static void addTestClass(String className, Map<String, String> rules) {
         ruleSets.put(className, rules);
     }
 
-    public static JavaClassLoader getLoader() {
-        return loader;
-    }
-
-    public static void createTestClassLoader() {
-        createTestClassLoader(Runner.class.getClassLoader());
-    }
-
-    public static void createTestClassLoader(ClassLoader parent) {
-        loader = new JavaClassLoader(parent);
-    }
-
     public static Map<String, Map<String, String>> getRuleSets() {
         return ruleSets;
+    }
+
+    public static String getRootPath() {
+        return path;
+    }
+
+    public static void setRootPath(String newPath) {
+        path = newPath;
     }
 }

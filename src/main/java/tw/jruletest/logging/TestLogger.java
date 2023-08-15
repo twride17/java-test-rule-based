@@ -29,7 +29,7 @@ public class TestLogger {
 
     public static void writeToLogfile() {
         try {
-            BufferedWriter logWriter = new BufferedWriter(new FileWriter(Runner.getPath() + "\\test\\java\\" + LOG_FILENAME, true));
+            BufferedWriter logWriter = new BufferedWriter(new FileWriter(Runner.getRootPath() + "\\test\\java\\" + LOG_FILENAME, true));
             logWriter.write(currentLog + "\n");
             logWriter.close();
             currentLog = "";
@@ -38,7 +38,7 @@ public class TestLogger {
 
     public static void printLog() {
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(Runner.getPath() + "\\test\\java\\" + LOG_FILENAME));
+            BufferedReader reader = new BufferedReader(new FileReader(Runner.getRootPath() + "\\test\\java\\" + LOG_FILENAME));
             String line;
             do {
                 line = reader.readLine();

@@ -2,6 +2,7 @@ package tw.jruletest.analyzers;
 
 import tw.jruletest.Runner;
 import tw.jruletest.files.TestClassFile;
+import tw.jruletest.virtualmachine.JavaClassLoader;
 
 import java.io.*;
 import java.lang.reflect.Field;
@@ -23,14 +24,12 @@ public class TestClassAnalyzer {
         int classNameIndex = filePath.lastIndexOf(".");
         int packageNameIndex = filePath.indexOf("test\\java\\")+10;
         className = filePath.substring(packageNameIndex, classNameIndex).replaceAll("\\\\", ".");
-        Runner.getLoader().setTopPackage(className.substring(0, className.indexOf(".")));
         testClassFile = new TestClassFile(className);
     }
 
     public TestClassFile readTestClass() {
         try {
-            Runner.getLoader().loadClass(className);
-            Class<?> cls = Class.forName(className, false, Runner.getLoader());
+            Class<?> cls = Class.forName(className, false, JavaClassLoader.getLoader());
             Object classInstance = cls.newInstance();
 
             Method[] methods = orderMethods(cls.getDeclaredMethods());

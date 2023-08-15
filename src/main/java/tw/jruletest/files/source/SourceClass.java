@@ -2,6 +2,7 @@ package tw.jruletest.files.source;
 
 import tw.jruletest.exceptions.AmbiguousMemberException;
 import tw.jruletest.exceptions.UnidentifiedCallException;
+import tw.jruletest.virtualmachine.JavaClassLoader;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -15,7 +16,9 @@ public class SourceClass {
     private ArrayList<SourceMethod> methods = new ArrayList<>();
     private ArrayList<SourceField> fields = new ArrayList<>();
 
-    public SourceClass(String className, Class<?> cls) throws ClassNotFoundException {
+    public SourceClass(String className) throws ClassNotFoundException {
+        // Move class finding into other helper class?
+        Class<?> cls = Class.forName(className, false, JavaClassLoader.getLoader());
         Field[] classFields = cls.getDeclaredFields();
         Method[] classMethods = cls.getDeclaredMethods();
 

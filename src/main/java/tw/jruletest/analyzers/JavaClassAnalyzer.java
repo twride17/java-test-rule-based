@@ -12,9 +12,7 @@ import java.util.List;
 
 public class JavaClassAnalyzer {
 
-    private static final String ROOT = "\\src\\main\\java\\";
-
-    public static HashMap<String, SourceClass> sourceFiles = new HashMap<>();
+    public static HashMap<String, SourceClass> sourceClasses = new HashMap<>();
 
     /**
      * @author Toby Wride
@@ -22,37 +20,12 @@ public class JavaClassAnalyzer {
      * Performs reflection on the source java classes to simplify the process of decoding rules
      * */
 
-    public static void compileSourceFiles() {
-        FileFinder.collectFiles(System.getProperty("user.dir") + "\\src");
-        String command = "javac -cp \"" + System.getProperty("java.class.path") + "\"";
-
-        List<String> javaFolderNames = FileFinder.getDistinctDirectoryNames(ROOT);
-        for(String javaFolderName: javaFolderNames) {
-            command += " " + javaFolderName + "\\*.java";
-        }
-
-        Runner.runCommand(command);
-
-        List<String> classNames = FileFinder.getClassNames(FileFinder.getFiles(System.getProperty("user.dir") + ROOT), ROOT);
-        Runner.getLoader().setTopPackage(classNames.get(0).substring(0, classNames.get(0).indexOf('.')));
-        for(String className: classNames) {
-            try {
-                Class<?> c = Runner.getLoader().loadClass(className);
-                sourceFiles.put(className, new SourceClass(className, c));
-            } catch (ClassNotFoundException e) {
-                System.out.println("Could not find " + className);
-            } catch (LinkageError e) {
-                System.out.println("Linkage error detected for: " + className);
-            }
-        }
-    }
-
     public static SourceClass identifySourceClass(String cls) throws AmbiguousMemberException, UnidentifiedCallException {
         SourceClass source = null;
-        for(String sourceName: sourceFiles.keySet()) {
+        for(String sourceName: sourceClasses.keySet()) {
             if(sourceName.endsWith(cls)) {
                 if(source == null) {
-                    source = sourceFiles.get(sourceName);
+                    source = sourceClasses.get(sourceName);
                 } else {
                     throw new AmbiguousMemberException(cls);
                 }
@@ -64,5 +37,13 @@ public class JavaClassAnalyzer {
         } else {
             return source;
         }
+    }
+
+    public static void addSourceClass(SourceClass cls) {
+        sourceClasses.put(cls.getClassName(), cls);
+    }
+
+    public static void resetSourceClasses() {
+        sourceClasses = new HashMap<>();
     }
 }
