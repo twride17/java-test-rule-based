@@ -1,4 +1,4 @@
-package tw.jruletest.testexamples.subpackage2;
+package tw.jruletest.testing.examples.subpackage2;
 
 public class Example {
 
