@@ -35,15 +35,14 @@ public class FileFinder {
         return requiredFiles;
     }
 
-    public static List<String> getDistinctPackageNames(String directory) {
-        return getDistinctPackageNames(getFiles(directory));
-    }
-
     public static List<String> getDistinctPackageNames() {
         return getDistinctPackageNames(FileFinder.getFiles("src"));
     }
 
-    // Rewrite
+    public static List<String> getDistinctPackageNames(String directory) {
+        return getDistinctPackageNames(getFiles(directory));
+    }
+
     public static List<String> getDistinctPackageNames(List<File> classFiles) {
         List<String> directories = new ArrayList<>();
         for(File classFile: classFiles) {

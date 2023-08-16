@@ -91,7 +91,7 @@ public class JavaClassLoader extends ClassLoader {
             try {
                 loader.loadClass(className);
                 JavaClassAnalyzer.addSourceClass(new SourceClass(className));
-                System.out.println("\n" + className + " loaded successfully\n");
+                System.out.println("\n" + className + " loaded successfully");
             } catch (ClassNotFoundException e) {
                 System.out.println("Could not find " + className);
             } catch (LinkageError e) {
