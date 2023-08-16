@@ -1,13 +1,11 @@
 package tw.jruletest;
 
 import tw.jruletest.analyzers.ImportCollector;
-import tw.jruletest.analyzers.JavaClassAnalyzer;
 import tw.jruletest.analyzers.RuleExtractor;
 import tw.jruletest.files.FileFinder;
 import tw.jruletest.generators.TestSuiteGenerator;
 import tw.jruletest.parse.Parser;
 import tw.jruletest.variables.VariableStore;
-import tw.jruletest.virtualmachine.JavaClassCompiler;
 import tw.jruletest.virtualmachine.JavaClassLoader;
 
 import java.io.*;
@@ -50,7 +48,7 @@ public class Runner {
         FileFinder.collectFiles(path);
 
         JavaClassLoader.createLoader();
-        String firstClass = FileFinder.getClassNames(FileFinder.getFiles(path + "\\main\\java"), "\\main\\java\\").get(0);
+        String firstClass = FileFinder.getClassNames(FileFinder.getFiles(path + "\\main\\java")).get(0);
         JavaClassLoader.setLoaderRootPackage(firstClass.substring(0, firstClass.indexOf('.')));
         JavaClassLoader.loadTestClasses();
         RuleExtractor.extractRules();

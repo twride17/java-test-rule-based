@@ -7,6 +7,7 @@ import tw.jruletest.files.FileFinder;
 import tw.jruletest.files.source.SourceClass;
 import tw.jruletest.parse.Parser;
 import tw.jruletest.variables.VariableStore;
+import tw.jruletest.virtualmachine.JavaClassLoader;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,31 +16,18 @@ import java.util.HashMap;
 
 public class TestParserCodeGeneration {
 
-    private void loadCLass(String className) {
-        try {
-            Class<?> c = Runner.getLoader().loadClass(className);
-            JavaClassAnalyzer.sourceFiles.put(className, new SourceClass(className, c));
-        } catch (ClassNotFoundException e) {
-            System.out.println("Could not find " + className);
-        } catch (LinkageError e) {
-            System.out.println("Linkage error detected for: " + className);
-        }
-    }
-
     @Before
     public void setup() {
-        VariableStore.addVariable("", "value", int.class);
-        FileFinder.collectFiles(System.getProperty("user.dir") + "\\src\\main\\java");
-        Runner.createTestClassLoader();
-        Runner.runCommand("javac -cp src " + System.getProperty("user.dir") + "\\src\\main\\java\\tw\\jruletest\\testexamples\\testprograms\\*.java ");
-        Runner.getLoader().setTopPackage("tw");
+        Runner.setRootPath(System.getProperty("user.dir") + "\\src");
+        VariableStore.addVariable(Runner.getCurrentMethod(), "value", int.class);
+        FileFinder.collectFiles(System.getProperty("user.dir") + "\\src");
+        JavaClassLoader.createLoader();
+        JavaClassLoader.setLoaderRootPackage("tw");
+        JavaClassLoader.loadClasses("programs");
     }
 
     @Test
     public void testCodeGenerationOfSingleRules() {
-        loadCLass("tw.jruletest.testexamples.testprograms.Class");
-        loadCLass("tw.jruletest.testexamples.testprograms.Example");
-
         String[] rules = {"Get value of Class.method: 1 and `Hello`, store value in xValue then expect xValue to equal 1",
                             "Call method Example.exampleMethod then store value of xValue in xValue1 and expect xValue1 to equal `New string`",
                             "call Example.exampleMethod: -0.987f, call Class.method then store value of Example.m with: true in x and expect x to not equal `String`",
@@ -60,8 +48,6 @@ public class TestParserCodeGeneration {
 
     @Test
     public void testCodeGenerationOfRuleBlock() {
-        loadCLass("tw.jruletest.testexamples.testprograms.Class");
-        loadCLass("tw.jruletest.testexamples.testprograms.Example");
 
         String[] rules = {"Get value of Class.method: 1 and `Hello`, store value in xValue then expect xValue to equal 1",
                 "Call method Example.exampleMethod then store value of xValue in xValue1 and expect xValue1 to equal `New string`",
@@ -81,7 +67,7 @@ public class TestParserCodeGeneration {
     @After
     public void teardown() {
         VariableStore.reset();
-        JavaClassAnalyzer.sourceFiles = new HashMap<>();
+        //JavaClassAnalyzer.sourceFiles = new HashMap<>();
         try {
             Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/main/java/tw/jruletest/testexamples/testprograms/Example.class"));
             Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/main/java/tw/jruletest/testexamples/testprograms/Test.class"));

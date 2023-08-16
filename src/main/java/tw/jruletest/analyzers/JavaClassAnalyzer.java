@@ -40,7 +40,7 @@ public class JavaClassAnalyzer {
     }
 
     public static void addSourceClass(SourceClass cls) {
-        sourceClasses.put(cls.getClassName(), cls);
+        sourceClasses.put(cls.getFullClassName(), cls);
     }
 
     public static void resetSourceClasses() {

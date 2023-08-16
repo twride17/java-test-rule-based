@@ -22,7 +22,7 @@ public class SourceClass {
         Field[] classFields = cls.getDeclaredFields();
         Method[] classMethods = cls.getDeclaredMethods();
 
-        this.className = className.substring(className.lastIndexOf(".") + 1);
+        this.className = className;
 
         for(Field field: classFields) {
             fields.add(new SourceField(field, className));
@@ -77,6 +77,10 @@ public class SourceClass {
     }
 
     public String getClassName() {
+        return className.substring(className.lastIndexOf('.') + 1);
+    }
+
+    public String getFullClassName() {
         return className;
     }
 }

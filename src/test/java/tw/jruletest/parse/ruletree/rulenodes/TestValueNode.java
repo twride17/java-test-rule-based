@@ -7,6 +7,7 @@ import tw.jruletest.exceptions.InvalidRuleStructureException;
 import tw.jruletest.files.FileFinder;
 import tw.jruletest.files.source.SourceClass;
 import tw.jruletest.variables.VariableStore;
+import tw.jruletest.virtualmachine.JavaClassLoader;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -19,23 +20,13 @@ public class TestValueNode {
 
     /* Testing rule validation for Value node */
 
-    private void loadCLass(String className) {
-        try {
-            Class<?> c = Runner.getLoader().loadClass(className);
-            JavaClassAnalyzer.sourceFiles.put(className, new SourceClass(className, c));
-        } catch (ClassNotFoundException e) {
-            System.out.println("Could not find " + className);
-        } catch (LinkageError e) {
-            System.out.println("Linkage error detected for: " + className);
-        }
-    }
-
     @Before
     public void setup() {
-        FileFinder.collectFiles(System.getProperty("user.dir") + "\\src\\main\\java");
-        Runner.createTestClassLoader();
-        Runner.runCommand("javac -cp src " + System.getProperty("user.dir") + "\\src\\main\\java\\tw\\jruletest\\testexamples\\testprograms\\*.java ");
-        Runner.getLoader().setTopPackage("tw");
+        Runner.setRootPath(System.getProperty("user.dir") + "\\src");
+        FileFinder.collectFiles(System.getProperty("user.dir") + "\\src");
+        JavaClassLoader.createLoader();
+        JavaClassLoader.setLoaderRootPackage("tw");
+        JavaClassLoader.loadClasses("programs");
 
         VariableStore.addVariable(Runner.getCurrentMethod(), "xValue", int.class);
     }
@@ -64,7 +55,6 @@ public class TestValueNode {
 
     @Test
     public void testGetValueOfValidMethod() {
-        loadCLass("tw.jruletest.testexamples.testprograms.Class");
         String rule = "Class.method";
         node = new ValueNode();
         try {
@@ -77,7 +67,6 @@ public class TestValueNode {
 
     @Test
     public void testGetValueOfInvalidMethod() {
-        loadCLass("tw.jruletest.testexamples.testprograms.Class");
         String rule = "result of class.Method";
         node = new ValueNode();
         try {
@@ -88,7 +77,6 @@ public class TestValueNode {
 
     @Test
     public void testGetValueOfMethodWithValidArguments() {
-        loadCLass("tw.jruletest.testexamples.testprograms.Class");
         String rule = "Class.method with arguments: `Hello world`, 10 and -0.89f, xValue";
         node = new ValueNode();
         try {
@@ -101,7 +89,6 @@ public class TestValueNode {
 
     @Test
     public void testGetValueOfRulePlusExtraRule() {
-        loadCLass("tw.jruletest.testexamples.testprograms.Example");
         String rule = "value of Example.x and store in y";
         node = new ValueNode();
         try {
@@ -133,7 +120,6 @@ public class TestValueNode {
         String[] expectedStrings = {"xValue", "Class.method()", /*"Example.x",*/
                 "Class.method(\"Hello world\", 10, -0.89f, xValue)"};
 
-        loadCLass("tw.jruletest.testexamples.testprograms.Class");
         for(int i = 0; i < rules.length; i++) {
             node = new ValueNode();
             try {
@@ -148,11 +134,10 @@ public class TestValueNode {
     @After
     public void teardown() {
         VariableStore.reset();
-        JavaClassAnalyzer.sourceFiles = new HashMap<>();
         try {
-            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/main/java/tw/jruletest/testexamples/testprograms/Example.class"));
-            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/main/java/tw/jruletest/testexamples/testprograms/Test.class"));
-            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/main/java/tw/jruletest/testexamples/testprograms/Class.class"));
+            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/main/java/tw/jruletest/testing/programs/Example.class"));
+            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/main/java/tw/jruletest/testing/programs/Test.class"));
+            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/main/java/tw/jruletest/testing/programs/Class.class"));
         } catch(IOException e) {
             System.out.println("Couldn't delete file.");
         }

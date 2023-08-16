@@ -8,6 +8,7 @@ import tw.jruletest.files.FileFinder;
 import tw.jruletest.files.source.SourceClass;
 import tw.jruletest.parse.Parser;
 import tw.jruletest.variables.VariableStore;
+import tw.jruletest.virtualmachine.JavaClassLoader;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -17,23 +18,13 @@ import java.util.HashMap;
 
 public class TestParserRuleValidations {
 
-    private void loadCLass(String className) {
-        try {
-            Class<?> c = Runner.getLoader().loadClass(className);
-            JavaClassAnalyzer.sourceFiles.put(className, new SourceClass(className, c));
-        } catch (ClassNotFoundException e) {
-            System.out.println("Could not find " + className);
-        } catch (LinkageError e) {
-            System.out.println("Linkage error detected for: " + className);
-        }
-    }
-
     @Before
     public void setup() {
-        FileFinder.collectFiles(System.getProperty("user.dir") + "\\src\\main\\java");
-        Runner.createTestClassLoader();
-        Runner.runCommand("javac -cp src " + System.getProperty("user.dir") + "\\src\\main\\java\\tw\\jruletest\\testexamples\\testprograms\\*.java ");
-        Runner.getLoader().setTopPackage("tw");
+        Runner.setRootPath(System.getProperty("user.dir") + "\\src");
+        FileFinder.collectFiles(System.getProperty("user.dir") + "\\src");
+        JavaClassLoader.createLoader();
+        JavaClassLoader.setLoaderRootPackage("tw");
+        JavaClassLoader.loadClasses("programs");
 
         String[] variables = {"x", "y", "z", "xValue", "value2", "yValue", "value", "value1", "string"};
         for(String variable: variables) {
@@ -59,8 +50,6 @@ public class TestParserRuleValidations {
 
     @Test
     public void testStoreValueRules() {
-        loadCLass("tw.jruletest.testexamples.testprograms.Class");
-        loadCLass("tw.jruletest.testexamples.testprograms.Example");
         String[][] subRules = {{"Store value of Class.method with arguments: 67, `Hello world`, true and -0.5f in test"},
                                {"store 10.5 in xValue", "store -10.65f in other", "store value of Class.method in variable"},
                                {"Store true in value1", "store false in value2", "store value of Class.method: value1 and value2 in value3"},
@@ -78,8 +67,6 @@ public class TestParserRuleValidations {
 
     @Test
     public void testGetValueRules() {
-        loadCLass("tw.jruletest.testexamples.testprograms.Class");
-        loadCLass("tw.jruletest.testexamples.testprograms.Example");
         String[][] subRules = {{"Get value of Class.method with arguments: 67, `Hello world`, true and -0.5f"},
                                {"get xValue", "get value of Class.method with arguments: -0.98f, 45, false and `New string`", "get yValue"},
                                {"Get result of Example.x", "get Class.method with: `New string`, 56", "get Class.method"},
@@ -97,9 +84,6 @@ public class TestParserRuleValidations {
 
     @Test
     public void testMethodCallRules() {
-        loadCLass("tw.jruletest.testexamples.testprograms.Class");
-        loadCLass("tw.jruletest.testexamples.testprograms.Example");
-        loadCLass("tw.jruletest.testexamples.testprograms.Test");
         String[][] subRules = {{"Call method Example.exampleMethod", "call method Example.exampleMethod with: 0, `Hello` and 4"},
                                {"call method Example.exampleMethod with arguments: `Hello world, this is a cool and nice string`, 1f"},
                                {"call Example.exampleMethod: 1, 2 and 3", "call method Example.exampleMethod", "call Class.example with: -0.89f"},
@@ -117,8 +101,6 @@ public class TestParserRuleValidations {
 
     @Test
     public void testExpectationRules() {
-        loadCLass("tw.jruletest.testexamples.testprograms.Class");
-        loadCLass("tw.jruletest.testexamples.testprograms.Example");
         String[][] subRules = {{"Expect 1 to equal xValue", "Expect value2 to not equal 3", "expect value of Class.method to equal -0.98f"},
                                {"Expect x to equal 1", "expect y to not equal `Hello`", "expect result of Example.exampleMethod to equal false"},
                                {"Expect value of Example.exampleMethod with: 56 and 0.98 to equal 3", "expect xValue to equal `New string`"},
@@ -136,8 +118,6 @@ public class TestParserRuleValidations {
 
     @Test
     public void testDifferentRuleCombinations() {
-        loadCLass("tw.jruletest.testexamples.testprograms.Class");
-        loadCLass("tw.jruletest.testexamples.testprograms.Example");
         String[][] subRules = {{"Get value of Class.method: 1 and `Hello`", "store value in xValue", "expect xValue to equal 1"},
                                {"Call method Example.exampleMethod", "store value of Example.x in xValue", "expect xValue to equal `New string`"},
                                {"call Example.exampleMethod: -0.987f", "call Class.method", "store value of Example.exampleMethod with: true in x", "expect x to not equal `String`"},
@@ -171,7 +151,6 @@ public class TestParserRuleValidations {
     @After
     public void teardown() {
         VariableStore.reset();
-        JavaClassAnalyzer.sourceFiles = new HashMap<>();
         try {
             Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/main/java/tw/jruletest/testexamples/testprograms/Example.class"));
             Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/main/java/tw/jruletest/testexamples/testprograms/Test.class"));

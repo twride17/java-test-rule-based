@@ -2,19 +2,9 @@ package tw.jruletest.expectations;
 
 import org.junit.*;
 
-import tw.jruletest.testexamples.testprograms.Example;
-import tw.jruletest.files.FileFinder;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import tw.jruletest.testing.programs.Example;
 
 public class TestExpectations {
-
-    @Before
-    public void setup() {
-        FileFinder.collectFiles(System.getProperty("user.dir") + "\\src\\test\\java");
-    }
 
     @Test
     public void testIntegerExpectationSatisfied() {
@@ -33,14 +23,5 @@ public class TestExpectations {
             Expectations.expect(Example.example).toEqual(21);
             Assert.fail();
         } catch(UnsatisfiedExpectationError e) {}
-    }
-
-    @After
-    public void teardown() {
-        try {
-            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "\\src\\test\\java\\testprograms\\Example.class"));
-        } catch(IOException e) {
-            System.out.println("Couldn't delete file");
-        }
     }
 }

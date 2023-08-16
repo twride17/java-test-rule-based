@@ -26,7 +26,7 @@ public class TestRuleExtractor {
         FileFinder.collectFiles(System.getProperty("user.dir") + "\\src\\test\\java");
         Runner.runCommand("javac -cp src src\\test\\java\\tw\\jruletest\\examples\\TestClass1.java");
         Runner.runCommand("javac -cp src src\\test\\java\\tw\\jruletest\\examples\\TestClass3.java");
-        Runner.createTestClassLoader();
+        //Runner.createTestClassLoader();
 
         files.add(new File(System.getProperty("user.dir") + "\\src\\test\\java\\tw\\jruletest\\examples\\TestClass1.java"));
         files.add(new File(System.getProperty("user.dir") + "\\src\\test\\java\\tw\\jruletest\\examples\\TestClass3.java"));

@@ -3,7 +3,6 @@ package tw.jruletest;
 import tw.jruletest.expectations.UnsatisfiedExpectationError;
 import tw.jruletest.files.FileFinder;
 import tw.jruletest.logging.TestLogger;
-import tw.jruletest.virtualmachine.JavaClassCompiler;
 import tw.jruletest.virtualmachine.JavaClassLoader;
 
 import java.io.File;
@@ -26,7 +25,7 @@ public class TestExecutor {
     }
 
     private static void executeGeneratedTestClass(String filename) {
-        String className = FileFinder.getClassName(filename, "src\\test\\java\\");
+        String className = FileFinder.getClassName(filename);
         TestLogger.setTestClassDetails(className);
         try {
             Class<?> foundClass = Class.forName(className, false, JavaClassLoader.getLoader());
@@ -76,7 +75,7 @@ public class TestExecutor {
 
         JavaClassLoader.createLoader();
 
-        String firstClass = FileFinder.getClassNames(FileFinder.getFiles(Runner.getRootPath() + "\\main\\java"), "\\main\\java\\").get(0);
+        String firstClass = FileFinder.getClassNames(FileFinder.getFiles(Runner.getRootPath() + "\\main\\java")).get(0);
         JavaClassLoader.setLoaderRootPackage(firstClass.substring(0, firstClass.indexOf('.')));
 
         JavaClassLoader.loadSourceClasses();

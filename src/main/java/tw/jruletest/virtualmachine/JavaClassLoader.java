@@ -84,27 +84,14 @@ public class JavaClassLoader extends ClassLoader {
         return loader;
     }
 
-    public static void loadSourceClasses() {
-        changeLoaderDirectory("\\main\\java\\");
-        loadClasses();
-    }
-
-    public static void loadTestClasses() {
-        changeLoaderDirectory("\\test\\java\\");
-        loadClasses();
-    }
-
-    public static void loadGeneratedTestClasses() {
-        changeLoaderDirectory("\\test\\java\\generated\\");
-        loadClasses();
-    }
-
-    public static void loadClasses(List<String> classes) {
-        JavaClassCompiler.compileClasses("src" + loader.currentDirectory);
-        for(String className: classes) {
+    public static void loadClasses(List<File> classes) {
+        JavaClassCompiler.compileClasses(classes);
+        for(File classFile: classes) {
+            String className = FileFinder.getClassName(classFile);
             try {
                 loader.loadClass(className);
                 JavaClassAnalyzer.addSourceClass(new SourceClass(className));
+                System.out.println("\n" + className + " loaded successfully\n");
             } catch (ClassNotFoundException e) {
                 System.out.println("Could not find " + className);
             } catch (LinkageError e) {
@@ -113,7 +100,35 @@ public class JavaClassLoader extends ClassLoader {
         }
     }
 
+    public static void loadClasses(String directory) {
+        loadClasses(FileFinder.getFiles(directory));
+    }
+
     public static void loadClasses() {
-        loadClasses(FileFinder.getClassNames(FileFinder.getFiles(Runner.getRootPath() + loader.currentDirectory), loader.currentDirectory));
+        loadClasses("src");
+    }
+
+    public static void main(String[] args) {
+        FileFinder.collectFiles(System.getProperty("user.dir"));
+        Runner.setRootPath(System.getProperty("user.dir") + "\\src");
+        JavaClassLoader.createLoader();
+        JavaClassLoader.setLoaderRootPackage("tw");
+        JavaClassLoader.loadTestClasses();
+        Runner.clearClassFiles();
+    }
+
+    public static void loadSourceClasses() {
+        changeLoaderDirectory("\\main\\java\\");
+        loadClasses("\\main\\");
+    }
+
+    public static void loadTestClasses() {
+        changeLoaderDirectory("\\test\\java\\");
+        loadClasses("\\test\\");
+    }
+
+    public static void loadGeneratedTestClasses() {
+        changeLoaderDirectory("\\test\\java\\generated\\");
+        loadClasses("\\generated\\");
     }
 }

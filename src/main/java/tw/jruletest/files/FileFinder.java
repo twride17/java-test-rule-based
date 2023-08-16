@@ -25,20 +25,6 @@ public class FileFinder {
         }
     }
 
-    public static File findFile(String filename) {
-        return findFile(filename, "");
-    }
-
-    public static File findFile(String filename, String topDirectory) {
-        List<File> directoryFiles = getFiles(topDirectory);
-        for(File file: directoryFiles) {
-            if(file.getPath().contains(filename) && !file.getPath().contains("generated")) {
-                return file;
-            }
-        }
-        return null;
-    }
-
     public static List<File> getFiles(String directory) {
         List<File> requiredFiles = new ArrayList<>();
         for(File file: files) {
@@ -49,11 +35,19 @@ public class FileFinder {
         return requiredFiles;
     }
 
-    public static List<String> getDistinctDirectoryNames(String sectionName) {
+    public static List<String> getDistinctPackageNames(String directory) {
+        return getDistinctPackageNames(getFiles(directory));
+    }
+
+    public static List<String> getDistinctPackageNames() {
+        return getDistinctPackageNames(FileFinder.getFiles("src"));
+    }
+
+    // Rewrite
+    public static List<String> getDistinctPackageNames(List<File> classFiles) {
         List<String> directories = new ArrayList<>();
-        List<File> javaFiles = getFiles(sectionName);
-        for(File javaFile: javaFiles) {
-            String name = javaFile.getPath();
+        for(File classFile: classFiles) {
+            String name = classFile.getPath();
             String directoryName = name.substring(0, name.lastIndexOf("\\"));
             if(!directories.contains(directoryName)) {
                 directories.add(directoryName);
@@ -62,15 +56,23 @@ public class FileFinder {
         return directories;
     }
 
-    public static List<String> getClassNames(List<File> files, String topDir) {
+    public static List<String> getClassNames(List<File> files) {
         List<String> classNames = new ArrayList<>();
         for(File file: files) {
-            classNames.add(getClassName(file.getPath(), topDir));
+            classNames.add(getClassName(file.getPath()));
         }
         return classNames;
     }
 
-    public static String getClassName(String className, String topDir) {
-        return className.substring(className.indexOf(topDir)+topDir.length(), className.indexOf(".")).replaceAll("\\\\", ".");
+    public static String getClassName(File file) {
+        return getClassName(file.getPath());
+    }
+
+    public static String getClassName(String filename, String root) {
+        return filename.substring(filename.indexOf(root) + root.length(), filename.lastIndexOf('.')).replaceAll("\\\\", ".");
+    }
+
+    public static String getClassName(String filename) {
+        return getClassName(filename, "\\java\\");
     }
 }

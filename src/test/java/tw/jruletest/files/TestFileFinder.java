@@ -25,18 +25,4 @@ public class TestFileFinder {
             Assert.assertTrue(FILES.contains(file.getName()));
         }
     }
-
-    @Test
-    public void testFileFindWithDirectory() {
-        File requiredFile = FileFinder.findFile("TestClass1.java", "examples");
-        String expectedFilePath = System.getProperty("user.dir") + "\\src\\test\\java\\tw\\jruletest\\examples\\TestClass1.java";
-        Assert.assertEquals(expectedFilePath, requiredFile.getPath());
-    }
-
-    @Test
-    public void testFileFindWithNoDirectory() {
-        File requiredFile = FileFinder.findFile("TestClass1.java");
-        String expectedFilePath = System.getProperty("user.dir") + "\\src\\test\\java\\tw\\jruletest\\examples\\TestClass1.java";
-        Assert.assertEquals(expectedFilePath, requiredFile.getPath());
-    }
 }
