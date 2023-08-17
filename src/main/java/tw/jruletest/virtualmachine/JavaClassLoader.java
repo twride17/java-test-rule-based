@@ -31,7 +31,6 @@ public class JavaClassLoader extends ClassLoader {
     }
 
     private Class<?> getClass(String name) throws ClassNotFoundException {
-        setFilePath(Runner.getRootPath() + currentDirectory + name.replaceAll("\\.", "\\\\") + ".class");
         try {
             // This loads the byte code data from the file
             byte[] b = loadClassFileData();
@@ -47,7 +46,7 @@ public class JavaClassLoader extends ClassLoader {
 
     @Override
     public Class<?> loadClass(String name) throws ClassNotFoundException {
-        if (name.startsWith(rootPackage)) {
+        if (name.startsWith(rootPackage) || name.substring(name.indexOf('.')+1).startsWith(rootPackage)) {
             return getClass(name);
         }
         return super.loadClass(name);
@@ -87,6 +86,7 @@ public class JavaClassLoader extends ClassLoader {
     public static void loadClasses(List<File> classes) {
         JavaClassCompiler.compileClasses(classes);
         for(File classFile: classes) {
+            loader.setFilePath(classFile.getPath().replace(".java", ".class"));
             String className = FileFinder.getClassName(classFile);
             try {
                 loader.loadClass(className);
@@ -100,7 +100,13 @@ public class JavaClassLoader extends ClassLoader {
         }
     }
 
+    public static void loadClasses(List<File> sourceClasses, List<File> testClasses) {
+        sourceClasses.addAll(testClasses);
+        loadClasses(sourceClasses);
+    }
+
     public static void loadClasses(String directory) {
+        System.out.println(directory);
         loadClasses(FileFinder.getFiles(directory));
     }
 
@@ -118,17 +124,18 @@ public class JavaClassLoader extends ClassLoader {
     }
 
     public static void loadSourceClasses() {
-        changeLoaderDirectory("\\main\\java\\");
+        //changeLoaderDirectory("\\main\\java\\");
         loadClasses("\\main\\");
     }
 
     public static void loadTestClasses() {
-        changeLoaderDirectory("\\test\\java\\");
+        //changeLoaderDirectory("\\test\\java\\");
         loadClasses("\\test\\");
     }
 
     public static void loadGeneratedTestClasses() {
-        changeLoaderDirectory("\\test\\java\\generated\\");
-        loadClasses("\\generated\\");
+        //changeLoaderDirectory("\\test\\java\\");
+        System.out.println("Loading generated");
+        loadClasses(FileFinder.getFiles("\\main\\"), FileFinder.getFiles("\\generated\\"));
     }
 }

@@ -13,6 +13,7 @@ import java.util.List;
 public class TestExecutor {
 
     public static void executeTests() {
+        FileFinder.collectFiles(Runner.getRootPath());
         JavaClassLoader.loadGeneratedTestClasses();
 
         List<File> generatedTestFiles = FileFinder.getFiles("generated");
@@ -71,6 +72,7 @@ public class TestExecutor {
     }
 
     public static void main(String[] args) {
+        Runner.setRootPath(System.getProperty("user.dir") + "\\src");
         FileFinder.collectFiles(Runner.getRootPath());
 
         JavaClassLoader.createLoader();
@@ -79,6 +81,6 @@ public class TestExecutor {
         JavaClassLoader.setLoaderRootPackage(firstClass.substring(0, firstClass.indexOf('.')));
 
         JavaClassLoader.loadSourceClasses();
-        JavaClassLoader.loadGeneratedTestClasses();
+        executeTests();
     }
 }

@@ -99,7 +99,6 @@ public class Runner {
         List<File> files = FileFinder.getFiles("src");
         for(File file: files) {
             deleteFile(file.getPath().replace(".java", ".class"));
-            //System.out.println(file.getPath().replace(".java", ".class"));
         }
     }
 
