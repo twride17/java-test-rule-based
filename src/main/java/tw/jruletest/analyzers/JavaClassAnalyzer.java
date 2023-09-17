@@ -14,12 +14,6 @@ public class JavaClassAnalyzer {
 
     public static HashMap<String, SourceClass> sourceClasses = new HashMap<>();
 
-    /**
-     * @author Toby Wride
-     *
-     * Performs reflection on the source java classes to simplify the process of decoding rules
-     * */
-
     public static SourceClass identifySourceClass(String cls) throws AmbiguousMemberException, UnidentifiedCallException {
         SourceClass source = null;
         for(String sourceName: sourceClasses.keySet()) {

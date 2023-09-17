@@ -6,6 +6,8 @@ import org.junit.Before;
 import org.junit.Test;
 import tw.jruletest.Runner;
 import tw.jruletest.files.FileFinder;
+import tw.jruletest.virtualmachine.JavaClassLoader;
+import tw.jruletest.virtualmachine.TestClassLoader;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,10 +25,15 @@ public class TestRuleExtractor {
 
     @Before
     public void setup() {
+        JavaClassLoader.createLoader();
+
         FileFinder.collectFiles(System.getProperty("user.dir") + "\\src\\test\\java");
-        Runner.runCommand("javac -cp src src\\test\\java\\tw\\jruletest\\examples\\TestClass1.java");
-        Runner.runCommand("javac -cp src src\\test\\java\\tw\\jruletest\\examples\\TestClass3.java");
-        //Runner.createTestClassLoader();
+        //Runner.runCommand("javac -cp src src\\test\\java\\tw\\jruletest\\examples\\TestClass1.java");
+        //Runner.runCommand("javac -cp src src\\test\\java\\tw\\jruletest\\examples\\TestClass3.java");
+
+
+        JavaClassLoader.setLoaderRootPackage("tw");
+        TestClassLoader.loadClasses("examples");
 
         files.add(new File(System.getProperty("user.dir") + "\\src\\test\\java\\tw\\jruletest\\examples\\TestClass1.java"));
         files.add(new File(System.getProperty("user.dir") + "\\src\\test\\java\\tw\\jruletest\\examples\\TestClass3.java"));
@@ -35,9 +42,9 @@ public class TestRuleExtractor {
         map.put("rule","Call method Example.exampleMethod with 12\nGet value of Example.example");
         expectedRules.put("tw.jruletest.examples.TestClass1", map);
         map = new HashMap<>();
-        map.put("currentRule", "Get value of Class.field");
-        map.put("currentRule2", "Get value of Class.method");
-        map.put("currentRule3", "Get value of Class.field");
+        map.put("currentRuleRule1", "Get value of Class.field");
+        map.put("currentRuleRule2", "Get value of Class.method");
+        map.put("currentRuleRule3", "Get value of Class.field");
         expectedRules.put("tw.jruletest.examples.TestClass3", map);
     }
 

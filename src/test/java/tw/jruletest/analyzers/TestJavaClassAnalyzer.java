@@ -7,6 +7,7 @@ import tw.jruletest.exceptions.UnidentifiedCallException;
 import tw.jruletest.files.FileFinder;
 import tw.jruletest.files.source.SourceClass;
 import tw.jruletest.virtualmachine.JavaClassLoader;
+import tw.jruletest.virtualmachine.SourceClassLoader;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -22,7 +23,7 @@ public class TestJavaClassAnalyzer {
         FileFinder.collectFiles(System.getProperty("user.dir") + "\\src");
         JavaClassLoader.createLoader();
         JavaClassLoader.setLoaderRootPackage("tw");
-        JavaClassLoader.loadClasses("examples");
+        SourceClassLoader.loadClasses("examples");
     }
 
     @Test

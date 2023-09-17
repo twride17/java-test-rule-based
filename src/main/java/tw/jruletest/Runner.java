@@ -2,11 +2,14 @@ package tw.jruletest;
 
 import tw.jruletest.analyzers.ImportCollector;
 import tw.jruletest.analyzers.RuleExtractor;
+import tw.jruletest.analyzers.TestClassAnalyzer;
 import tw.jruletest.files.FileFinder;
 import tw.jruletest.generators.TestSuiteGenerator;
 import tw.jruletest.parse.Parser;
 import tw.jruletest.variables.VariableStore;
 import tw.jruletest.virtualmachine.JavaClassLoader;
+import tw.jruletest.virtualmachine.SourceClassLoader;
+import tw.jruletest.virtualmachine.TestClassLoader;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -47,13 +50,12 @@ public class Runner {
 
         FileFinder.collectFiles(path);
 
-        JavaClassLoader.createLoader();
         String firstClass = FileFinder.getClassNames(FileFinder.getFiles(path + "\\main\\java")).get(0);
         JavaClassLoader.setLoaderRootPackage(firstClass.substring(0, firstClass.indexOf('.')));
-        JavaClassLoader.loadTestClasses();
+        TestClassLoader.loadClasses();
         RuleExtractor.extractRules();
 
-        JavaClassLoader.loadSourceClasses();
+        SourceClassLoader.loadClasses();
         for(String className: ruleSets.keySet()) {
             Map<String, String> rules = ruleSets.get(className);
             for(String methodName: rules.keySet()) {
@@ -65,6 +67,7 @@ public class Runner {
             currentMethod = "";
             ImportCollector.resetImports();
         }
+        TestClassAnalyzer.resetTestClasses();
 
         TestExecutor.executeTests();
     }

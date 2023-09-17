@@ -4,6 +4,8 @@ import tw.jruletest.expectations.UnsatisfiedExpectationError;
 import tw.jruletest.files.FileFinder;
 import tw.jruletest.logging.TestLogger;
 import tw.jruletest.virtualmachine.JavaClassLoader;
+import tw.jruletest.virtualmachine.SourceClassLoader;
+import tw.jruletest.virtualmachine.TestClassLoader;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -14,7 +16,7 @@ public class TestExecutor {
 
     public static void executeTests() {
         FileFinder.collectFiles(Runner.getRootPath());
-        JavaClassLoader.loadGeneratedTestClasses();
+        TestClassLoader.loadGeneratedTestClasses();
 
         List<File> generatedTestFiles = FileFinder.getFiles("generated");
         for(File generatedFile: generatedTestFiles) {
@@ -75,12 +77,10 @@ public class TestExecutor {
         Runner.setRootPath(System.getProperty("user.dir") + "\\src");
         FileFinder.collectFiles(Runner.getRootPath());
 
-        JavaClassLoader.createLoader();
-
         String firstClass = FileFinder.getClassNames(FileFinder.getFiles(Runner.getRootPath() + "\\main\\java")).get(0);
         JavaClassLoader.setLoaderRootPackage(firstClass.substring(0, firstClass.indexOf('.')));
 
-        JavaClassLoader.loadSourceClasses();
+        SourceClassLoader.loadClasses();
         executeTests();
     }
 }

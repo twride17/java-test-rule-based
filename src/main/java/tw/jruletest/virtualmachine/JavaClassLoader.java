@@ -1,18 +1,17 @@
 package tw.jruletest.virtualmachine;
 
 import tw.jruletest.Runner;
-import tw.jruletest.analyzers.JavaClassAnalyzer;
 import tw.jruletest.files.FileFinder;
-import tw.jruletest.files.source.SourceClass;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 public class JavaClassLoader extends ClassLoader {
 
-    private static JavaClassLoader loader;
+    private static JavaClassLoader loader = new JavaClassLoader(Runner.class.getClassLoader());
 
     private String currentDirectory = "\\main\\java\\";
     private String rootPackage = "";
@@ -22,7 +21,7 @@ public class JavaClassLoader extends ClassLoader {
         super(parent);
     }
 
-    private void setRootPackage(String rootPackage) {
+    public void setRootPackage(String rootPackage) {
         this.rootPackage = rootPackage;
     }
 
@@ -83,14 +82,15 @@ public class JavaClassLoader extends ClassLoader {
         return loader;
     }
 
-    public static void loadClasses(List<File> classes) {
+    public static ArrayList<String> loadClasses(List<File> classes) {
+        ArrayList<String> classNames = new ArrayList<>();
         JavaClassCompiler.compileClasses(classes);
         for(File classFile: classes) {
             loader.setFilePath(classFile.getPath().replace(".java", ".class"));
             String className = FileFinder.getClassName(classFile);
             try {
                 loader.loadClass(className);
-                JavaClassAnalyzer.addSourceClass(new SourceClass(className));
+                classNames.add(className);
                 System.out.println("\n" + className + " loaded successfully");
             } catch (ClassNotFoundException e) {
                 System.out.println("Could not find " + className);
@@ -98,44 +98,16 @@ public class JavaClassLoader extends ClassLoader {
                 System.out.println("Linkage error detected for: " + className);
             }
         }
+        return classNames;
     }
 
-    public static void loadClasses(List<File> sourceClasses, List<File> testClasses) {
+    public static ArrayList<String> loadClasses(List<File> sourceClasses, List<File> testClasses) {
         sourceClasses.addAll(testClasses);
-        loadClasses(sourceClasses);
+        return loadClasses(sourceClasses);
     }
 
-    public static void loadClasses(String directory) {
+    public static ArrayList<String> loadClasses(String directory) {
         System.out.println(directory);
-        loadClasses(FileFinder.getFiles(directory));
-    }
-
-    public static void loadClasses() {
-        loadClasses("src");
-    }
-
-    public static void main(String[] args) {
-        FileFinder.collectFiles(System.getProperty("user.dir"));
-        Runner.setRootPath(System.getProperty("user.dir") + "\\src");
-        JavaClassLoader.createLoader();
-        JavaClassLoader.setLoaderRootPackage("tw");
-        JavaClassLoader.loadTestClasses();
-        Runner.clearClassFiles();
-    }
-
-    public static void loadSourceClasses() {
-        //changeLoaderDirectory("\\main\\java\\");
-        loadClasses("\\main\\");
-    }
-
-    public static void loadTestClasses() {
-        //changeLoaderDirectory("\\test\\java\\");
-        loadClasses("\\test\\");
-    }
-
-    public static void loadGeneratedTestClasses() {
-        //changeLoaderDirectory("\\test\\java\\");
-        System.out.println("Loading generated");
-        loadClasses(FileFinder.getFiles("\\main\\"), FileFinder.getFiles("\\generated\\"));
+        return loadClasses(FileFinder.getFiles(directory));
     }
 }

@@ -8,6 +8,7 @@ import tw.jruletest.files.FileFinder;
 import tw.jruletest.files.source.SourceClass;
 import tw.jruletest.variables.VariableStore;
 import tw.jruletest.virtualmachine.JavaClassLoader;
+import tw.jruletest.virtualmachine.SourceClassLoader;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -26,7 +27,7 @@ public class TestStoreValueNode {
         FileFinder.collectFiles(System.getProperty("user.dir") + "\\src");
         JavaClassLoader.createLoader();
         JavaClassLoader.setLoaderRootPackage("tw");
-        JavaClassLoader.loadClasses("programs");
+        SourceClassLoader.loadClasses("programs");
 
         VariableStore.addVariable(Runner.getCurrentMethod(), "z", char.class);
         VariableStore.addVariable(Runner.getCurrentMethod(), "xValue", boolean.class);

@@ -8,6 +8,7 @@ import tw.jruletest.files.source.SourceClass;
 import tw.jruletest.parse.Parser;
 import tw.jruletest.variables.VariableStore;
 import tw.jruletest.virtualmachine.JavaClassLoader;
+import tw.jruletest.virtualmachine.SourceClassLoader;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -23,7 +24,7 @@ public class TestParserCodeGeneration {
         FileFinder.collectFiles(System.getProperty("user.dir") + "\\src");
         JavaClassLoader.createLoader();
         JavaClassLoader.setLoaderRootPackage("tw");
-        JavaClassLoader.loadClasses("programs");
+        SourceClassLoader.loadClasses("programs");
     }
 
     @Test
