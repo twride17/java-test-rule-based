@@ -17,7 +17,6 @@ public class SourceClass {
     private ArrayList<SourceField> fields = new ArrayList<>();
 
     public SourceClass(String className) throws ClassNotFoundException {
-        // Move class finding into other helper class?
         Class<?> cls = Class.forName(className, false, JavaClassLoader.getLoader());
         Field[] classFields = cls.getDeclaredFields();
         Method[] classMethods = cls.getDeclaredMethods();
@@ -31,10 +30,6 @@ public class SourceClass {
         for(Method method: classMethods) {
             methods.add(new SourceMethod(method, className));
         }
-    }
-
-    public Type findType(String call) throws AmbiguousMemberException, UnidentifiedCallException {
-        return getMember(call).getType();
     }
 
     public SourceMember getMember(String call) throws UnidentifiedCallException, AmbiguousMemberException {

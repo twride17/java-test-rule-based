@@ -36,13 +36,13 @@ public class TestFileFinder {
                                     mainTop + "\\testing\\examples", mainTop + "\\testing\\examples\\subpackage1",
                                     mainTop + "\\testing\\examples\\subpackage2", mainTop + "\\testing\\programs",
                                     mainTop + "\\variables", mainTop + "\\virtualmachine", testTop + "\\analyzers",
-                                    testTop + "\\examples", testTop + "\\expectations", testTop + "\\files",
+                                    testTop + "\\examples", testTop + "\\expectations", testTop + "\\files\\source", testTop + "\\files\\test", testTop + "\\files",
                                     testTop + "\\generators", testTop + "\\parse\\parser", testTop + "\\parse\\ruletree\\argumentnodes",
                                     testTop + "\\parse\\ruletree\\rulenodes", testTop + "\\variables"};
 
         List<String> packages = FileFinder.getDistinctPackageNames();
 
-        Assert.assertEquals(28, packages.size());
+        Assert.assertEquals(30, packages.size());
         for(int i = 0; i < expectedPackages.length; i++) {
             Assert.assertEquals(topPackage + expectedPackages[i], packages.get(i));
         }
@@ -69,10 +69,11 @@ public class TestFileFinder {
         String topPackage = "C:\\Users\\toby\\Documents\\ComputerScience\\PersonalProjects\\java-test-rule-based\\src\\";
         String mainTop = "main\\java\\tw\\jruletest";
         String testTop = "test\\java\\tw\\jruletest";
-        String[] expectedPackages = {mainTop + "\\files", mainTop + "\\files\\source", mainTop + "\\files\\test", testTop + "\\files"};
+        String[] expectedPackages = {mainTop + "\\files", mainTop + "\\files\\source", mainTop + "\\files\\test",
+                                    testTop + "\\files\\source",testTop + "\\files\\test", testTop + "\\files"};
 
         List<String> packages = FileFinder.getDistinctPackageNames(FileFinder.getFiles("files"));
-        Assert.assertEquals(4, packages.size());
+        Assert.assertEquals(6, packages.size());
         for(int i = 0; i < expectedPackages.length; i++) {
             Assert.assertEquals(topPackage + expectedPackages[i], packages.get(i));
         }

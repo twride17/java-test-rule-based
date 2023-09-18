@@ -17,7 +17,14 @@ public class JavaClassAnalyzer {
     public static SourceClass identifySourceClass(String cls) throws AmbiguousMemberException, UnidentifiedCallException {
         SourceClass source = null;
         for(String sourceName: sourceClasses.keySet()) {
-            if(sourceName.endsWith(cls)) {
+            String className = "";
+            if(sourceName.indexOf('.') == -1) {
+                className = sourceName;
+            } else {
+                className = sourceName.substring(sourceName.lastIndexOf('.') + 1);
+            }
+
+            if(className.equals(cls)) {
                 if(source == null) {
                     source = sourceClasses.get(sourceName);
                 } else {

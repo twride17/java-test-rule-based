@@ -1,7 +1,6 @@
 package tw.jruletest.files.test;
 
 import java.lang.reflect.Member;
-import java.lang.reflect.Modifier;
 
 public class TestMember {
 

@@ -1,9 +1,11 @@
-package tw.jruletest.analyzers;
+package tw.jruletest.files.test;
 
-import tw.jruletest.Runner;
 import org.junit.*;
+import tw.jruletest.Runner;
+import tw.jruletest.analyzers.RuleExtractor;
 import tw.jruletest.files.FileFinder;
 import tw.jruletest.virtualmachine.JavaClassLoader;
+import tw.jruletest.virtualmachine.TestClassLoader;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,7 +16,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class TestTestClassAnalyzer {
+public class TestTestClass {
 
     private List<File> files = new ArrayList<>();
 
@@ -34,10 +36,7 @@ public class TestTestClassAnalyzer {
         Runner.setRootPath(System.getProperty("user.dir") + "\\src");
         JavaClassLoader.createLoader();
         JavaClassLoader.setLoaderRootPackage("tw");
-        JavaClassLoader.changeLoaderDirectory("\\test\\java\\");
-        JavaClassLoader.loadClasses("test\\java\\tw\\jruletest\\examples\\");
-        JavaClassLoader.changeLoaderDirectory("\\main\\java\\");
-        JavaClassLoader.loadClasses("programs");
+        TestClassLoader.loadClasses("test\\java\\tw\\jruletest\\examples\\");
     }
 
     @Test
