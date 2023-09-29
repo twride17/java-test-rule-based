@@ -1,5 +1,6 @@
 package tw.jruletest;
 
+import tw.jruletest.exceptions.CompilationFailureException;
 import tw.jruletest.expectations.UnsatisfiedExpectationError;
 import tw.jruletest.files.FileFinder;
 import tw.jruletest.logging.TestLogger;
@@ -7,6 +8,7 @@ import tw.jruletest.virtualmachine.JavaClassLoader;
 import tw.jruletest.virtualmachine.SourceClassLoader;
 import tw.jruletest.virtualmachine.TestClassLoader;
 
+import javax.swing.*;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -14,12 +16,12 @@ import java.util.List;
 
 public class TestExecutor {
 
-    public static void executeTests() {
+    public static void executeTests() throws CompilationFailureException {
         FileFinder.collectFiles(Runner.getRootPath());
         TestClassLoader.loadGeneratedTestClasses();
 
         List<File> generatedTestFiles = FileFinder.getFiles("generated");
-        for(File generatedFile: generatedTestFiles) {
+        for (File generatedFile : generatedTestFiles) {
             executeGeneratedTestClass(generatedFile.getPath().replace(".java", ".class"));
         }
 
@@ -80,7 +82,13 @@ public class TestExecutor {
         String firstClass = FileFinder.getClassNames(FileFinder.getFiles(Runner.getRootPath() + "\\main\\java")).get(0);
         JavaClassLoader.setLoaderRootPackage(firstClass.substring(0, firstClass.indexOf('.')));
 
-        SourceClassLoader.loadClasses();
-        executeTests();
+        try {
+            SourceClassLoader.loadClasses();
+            executeTests();
+        } catch(CompilationFailureException e) {
+            JOptionPane.showMessageDialog(null, e.getError(), "Error", JOptionPane.ERROR_MESSAGE);
+            Runner.clearClassFiles();
+            System.exit(0);
+        }
     }
 }

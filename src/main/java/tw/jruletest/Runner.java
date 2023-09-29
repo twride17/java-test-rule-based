@@ -3,18 +3,24 @@ package tw.jruletest;
 import tw.jruletest.analyzers.ImportCollector;
 import tw.jruletest.analyzers.RuleExtractor;
 import tw.jruletest.analyzers.TestClassAnalyzer;
+import tw.jruletest.exceptions.CompilationFailureException;
 import tw.jruletest.files.FileFinder;
 import tw.jruletest.generators.TestSuiteGenerator;
+import tw.jruletest.logging.CompilationLogger;
 import tw.jruletest.parse.Parser;
 import tw.jruletest.variables.VariableStore;
+import tw.jruletest.virtualmachine.JavaClassCompiler;
 import tw.jruletest.virtualmachine.JavaClassLoader;
 import tw.jruletest.virtualmachine.SourceClassLoader;
 import tw.jruletest.virtualmachine.TestClassLoader;
 
+import javax.swing.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Toby Wride
@@ -47,54 +53,85 @@ public class Runner {
         path += "\\src";
 
         removeExistingGeneratedTests();
+        removeExistingLogFiles();
 
         FileFinder.collectFiles(path);
 
-        String firstClass = FileFinder.getClassNames(FileFinder.getFiles(path + "\\main\\java")).get(0);
-        JavaClassLoader.setLoaderRootPackage(firstClass.substring(0, firstClass.indexOf('.')));
-        TestClassLoader.loadClasses();
-        RuleExtractor.extractRules();
+        try {
+            String firstClass = FileFinder.getClassNames(FileFinder.getFiles(path + "\\main\\java")).get(0);
+            JavaClassLoader.setLoaderRootPackage(firstClass.substring(0, firstClass.indexOf('.')));
+            TestClassLoader.loadClasses();
+            RuleExtractor.extractRules();
 
-        SourceClassLoader.loadClasses();
-        for(String className: ruleSets.keySet()) {
-            Map<String, String> rules = ruleSets.get(className);
-            for(String methodName: rules.keySet()) {
-                currentMethod = methodName;
-                rules.replace(methodName, Parser.parseRules(rules.get(methodName).split("\n")));
+            SourceClassLoader.loadClasses();
+            for (String className : ruleSets.keySet()) {
+                Map<String, String> rules = ruleSets.get(className);
+                for (String methodName : rules.keySet()) {
+                    currentMethod = methodName;
+                    rules.replace(methodName, Parser.parseRules(rules.get(methodName).split("\n")));
+                }
+                TestSuiteGenerator.writeSuiteToFile(rules, className);
+                VariableStore.reset();
+                currentMethod = "";
+                ImportCollector.resetImports();
             }
-            TestSuiteGenerator.writeSuiteToFile(rules, className);
-            VariableStore.reset();
-            currentMethod = "";
-            ImportCollector.resetImports();
-        }
-        TestClassAnalyzer.resetTestClasses();
+            TestClassAnalyzer.resetTestClasses();
 
-        TestExecutor.executeTests();
+            TestExecutor.executeTests();
+        } catch(CompilationFailureException e) {
+            JOptionPane.showMessageDialog(null, e.getError(), "Error", JOptionPane.ERROR_MESSAGE);
+            CompilationLogger.reset();
+            clearClassFiles();
+            removeExistingGeneratedTests();
+            System.exit(0);
+        }
     }
 
     public static String getCurrentMethod() {
         return currentMethod;
     }
 
-    public static void runCommand(String command) {
+    public static void runCommand(String command) throws CompilationFailureException {
         try {
-            System.out.println(command);
             Process process = Runtime.getRuntime().exec(command);
-            //displayOutput(command + " stdout:", process.getInputStream());
-            displayOutput(command + " stderr:", process.getErrorStream());
+            recordCompilationOutput(process.getErrorStream());
             process.waitFor();
-            //System.out.println(command + " exitValue() " + process.exitValue());
-        } catch(Exception e) {
-            System.out.println("Couldn't run process: " + command);
+            CompilationLogger.writeToFile();
+        } catch (IOException | InterruptedException e) {
+            System.out.println("Couldn't run process:" + command);
+            e.printStackTrace();
         }
     }
 
-    private static void displayOutput(String command, InputStream input) throws IOException {
+    private static void recordCompilationOutput(InputStream input) {
         BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-        String line = reader.readLine();
-        while(line != null) {
-            System.out.println(line);
-            line = reader.readLine();
+        String currentClass = "";
+        String output = "";
+
+        try {
+            String line = reader.readLine();
+            while (line != null) {
+                System.out.println(line);
+                Matcher matcher = Pattern.compile("^(((.+)\\\\)*([A-za-z0-9]+)(\\.java))").matcher(line);
+                if(matcher.find()) {
+                    if(!(currentClass.isEmpty() && output.isEmpty())) {
+                        CompilationLogger.addResult(currentClass, output);
+                    }
+                    currentClass = FileFinder.getClassName(matcher.group());
+                    String remainingLine = line.substring(matcher.end());
+                    output = remainingLine.substring(remainingLine.indexOf(' ') + 1) + "\n";
+                } else {
+                    output += line + "\n";
+                }
+                line = reader.readLine();
+            }
+        } catch(IOException e) {
+            currentClass = "Compilation Error Stream";
+            output = "Couldn't open error stream.";
+        }
+
+        if(!(currentClass.isEmpty() && output.isEmpty())) {
+            CompilationLogger.addResult(currentClass, output);
         }
     }
 
@@ -105,16 +142,22 @@ public class Runner {
         }
     }
 
+    private static void removeExistingLogFiles() {
+        deleteDirectory(new File(path + "\\test\\java\\logfiles"));
+    }
+
     private static void removeExistingGeneratedTests() {
-        FileFinder.collectFiles(path);
-        try {
-            List<File> testFiles = FileFinder.getFiles("generated");
-            for (File file : testFiles) {
-                deleteFile(file.getPath());
+        deleteDirectory(new File(path + "\\test\\java\\generated"));
+    }
+
+    private static void deleteDirectory(File root) {
+        File[] rootContents = root.listFiles();
+        if (rootContents != null) {
+            for (File file : rootContents) {
+                deleteDirectory(file);
             }
-            deleteFile(path + "\\test\\java\\generated\\TestResults.log");
-            FileFinder.collectFiles(path);
-        } catch(NullPointerException e) {}
+        }
+        root.delete();
     }
 
     private static void deleteFile(String filename) {

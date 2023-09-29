@@ -5,8 +5,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import tw.jruletest.Runner;
+import tw.jruletest.exceptions.CompilationFailureException;
 import tw.jruletest.files.FileFinder;
 import tw.jruletest.virtualmachine.JavaClassLoader;
+import tw.jruletest.virtualmachine.SourceClassLoader;
 import tw.jruletest.virtualmachine.TestClassLoader;
 
 import java.io.File;
@@ -33,7 +35,9 @@ public class TestRuleExtractor {
 
 
         JavaClassLoader.setLoaderRootPackage("tw");
-        TestClassLoader.loadClasses("examples");
+        try {
+            TestClassLoader.loadClasses("examples");
+        } catch(CompilationFailureException e) {}
 
         files.add(new File(System.getProperty("user.dir") + "\\src\\test\\java\\tw\\jruletest\\examples\\TestClass1.java"));
         files.add(new File(System.getProperty("user.dir") + "\\src\\test\\java\\tw\\jruletest\\examples\\TestClass3.java"));

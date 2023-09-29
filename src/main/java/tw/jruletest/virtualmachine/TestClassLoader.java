@@ -3,6 +3,7 @@ package tw.jruletest.virtualmachine;
 import tw.jruletest.Runner;
 import tw.jruletest.analyzers.JavaClassAnalyzer;
 import tw.jruletest.analyzers.TestClassAnalyzer;
+import tw.jruletest.exceptions.CompilationFailureException;
 import tw.jruletest.files.FileFinder;
 import tw.jruletest.files.source.SourceClass;
 import tw.jruletest.files.test.TestClass;
@@ -11,11 +12,11 @@ import java.util.ArrayList;
 
 public class TestClassLoader {
 
-    public static void loadClasses() {
+    public static void loadClasses() throws CompilationFailureException {
         loadClasses("\\test\\");
     }
 
-    public static void loadClasses(String requiredDirectory) {
+    public static void loadClasses(String requiredDirectory) throws CompilationFailureException {
         ArrayList<String> classes = JavaClassLoader.loadClasses(requiredDirectory);
         for(String cls: classes) {
             try {
@@ -26,7 +27,7 @@ public class TestClassLoader {
         }
     }
 
-    public static void loadGeneratedTestClasses() {
+    public static void loadGeneratedTestClasses() throws CompilationFailureException {
         System.out.println("Loading generated");
         JavaClassLoader.loadClasses(FileFinder.getFiles("\\main\\"), FileFinder.getFiles("\\generated\\"));
     }

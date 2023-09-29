@@ -81,16 +81,16 @@ public class TestFileFinder {
 
     @Test
     public void testGetClassNameWithFile() {
-        Assert.assertEquals("tw.jruletest.logging.TestLogger", FileFinder.getClassName(FileFinder.getFiles("logging").get(0)));
+        Assert.assertEquals("tw.jruletest.logging.CompilationLogger", FileFinder.getClassName(FileFinder.getFiles("logging").get(0)));
     }
 
     @Test
     public void testGetClassNameWithFilename() {
-        Assert.assertEquals("tw.jruletest.logging.TestLogger", FileFinder.getClassName(FileFinder.getFiles("logging").get(0).getPath()));
+        Assert.assertEquals("tw.jruletest.logging.CompilationLogger", FileFinder.getClassName(FileFinder.getFiles("logging").get(0).getPath()));
     }
 
     @Test
     public void testGetClassNameWithFilenameAndRoot() {
-        Assert.assertEquals("tw.jruletest.logging.TestLogger", FileFinder.getClassName(FileFinder.getFiles("logging").get(0).getPath(), "main\\java\\"));
+        Assert.assertEquals("tw.jruletest.logging.CompilationLogger", FileFinder.getClassName(FileFinder.getFiles("logging").get(0).getPath(), "main\\java\\"));
     }
 }

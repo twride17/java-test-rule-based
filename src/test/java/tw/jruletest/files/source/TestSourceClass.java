@@ -4,6 +4,7 @@ import org.junit.*;
 import tw.jruletest.Runner;
 import tw.jruletest.analyzers.JavaClassAnalyzer;
 import tw.jruletest.exceptions.AmbiguousMemberException;
+import tw.jruletest.exceptions.CompilationFailureException;
 import tw.jruletest.exceptions.UnidentifiedCallException;
 import tw.jruletest.files.FileFinder;
 import tw.jruletest.virtualmachine.JavaClassLoader;
@@ -23,7 +24,9 @@ public class TestSourceClass {
         Runner.setRootPath(System.getProperty("user.dir") + "\\src");
         JavaClassLoader.createLoader();
         JavaClassLoader.setLoaderRootPackage("tw");
-        SourceClassLoader.loadClasses("main\\java\\tw\\jruletest\\testing\\examples\\");
+        try {
+            SourceClassLoader.loadClasses("main\\java\\tw\\jruletest\\testing\\examples\\");
+        } catch(CompilationFailureException e) {}
     }
 
     @Test

@@ -3,8 +3,10 @@ package tw.jruletest.files.test;
 import org.junit.*;
 import tw.jruletest.Runner;
 import tw.jruletest.analyzers.RuleExtractor;
+import tw.jruletest.exceptions.CompilationFailureException;
 import tw.jruletest.files.FileFinder;
 import tw.jruletest.virtualmachine.JavaClassLoader;
+import tw.jruletest.virtualmachine.SourceClassLoader;
 import tw.jruletest.virtualmachine.TestClassLoader;
 
 import java.io.File;
@@ -36,7 +38,10 @@ public class TestTestClass {
         Runner.setRootPath(System.getProperty("user.dir") + "\\src");
         JavaClassLoader.createLoader();
         JavaClassLoader.setLoaderRootPackage("tw");
-        TestClassLoader.loadClasses("test\\java\\tw\\jruletest\\examples\\");
+
+        try {
+            TestClassLoader.loadClasses("test\\java\\tw\\jruletest\\examples\\");
+        } catch(CompilationFailureException e) {}
     }
 
     @Test

@@ -3,6 +3,7 @@ package tw.jruletest.parse.parser;
 import org.junit.*;
 import tw.jruletest.Runner;
 import tw.jruletest.analyzers.JavaClassAnalyzer;
+import tw.jruletest.exceptions.CompilationFailureException;
 import tw.jruletest.exceptions.UnparsableRuleException;
 import tw.jruletest.files.FileFinder;
 import tw.jruletest.files.source.SourceClass;
@@ -25,7 +26,9 @@ public class TestParserRuleValidations {
         FileFinder.collectFiles(System.getProperty("user.dir") + "\\src");
         JavaClassLoader.createLoader();
         JavaClassLoader.setLoaderRootPackage("tw");
-        SourceClassLoader.loadClasses("programs");
+        try {
+            SourceClassLoader.loadClasses("programs");
+        } catch(CompilationFailureException e) {}
 
         String[] variables = {"x", "y", "z", "xValue", "value2", "yValue", "value", "value1", "string"};
         for(String variable: variables) {

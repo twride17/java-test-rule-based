@@ -6,7 +6,7 @@ import java.io.*;
 
 public class TestLogger {
 
-    private static final String LOG_FILENAME = "generated\\TestResults.log";
+    private static final String LOG_FILENAME = "logfiles\\TestResults.log";
 
     private static String currentLog = "";
 
@@ -29,11 +29,18 @@ public class TestLogger {
 
     public static void writeToLogfile() {
         try {
+            File logDirectory = new File(Runner.getRootPath() + "\\test\\java\\logfiles");
+            if(!logDirectory.exists()) {
+                logDirectory.mkdir();
+            }
+
             BufferedWriter logWriter = new BufferedWriter(new FileWriter(Runner.getRootPath() + "\\test\\java\\" + LOG_FILENAME, true));
             logWriter.write(currentLog + "\n");
             logWriter.close();
             currentLog = "";
-        } catch(IOException e) {}
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void printLog() {

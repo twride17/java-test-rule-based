@@ -1,6 +1,7 @@
 package tw.jruletest.virtualmachine;
 
 import tw.jruletest.Runner;
+import tw.jruletest.exceptions.CompilationFailureException;
 import tw.jruletest.files.FileFinder;
 
 import java.io.*;
@@ -82,7 +83,7 @@ public class JavaClassLoader extends ClassLoader {
         return loader;
     }
 
-    public static ArrayList<String> loadClasses(List<File> classes) {
+    public static ArrayList<String> loadClasses(List<File> classes) throws CompilationFailureException {
         ArrayList<String> classNames = new ArrayList<>();
         JavaClassCompiler.compileClasses(classes);
         for(File classFile: classes) {
@@ -101,12 +102,12 @@ public class JavaClassLoader extends ClassLoader {
         return classNames;
     }
 
-    public static ArrayList<String> loadClasses(List<File> sourceClasses, List<File> testClasses) {
+    public static ArrayList<String> loadClasses(List<File> sourceClasses, List<File> testClasses) throws CompilationFailureException {
         sourceClasses.addAll(testClasses);
         return loadClasses(sourceClasses);
     }
 
-    public static ArrayList<String> loadClasses(String directory) {
+    public static ArrayList<String> loadClasses(String directory) throws CompilationFailureException {
         System.out.println(directory);
         return loadClasses(FileFinder.getFiles(directory));
     }

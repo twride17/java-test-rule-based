@@ -3,6 +3,7 @@ package tw.jruletest.analyzers;
 import org.junit.*;
 import tw.jruletest.Runner;
 import tw.jruletest.exceptions.AmbiguousMemberException;
+import tw.jruletest.exceptions.CompilationFailureException;
 import tw.jruletest.exceptions.UnidentifiedCallException;
 import tw.jruletest.files.FileFinder;
 import tw.jruletest.files.source.SourceClass;
@@ -23,7 +24,9 @@ public class TestJavaClassAnalyzer {
         FileFinder.collectFiles(System.getProperty("user.dir") + "\\src");
         JavaClassLoader.createLoader();
         JavaClassLoader.setLoaderRootPackage("tw");
-        SourceClassLoader.loadClasses("examples");
+        try {
+            SourceClassLoader.loadClasses("examples");
+        } catch(CompilationFailureException e) {}
     }
 
     @Test
