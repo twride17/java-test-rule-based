@@ -11,8 +11,7 @@ import java.util.Map;
 /**
  * @author Toby Wride
  *
- * Writes the generated code into test suites as Java files
- *
+ * Writes test suites containing generated code to Java files
  * */
 
 public class TestSuiteGenerator {
@@ -20,8 +19,8 @@ public class TestSuiteGenerator {
     /**
      * Constructs the test suite and writes it to a Java file in a package starting with 'generated'
      *
-     * @param code code to write into the specified file
-     * @param filename the name of the file to write the test suite into
+     * @param code code to write to the specified file
+     * @param filename the name of the file to write the test suite to
      * */
 
     public static void writeSuiteToFile(String code, String filename) {
@@ -48,7 +47,7 @@ public class TestSuiteGenerator {
      * Constructs the test suite and writes it to a Java file in a specified package
      *
      * @param codeBlocks list of blocks of code mapped to their respective methods
-     * @param className the full name of the class to write the suite for. Is used to generate the filename
+     * @param className the full name of the class the code has been generated for. The filename is generated using this
      * */
 
     public static void writeSuiteToFile(Map<String, String> codeBlocks, String className) {
@@ -61,10 +60,10 @@ public class TestSuiteGenerator {
      * Constructs the test suite and writes it to a Java file of the same name, in a specified package
      *
      * @param codeBlocks a list of the code for each test case in the suite
-     * @param className the full name of the class to write the suite for. Is used to generate the filename
+     * @param className the full name of the class the code has been generated for. The filename is generated using this
      * @param packageName name of the package the test suite should belong to
      *
-     * @return constructed test suite as a single string
+     * @return the constructed test suite as a String
      * */
 
     public static String constructTestSuite(Map<String, String> codeBlocks, String className, String packageName) {

@@ -7,19 +7,30 @@ import tw.jruletest.parse.ruletree.rulenodes.*;
 
 import java.util.*;
 
+/**
+ * Parses the rules extracted from test classes to generate the code required to create test suites.
+ *
+ * @author Toby Wride
+ */
 
 public class Parser {
 
     /**
-     * @author Toby Wride
-     *
-     * Parses the rules from a test case
-     */
+     * Constant list of Strings storing the keywords required to detect new rules.
+     * */
 
     public static final ArrayList<String> KEYWORDS = new ArrayList<>(Arrays.asList("call", "get", "store", "expect"));
     private static final ArrayList<String> POSSIBLE_CONNECTIVES = new ArrayList<>(Arrays.asList(",", "and", "then"));
 
     private static LinkedList<TreeNode> rules = new LinkedList<>();
+
+    /**
+     * Decodes and generates the code from a set o rules
+     *
+     * @param rules list of rules to generate code for
+     *
+     * @return the code generated from the list of rules.
+     * */
 
     public static String parseRules(String[] rules) {
         String generatedCode = "";
@@ -28,6 +39,14 @@ public class Parser {
         }
         return generatedCode;
     }
+
+    /**
+     * Decodes and generates the code from a given rule
+     *
+     * @param rule the rule to generate code for
+     *
+     * @return the code generated from the given rule.
+     * */
 
     public static String parseRule(String rule) {
         String[] subRules = rule.split("\\.\\s");
@@ -45,6 +64,16 @@ public class Parser {
         }
         return codeBlock;
     }
+
+    /**
+     * Breaks up the provided rule into separate rules and generates the rule tree required to validate the rule and generate the corresponding code.
+     *
+     * @param rule the rule to segment and generate the rule tree for
+     *
+     * @return the list of validated rule segments
+     *
+     * @throws UnparsableRuleException thrown if the rule could be validated or could not generate valid code
+     * */
 
     public static ArrayList<String> generateTrees(String rule) throws UnparsableRuleException {
         String remainingRule = rule.trim();

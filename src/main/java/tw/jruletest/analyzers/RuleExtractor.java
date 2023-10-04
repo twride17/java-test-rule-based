@@ -3,24 +3,20 @@ package tw.jruletest.analyzers;
 import tw.jruletest.Runner;
 import tw.jruletest.files.FileFinder;
 import tw.jruletest.files.test.TestClass;
-import tw.jruletest.virtualmachine.JavaClassLoader;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
+
+/**
+ * Class that extracts rules from the required files and passes the rules to the Runner class.
+ *
+ * @author Toby Wride
+ * */
 
 public class RuleExtractor {
 
     /**
-     * Obtains the rules defined in all files from test directory
+     * Obtains the rules defined in all Java files located in the 'test' directory
      * */
 
     public static void extractRules() {
@@ -39,6 +35,12 @@ public class RuleExtractor {
         }
     }
 
+
+    /**
+     * Extracts the rules from the provided file
+     *
+     * @param testFile: file from which to extract the rules
+     * */
     public static void extractRules(File testFile) {
         try {
             TestClass testClassFile = new TestClass(FileFinder.getClassName(testFile));

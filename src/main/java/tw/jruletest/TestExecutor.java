@@ -3,7 +3,7 @@ package tw.jruletest;
 import tw.jruletest.exceptions.CompilationFailureException;
 import tw.jruletest.expectations.UnsatisfiedExpectationError;
 import tw.jruletest.files.FileFinder;
-import tw.jruletest.logging.TestLogger;
+import tw.jruletest.loggers.TestLogger;
 import tw.jruletest.virtualmachine.JavaClassLoader;
 import tw.jruletest.virtualmachine.SourceClassLoader;
 import tw.jruletest.virtualmachine.TestClassLoader;
@@ -14,7 +14,22 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
+/**
+ * TestExecutor is designed to execute all the tests from all the generated test suites and record the outcomes of each test.
+ * The execution can either be started by calling this from Runner or by simply using TestExecutor's main method.
+ * In order to use TestExecutor on its own, all test suites must be located within a 'generated' directory.
+ *
+ * @author Toby Wride
+ * */
+
 public class TestExecutor {
+
+    /**
+     * Executes the test suites by loading the classes and executing each test case in each class.
+     * The test results are logged in the appropriate log file.
+     *
+     * @throws CompilationFailureException thrown if the generated test suites do not compile successfully
+     * */
 
     public static void executeTests() throws CompilationFailureException {
         FileFinder.collectFiles(Runner.getRootPath());
@@ -48,7 +63,7 @@ public class TestExecutor {
             System.out.println("Couldn't find the test class:" + className);
         } catch(LinkageError e) {}
 
-        TestLogger.writeToLogfile();
+        TestLogger.writeToFile();
     }
 
     private static void attemptTest(Method test, Object instance) {
@@ -74,6 +89,13 @@ public class TestExecutor {
             }
         }
     }
+
+    /**
+     * Main entrypoint for executing tests. Assumes files are located in 'generated' package.
+     * This method controls the execution of all available test classes.
+     *
+     * @param args this parameter has no use
+     * */
 
     public static void main(String[] args) {
         Runner.setRootPath(System.getProperty("user.dir") + "\\src");

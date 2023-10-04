@@ -5,13 +5,14 @@ import tw.jruletest.exceptions.InvalidRuleStructureException;
 import tw.jruletest.parse.ruletree.TreeNode;
 import tw.jruletest.parse.ruletree.argumentnodes.ArgumentNode;
 
-public class ExpectationNode implements TreeNode {
+/**
+ * Rule node that deals with creating expectation objects.
+ * This node is designed to be the root node of a tree generated from rules that start with the keyword 'expect'.
+ *
+ * @author Toby Wride
+ * */
 
-    /**
-     * @author Toby Wride
-     *
-     * Rule tree node for expectation rules
-     */
+public class ExpectationNode implements TreeNode {
 
     private int keywordLength = 0;
 
@@ -22,6 +23,13 @@ public class ExpectationNode implements TreeNode {
     private boolean negated = false;
 
     private static final String[] POSSIBLE_COMPARATORS = {" equal "};
+
+    /**
+     * Implementation of code generation from TreeNode interface.
+     * Generation of code involves code generation from both child nodes (or only one if boolean) and creating the appropriate expectation object.
+     *
+     * @return a full line of code containing the expectation object with the first and second values as code generated from the child nodes.
+     * */
 
     @Override
     public String generateCode() {
@@ -35,6 +43,20 @@ public class ExpectationNode implements TreeNode {
         code += comparator.substring(0, 1).toUpperCase() + comparator.substring(1) + "(";
         return code + actualValueTree.generateCode() + ");";
     }
+
+    /**
+     * Implementation of rule validation from TreeNode interface.
+     * Checks if the first word is the keyword 'expect' and one of the possible comparators exists in the rule with possible
+     * negation allowed. Assuming the basic structure is valid, the validity of the arguments for the first and second
+     * values are checked by the appropriate child nodes.
+     *
+     * @param ruleContent rule segment to be validated
+     *
+     * @return the index required to extract the valid segment from the rule
+     *
+     * @throws InvalidRuleStructureException thrown if the rule does not start with the 'expect' keyword, does not contain
+     * one of allowed comparison keywords or one of the child nodes was not able to find a valid segment
+     * */
 
     public int validateRule(String ruleContent) throws InvalidRuleStructureException  {
         int comparatorIndex = -1;

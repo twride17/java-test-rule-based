@@ -7,14 +7,38 @@ import java.lang.reflect.Type;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ConstantNode extends ArgumentNode implements TreeNode {
+/**
+ * Rule node that deals with constants of any primitive type, (such as int, char, boolean etc)
+ *
+ * @author Toby Wride
+ * */
 
+public class ConstantNode extends ArgumentNode implements TreeNode {
     private Type type;
+
+    /**
+     * Implementation of code generation from TreeNode interface.
+     * Generates the code by returning the stored argument.
+     *
+     * @return the stored argument as the required code segment
+     * */
 
     @Override
     public String generateCode() {
         return argumentString;
     }
+
+    /**
+     * Implementation of rule validation from TreeNode interface.
+     * Checks that at least part of the rule segment matches the required structure for one primitive constant.
+     * If a valid segment is found, the type is stored
+     *
+     * @param rule rule segment to be validated
+     *
+     * @return the index required to extract the valid segment from the rule
+     *
+     * @throws InvalidRuleStructureException thrown if the rule does not start with any primitive constant structure
+     * */
 
     @Override
     public int validateRule(String rule) throws InvalidRuleStructureException {
@@ -72,6 +96,12 @@ public class ConstantNode extends ArgumentNode implements TreeNode {
             }
         }
     }
+
+    /**
+     * Gets the stored type of the constant
+     *
+     * @return the type of the constant being represented
+     * */
 
     public Type getType() {
         return type;

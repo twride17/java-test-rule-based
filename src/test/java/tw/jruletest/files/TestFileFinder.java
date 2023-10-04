@@ -31,7 +31,7 @@ public class TestFileFinder {
         String testTop = "test\\java\\tw\\jruletest";
         String[] expectedPackages = {mainTop + "\\analyzers", mainTop + "\\exceptions", mainTop + "\\expectations",
                                     mainTop + "\\files", mainTop + "\\files\\source", mainTop + "\\files\\test", mainTop + "\\generators",
-                                    mainTop + "\\logging", mainTop + "\\parse", mainTop + "\\parse\\ruletree\\argumentnodes",
+                                    mainTop + "\\loggers", mainTop + "\\parse", mainTop + "\\parse\\ruletree\\argumentnodes",
                                     mainTop + "\\parse\\ruletree\\rulenodes", mainTop + "\\parse\\ruletree", mainTop,
                                     mainTop + "\\testing\\examples", mainTop + "\\testing\\examples\\subpackage1",
                                     mainTop + "\\testing\\examples\\subpackage2", mainTop + "\\testing\\programs",
@@ -81,16 +81,16 @@ public class TestFileFinder {
 
     @Test
     public void testGetClassNameWithFile() {
-        Assert.assertEquals("tw.jruletest.logging.CompilationLogger", FileFinder.getClassName(FileFinder.getFiles("logging").get(0)));
+        Assert.assertEquals("tw.jruletest.loggers.CompilationLogger", FileFinder.getClassName(FileFinder.getFiles("loggers").get(0)));
     }
 
     @Test
     public void testGetClassNameWithFilename() {
-        Assert.assertEquals("tw.jruletest.logging.CompilationLogger", FileFinder.getClassName(FileFinder.getFiles("logging").get(0).getPath()));
+        Assert.assertEquals("tw.jruletest.loggers.CompilationLogger", FileFinder.getClassName(FileFinder.getFiles("loggers").get(0).getPath()));
     }
 
     @Test
     public void testGetClassNameWithFilenameAndRoot() {
-        Assert.assertEquals("tw.jruletest.logging.CompilationLogger", FileFinder.getClassName(FileFinder.getFiles("logging").get(0).getPath(), "main\\java\\"));
+        Assert.assertEquals("tw.jruletest.loggers.CompilationLogger", FileFinder.getClassName(FileFinder.getFiles("loggers").get(0).getPath(), "main\\java\\"));
     }
 }

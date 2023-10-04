@@ -1,21 +1,19 @@
 package tw.jruletest.generators;
 
-import tw.jruletest.analyzers.ImportCollector;
-
 /**
- * @author Toby Wride
+ * Generates the code for a single test case based on the tree generated during rule validation
  *
- * Generates the code for a single test case method
+ * @author Toby Wride
  * */
 
 public class TestCaseGenerator {
 
     /**
-     * Constructs the test case code for a given block of code and wraps it in a method with the name given
+     * Constructs the test case code for a given block of code and wraps it in a method with the provided name
      *
      * @param codeBlock: the commands to be included in the test case code
      * @param methodName: the name of the method to wrap the constructed code in
-     * @return generated code that has been constructed
+     * @return the code generated for the method
      * */
 
     public static String writeTestCase(String codeBlock, String methodName) {

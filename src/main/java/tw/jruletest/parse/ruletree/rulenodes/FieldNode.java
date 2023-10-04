@@ -14,10 +14,23 @@ import java.lang.reflect.Type;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Rule node that deals explicitly with static or instance fields from source classes.
+ *
+ * @author Toby Wride
+ * */
+
 public class FieldNode implements TreeNode {
 
     private SourceField field;
     private String className;
+
+    /**
+     * Implementation of code generation from TreeNode interface.
+     * Generation of code involves concatenating the name of the field to with the defining class and importing the correct class.
+     *
+     * @return the generated code segment for accessing the field's value
+     * */
 
     @Override
     public String generateCode() {
@@ -25,10 +38,12 @@ public class FieldNode implements TreeNode {
         return className + "." + field.getName();
     }
 
+
+
     @Override
-    public int validateRule(String rule) throws InvalidRuleStructureException {
-        String fieldCall = rule;
-        int nextSpaceIndex = rule.indexOf(' ');
+    public int validateRule(String ruleContent) throws InvalidRuleStructureException {
+        String fieldCall = ruleContent;
+        int nextSpaceIndex = ruleContent.indexOf(' ');
         if(nextSpaceIndex != -1) {
             fieldCall = fieldCall.substring(0, nextSpaceIndex);
         }
@@ -70,15 +85,23 @@ public class FieldNode implements TreeNode {
 
     }
 
+    /**
+     * Gets the type of the field
+     *
+     * @return the type of the stored field
+     * */
+
     public Type getType() {
         return field.getType();
     }
 
+    /**
+     * Gets the name of the field
+     *
+     * @return the name of the stored field
+     * */
+
     public String getFieldName() {
         return field.getName();
-    }
-
-    public SourceField getField() {
-        return field;
     }
 }

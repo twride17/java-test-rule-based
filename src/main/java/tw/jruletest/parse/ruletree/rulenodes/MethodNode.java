@@ -5,7 +5,6 @@ import tw.jruletest.analyzers.JavaClassAnalyzer;
 import tw.jruletest.exceptions.AmbiguousMemberException;
 import tw.jruletest.exceptions.InvalidRuleStructureException;
 import tw.jruletest.exceptions.UnidentifiedCallException;
-import tw.jruletest.files.source.SourceField;
 import tw.jruletest.files.source.SourceMember;
 import tw.jruletest.files.source.SourceMethod;
 import tw.jruletest.parse.ruletree.TreeNode;
@@ -14,12 +13,25 @@ import java.lang.reflect.Type;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Rule node that deals with calling a method.
+ *
+ * @author Toby Wride
+ * */
+
 public class MethodNode implements TreeNode {
 
     private SourceMethod method;
 
     private String methodName;
     private MethodArgumentNode arguments = null;
+
+    /**
+     * Implementation of code generation from TreeNode interface.
+     * Generation of code involves generating the code to call the method and inserting the code for any arguments the method requires.
+     *
+     * @return the generated code segment for calling a method with or without arguments.
+     * */
 
     @Override
     public String generateCode() {
@@ -31,6 +43,18 @@ public class MethodNode implements TreeNode {
         }
         return code + ")";
     }
+
+    /**
+     * Implementation of rule validation from TreeNode interface.
+     * Checks that the method call has a valid structure for the name and exists in the loaded source classes.
+     * If there are arguments required, the validity of the rule depends on the validity of the arguments
+     *
+     * @param ruleContent rule segment to be validated
+     *
+     * @return the index required to extract the valid segment from the rule
+     *
+     * @throws InvalidRuleStructureException thrown if the method name is not of a valid structure or does not exist in the loaded source classes
+     * */
 
     public int validateRule(String ruleContent) throws InvalidRuleStructureException {
         int methodCallStart = 0;
@@ -113,15 +137,23 @@ public class MethodNode implements TreeNode {
         }
     }
 
+    /**
+     * Gets the type of the required method
+     *
+     * @return the type of the method found
+     * */
+
     public Type getType() {
         return method.getType();
     }
 
+    /**
+     * Gets the name of the required method
+     *
+     * @return the name of the method found
+     * */
+
     public String getMethodName() {
         return method.getName();
-    }
-
-    public SourceMethod getMethod() {
-        return method;
     }
 }

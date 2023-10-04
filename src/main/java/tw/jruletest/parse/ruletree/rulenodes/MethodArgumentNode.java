@@ -6,9 +6,22 @@ import tw.jruletest.parse.ruletree.TreeNode;
 
 import java.util.ArrayList;
 
+/**
+ * Rule node that deals with the arguments for method calls.
+ *
+ * @author Toby Wride
+ * */
+
 public class MethodArgumentNode implements TreeNode {
 
     private ArrayList<TreeNode> arguments = new ArrayList<>();
+
+    /**
+     * Implementation of code generation from TreeNode interface.
+     * Generation of code involves concatenating the results of code generation from all the arguments and separating them with commas
+     *
+     * @return the generated code segment for structuring a method's arguments
+     * */
 
     @Override
     public String generateCode() {
@@ -18,6 +31,18 @@ public class MethodArgumentNode implements TreeNode {
         }
         return code;
     }
+
+    /**
+     * Implementation of rule validation from TreeNode interface.
+     * Checks that each valid argument is followed by an appropriate connective until the end of the rule is found
+     * or another connective  or keyword is found.
+     *
+     * @param ruleContent rule segment to be validated
+     *
+     * @return the index required to extract the valid segment from the rule
+     *
+     * @throws InvalidRuleStructureException if the connective between each argument is invalid or a connective is found when no extra rule exists.
+     * */
 
     public int validateRule(String ruleContent) throws InvalidRuleStructureException {
         boolean valid = false;

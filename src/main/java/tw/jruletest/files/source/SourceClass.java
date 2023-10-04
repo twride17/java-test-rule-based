@@ -7,14 +7,41 @@ import tw.jruletest.virtualmachine.JavaClassLoader;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
+
+/**
+ * Utility class to store details of a source class and provide methods of analysis
+ *
+ * @author Toby Wride
+ * */
 
 public class SourceClass {
 
+    /**
+     * Instance field for the name of the class being represented by this SourceClass object
+     * */
+
     private String className;
+
+    /**
+     * List of SourceMethod objects representing the methods defined in the class represented by this object
+     * */
+
     private ArrayList<SourceMethod> methods = new ArrayList<>();
+
+    /**
+     * List of SourceField objects representing the fields defined in the class represented by this object
+     * */
+
     private ArrayList<SourceField> fields = new ArrayList<>();
+
+    /**
+     * SourceClass constructor uses the represented class's name to find the class, collects the fields and methods and stores them in their respective objects.
+     *
+     * @param className the name of the class to be represented by this object
+     *
+     * @throws ClassNotFoundException when the class with the provided class name either doesn't exist or hss not been loaded into the classpath.
+     * */
 
     public SourceClass(String className) throws ClassNotFoundException {
         Class<?> cls = Class.forName(className, false, JavaClassLoader.getLoader());
@@ -32,13 +59,24 @@ public class SourceClass {
         }
     }
 
-    public SourceMember getMember(String call) throws UnidentifiedCallException, AmbiguousMemberException {
-        SourceMethod requiredMethod = findMethod(call);
-        SourceField requiredField = findField(call);
+    /**
+     * Finds the method or field defined by the required method or field memberName.
+     *
+     * @param memberName the name of the member to find
+     *
+     * @return the member found with the provided name
+     *
+     * @throws UnidentifiedCallException thrown when theis object does not have a field or method defined by the provided member name
+     * @throws AmbiguousMemberException thrown when there is more than one occurrence of members with the provided name
+     * */
+
+    public SourceMember getMember(String memberName) throws UnidentifiedCallException, AmbiguousMemberException {
+        SourceMethod requiredMethod = findMethod(memberName);
+        SourceField requiredField = findField(memberName);
 
         if(requiredField == null) {
             if(requiredMethod == null) {
-                throw new UnidentifiedCallException(call);
+                throw new UnidentifiedCallException(memberName);
             }
             else {
                 return requiredMethod;
@@ -48,7 +86,7 @@ public class SourceClass {
                 return requiredField;
             }
             else {
-                throw new AmbiguousMemberException(call);
+                throw new AmbiguousMemberException(memberName);
             }
         }
     }
@@ -71,9 +109,21 @@ public class SourceClass {
         return null;
     }
 
+    /**
+     * Returns the base class name for the represented class
+     *
+     * @return the name of the class represented by this object
+     * */
+
     public String getClassName() {
         return className.substring(className.lastIndexOf('.') + 1);
     }
+
+    /**
+     * Returns the class name for the represented class, including the packages
+     *
+     * @return the full name of the class represented by this object
+     * */
 
     public String getFullClassName() {
         return className;

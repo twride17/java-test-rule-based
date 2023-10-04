@@ -10,21 +10,43 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * JavaClassLoader extends the built-in ClassLoader class.
+ *
+ * @author Toby Wride
+ * */
+
 public class JavaClassLoader extends ClassLoader {
 
     private static JavaClassLoader loader = new JavaClassLoader(Runner.class.getClassLoader());
-
-    private String currentDirectory = "\\main\\java\\";
     private String rootPackage = "";
     private String filePath;
+
+    /**
+     * Constructor extends ClassLoader using a parent loader as argument.
+     *
+     * @param parent the ClassLoader parent
+     * */
 
     public JavaClassLoader(ClassLoader parent) {
         super(parent);
     }
 
+    /**
+     * Updates the current root package
+     *
+     * @param rootPackage the name of the new root package
+     * */
+
     public void setRootPackage(String rootPackage) {
         this.rootPackage = rootPackage;
     }
+
+    /**
+     * Updates the current file path
+     *
+     * @param path the new file path
+     * */
 
     public void setFilePath(String path) {
         filePath = path;
@@ -44,6 +66,16 @@ public class JavaClassLoader extends ClassLoader {
         }
     }
 
+    /**
+     * Overridden method from ClassLoader uses parent class loader if neither the first nor second packages match the root package.
+     *
+     * @param name the full name of the class
+     *
+     * @return the loaded class
+     *
+     * @throws ClassNotFoundException thrown if the class required could not be foumd
+     * */
+
     @Override
     public Class<?> loadClass(String name) throws ClassNotFoundException {
         if (name.startsWith(rootPackage) || name.substring(name.indexOf('.')+1).startsWith(rootPackage)) {
@@ -62,26 +94,43 @@ public class JavaClassLoader extends ClassLoader {
         return buff;
     }
 
-    public void changeDirectory(String directory) {
-        currentDirectory = directory;
-    }
+    /**
+     * Static method to instantiate the re-instantiate the class loader
+     * */
 
-    // Static methods
     public static void createLoader() {
         loader = new JavaClassLoader(Runner.class.getClassLoader());
     }
+
+    /**
+     * Static method to update the root package stored by the class loader
+     *
+     * @param packageName the name of the new root package
+     * */
 
     public static void setLoaderRootPackage(String packageName) {
         loader.setRootPackage(packageName);
     }
 
-    public static void changeLoaderDirectory(String directory) {
-        loader.changeDirectory(directory);
-    }
+    /**
+     * Static method to get the loader object
+     *
+     * @return the loader object being used
+     * */
 
     public static JavaClassLoader getLoader() {
         return loader;
     }
+
+    /**
+     * Loads the classes from the provided files and gets the names of all successfully loaded classes
+     *
+     * @param classes list of files with classes to load
+     *
+     * @return a list of the names of all the successfully loaded classes
+     *
+     * @throws CompilationFailureException thrown if the files did not compile
+     * */
 
     public static ArrayList<String> loadClasses(List<File> classes) throws CompilationFailureException {
         ArrayList<String> classNames = new ArrayList<>();
@@ -102,13 +151,33 @@ public class JavaClassLoader extends ClassLoader {
         return classNames;
     }
 
+    /**
+     * Loads the classes from both lists of provided files and gets the names of all successfully loaded classes
+     *
+     * @param sourceClasses list of source files with classes to load
+     * @param testClasses list of test files with classes to load
+     *
+     * @return a list of the names of all the successfully loaded classes
+     *
+     * @throws CompilationFailureException thrown if the files did not compile
+     * */
+
     public static ArrayList<String> loadClasses(List<File> sourceClasses, List<File> testClasses) throws CompilationFailureException {
         sourceClasses.addAll(testClasses);
         return loadClasses(sourceClasses);
     }
 
+    /**
+     * Loads all classes found within the specified directory and gets the names of all successfully loaded classes
+     *
+     * @param directory name of the directory containing the classes to be loaded
+     *
+     * @return a list of the names of all the successfully loaded classes
+     *
+     * @throws CompilationFailureException thrown if the files did not compile
+     * */
+
     public static ArrayList<String> loadClasses(String directory) throws CompilationFailureException {
-        System.out.println(directory);
         return loadClasses(FileFinder.getFiles(directory));
     }
 }
