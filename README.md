@@ -1,31 +1,34 @@
 # Rule Based Testing Framework for Java
 
-### VERSION: Proof of Concept
+### VERSION: Basic Prototype
 
-This framework aims to enable developers to test their programs without needing to fully understand the code syntax.
-A controller class reads rules from a test suite class and assembles the required code.
+This framework aims to enable developers to test their programs without needing to fully understand Java code syntax.
+A controller class reads rules from a test suite class and assembles the required code. A secondary testing controller class executes the tests and records the results.
 
 ## Current Features
 
 - Parsable rules include:
-  - Static method calls with void or integer return types with public modifier
-  - Integer static variables with public modifier
-  - Expectations for integer values
+  - Static public fields or method calls
+  - Storage of field values and method return values in self-defined or auto-generated variables with primitive and String types able to be declared.
+  - Variables can also be assigned constant values such as primitive constants or user defined strings
+  - Expectations for primitive and String values
 - Controller reads rules and constructs test suites, then executes the generated test suites
+- Test results and compilation errors are recorded in dedicated log files.
 
 ## Installation
 
-Current release is only Proof of Concept so there is currently no JAR available.
+Current release is only a Basic Prototype so there is currently no JAR available.
 
 To install:
 1. Download JAR file from this repository or clone it
 2. Run the JAR from command line using the command:
-`java -jar JavaRuleBasedTesting.jar <path to src folder of the project>`
+`java -jar JavaRuleBasedTesting.jar <path to src folder of the project>(optional)`
 3. Alternatively, add the JAR as an external library (eg: in IntelliJ or Eclipse IDEs)
 
 ## Usage
 
-Runner is the main entrypoint into the program and will both generate and run the test suites. TestExecutor can be used for a previously generated test suite if no rules require extraction.
+Runner is the main entrypoint into the program and will both generate and run the test suites.
+TestExecutor can also be used for any previously generated or user defined test suites.
 
 ### Defining Rules
 
@@ -40,8 +43,16 @@ Instance variable containing the rules:
 
 *NB: rules can be extracted using a String array type as well.*
 
-Tests pass or fail using expectations. To add an expectation to a test, the rule should be of the form:
-`Expect <variable name> to equal <expected value>`. The `<variable name>` can either be the value returned directly from a method or from a previously defined variable.
+### Available Rules
+
+- `Call <method name> (with arguments): <list of arguments>`
+- `Call <method name>`
+- `Get <method or field name>`
+- `Store <method or field name> in <variable name>`
+- `Store <contant or string> in <variable name>`
+- `Expect <variable name> to (not) <comparator> <expected value>`
+
+Expectations are used to determine if a test passes or fails. Errors and failures found are recorded in the TestResults.log file.
 
 ## Notes
 
