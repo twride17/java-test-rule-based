@@ -2,9 +2,11 @@ package tw.jruletest.files.test;
 
 import org.junit.*;
 import tw.jruletest.Runner;
+import tw.jruletest.analyzers.JavaClassAnalyzer;
 import tw.jruletest.analyzers.RuleExtractor;
 import tw.jruletest.exceptions.CompilationFailureException;
 import tw.jruletest.files.FileFinder;
+import tw.jruletest.files.source.SourceClass;
 import tw.jruletest.virtualmachine.JavaClassLoader;
 import tw.jruletest.virtualmachine.SourceClassLoader;
 import tw.jruletest.virtualmachine.TestClassLoader;
@@ -34,14 +36,18 @@ public class TestTestClass {
     @Before
     public void setup() {
         FileFinder.collectFiles(System.getProperty("user.dir") + "\\src");
-        files = FileFinder.getFiles("\\test\\java\\tw\\jruletest\\examples\\");
+        files = FileFinder.getFiles("\\test\\java\\tw\\jruletest\\examples\\testclasses");
         Runner.setRootPath(System.getProperty("user.dir") + "\\src");
         JavaClassLoader.createLoader();
         JavaClassLoader.setLoaderRootPackage("tw");
 
         try {
-            TestClassLoader.loadClasses("test\\java\\tw\\jruletest\\examples\\");
-        } catch(CompilationFailureException e) {}
+            TestClassLoader.loadClasses("testclasses");
+            ArrayList<String> classes = JavaClassLoader.loadClasses("programs");
+            for(String name: classes) {
+                JavaClassAnalyzer.addSourceClass(new SourceClass(name));
+            }
+        } catch(CompilationFailureException | ClassNotFoundException e) {}
     }
 
     @Test
@@ -75,7 +81,7 @@ public class TestTestClass {
     }
 
     private void conductTest(int testNumber) {
-        String className = "tw.jruletest.examples.TestClass" + (testNumber+1);
+        String className = "tw.jruletest.examples.testclasses.TestClass" + (testNumber+1);
 
         RuleExtractor.extractRules(new ArrayList<>(Collections.singleton(files.get(testNumber))));
         Map<String, Map<String, String>> rules = Runner.getRuleSets();
@@ -101,15 +107,15 @@ public class TestTestClass {
     @After
     public void teardown() {
         try {
-            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/test/java/tw/jruletest/examples/TestClass1.class"));
-            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/test/java/tw/jruletest/examples/TestClass2.class"));
-            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/test/java/tw/jruletest/examples/TestClass3.class"));
-            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/test/java/tw/jruletest/examples/TestClass4.class"));
-            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/test/java/tw/jruletest/examples/TestClass5.class"));
-            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/test/java/tw/jruletest/examples/TestClass6.class"));
-            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/main/java/tw/jruletest/testing/programs/Example.class"));
-            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/main/java/tw/jruletest/testing/programs/Class.class"));
-            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/main/java/tw/jruletest/testing/programs/Test.class"));
+            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/test/java/tw/jruletest/examples/testclasses/TestClass1.class"));
+            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/test/java/tw/jruletest/examples/testclasses/TestClass2.class"));
+            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/test/java/tw/jruletest/examples/testclasses/TestClass3.class"));
+            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/test/java/tw/jruletest/examples/testclasses/TestClass4.class"));
+            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/test/java/tw/jruletest/examples/testclasses/TestClass5.class"));
+            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/test/java/tw/jruletest/examples/testclasses/TestClass6.class"));
+            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/test/java/tw/jruletest/examples/sourceclasses/programs/Example.class"));
+            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/test/java/tw/jruletest/examples/sourceclasses/programs/Test.class"));
+            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/test/java/tw/jruletest/examples/sourceclasses/programs/Class.class"));
         } catch (IOException e) {
             System.out.println("Class file does not exist.");
         }

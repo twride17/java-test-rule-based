@@ -1,4 +1,4 @@
-package tw.jruletest.testing.programs;
+package tw.jruletest.examples.sourceclasses.programs;
 
 public class Example {
 

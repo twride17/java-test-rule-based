@@ -8,7 +8,6 @@ import tw.jruletest.Runner;
 import tw.jruletest.exceptions.CompilationFailureException;
 import tw.jruletest.files.FileFinder;
 import tw.jruletest.virtualmachine.JavaClassLoader;
-import tw.jruletest.virtualmachine.SourceClassLoader;
 import tw.jruletest.virtualmachine.TestClassLoader;
 
 import java.io.File;
@@ -28,28 +27,23 @@ public class TestRuleExtractor {
     @Before
     public void setup() {
         JavaClassLoader.createLoader();
-
         FileFinder.collectFiles(System.getProperty("user.dir") + "\\src\\test\\java");
-        //Runner.runCommand("javac -cp src src\\test\\java\\tw\\jruletest\\examples\\TestClass1.java");
-        //Runner.runCommand("javac -cp src src\\test\\java\\tw\\jruletest\\examples\\TestClass3.java");
-
-
         JavaClassLoader.setLoaderRootPackage("tw");
         try {
-            TestClassLoader.loadClasses("examples");
+            TestClassLoader.loadClasses("testclasses");
         } catch(CompilationFailureException e) {}
 
-        files.add(new File(System.getProperty("user.dir") + "\\src\\test\\java\\tw\\jruletest\\examples\\TestClass1.java"));
-        files.add(new File(System.getProperty("user.dir") + "\\src\\test\\java\\tw\\jruletest\\examples\\TestClass3.java"));
+        files.add(new File(System.getProperty("user.dir") + "\\src\\test\\java\\tw\\jruletest\\examples\\testclasses\\TestClass1.java"));
+        files.add(new File(System.getProperty("user.dir") + "\\src\\test\\java\\tw\\jruletest\\examples\\testclasses\\TestClass3.java"));
 
         HashMap<String, String> map = new HashMap<>();
         map.put("rule","Call method Example.exampleMethod with 12\nGet value of Example.example");
-        expectedRules.put("tw.jruletest.examples.TestClass1", map);
+        expectedRules.put("tw.jruletest.examples.testclasses.TestClass1", map);
         map = new HashMap<>();
         map.put("currentRuleRule1", "Get value of Class.field");
         map.put("currentRuleRule2", "Get value of Class.method");
         map.put("currentRuleRule3", "Get value of Class.field");
-        expectedRules.put("tw.jruletest.examples.TestClass3", map);
+        expectedRules.put("tw.jruletest.examples.testclasses.TestClass3", map);
     }
 
     @Test
@@ -68,10 +62,8 @@ public class TestRuleExtractor {
     @After
     public void teardown() {
         try {
-            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/test/java/tw/jruletest/examples/TestClass1.class"));
-            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/test/java/tw/jruletest/examples/TestClass3.class"));
-            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/test/java/tw/jruletest/testprograms/Example.class"));
-            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/test/java/tw/jruletest/testprograms/Class.class"));
+            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/test/java/tw/jruletest/examples/testclasses/TestClass1.class"));
+            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/test/java/tw/jruletest/examples/testclasses/TestClass3.class"));
         } catch(IOException e) {
             System.out.println("Couldn't delete file.");
         }

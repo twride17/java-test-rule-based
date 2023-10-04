@@ -14,6 +14,7 @@ import tw.jruletest.virtualmachine.SourceClassLoader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class TestStoreValueNode {
@@ -29,8 +30,11 @@ public class TestStoreValueNode {
         JavaClassLoader.createLoader();
         JavaClassLoader.setLoaderRootPackage("tw");
         try {
-            SourceClassLoader.loadClasses("programs");
-        } catch(CompilationFailureException e) {}
+            ArrayList<String> classes = JavaClassLoader.loadClasses("programs");
+            for(String name: classes) {
+                JavaClassAnalyzer.addSourceClass(new SourceClass(name));
+            }
+        } catch(CompilationFailureException | ClassNotFoundException e) {}
 
         VariableStore.addVariable(Runner.getCurrentMethod(), "z", char.class);
         VariableStore.addVariable(Runner.getCurrentMethod(), "xValue", boolean.class);
@@ -157,9 +161,9 @@ public class TestStoreValueNode {
         VariableStore.reset();
         JavaClassAnalyzer.resetSourceClasses();
         try {
-            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/main/java/tw/jruletest/testing/programs/Example.class"));
-            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/main/java/tw/jruletest/testing/programs/Test.class"));
-            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/main/java/tw/jruletest/testing/programs/Class.class"));
+            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/test/java/tw/jruletest/examples/sourceclasses/programs/Example.class"));
+            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/test/java/tw/jruletest/examples/sourceclasses/programs/Test.class"));
+            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/test/java/tw/jruletest/examples/sourceclasses/programs/Class.class"));
         } catch(IOException e) {
             System.out.println("Couldn't delete file.");
         }

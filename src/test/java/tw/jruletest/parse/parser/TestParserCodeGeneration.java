@@ -14,6 +14,7 @@ import tw.jruletest.virtualmachine.SourceClassLoader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class TestParserCodeGeneration {
@@ -26,8 +27,11 @@ public class TestParserCodeGeneration {
         JavaClassLoader.createLoader();
         JavaClassLoader.setLoaderRootPackage("tw");
         try {
-            SourceClassLoader.loadClasses("programs");
-        } catch(CompilationFailureException e) {}
+            ArrayList<String> classes = JavaClassLoader.loadClasses("sourceclasses");
+            for(String name: classes) {
+                JavaClassAnalyzer.addSourceClass(new SourceClass(name));
+            }
+        } catch(CompilationFailureException | ClassNotFoundException e) {}
     }
 
     @Test
@@ -73,9 +77,13 @@ public class TestParserCodeGeneration {
         VariableStore.reset();
         JavaClassAnalyzer.resetSourceClasses();
         try {
-            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/main/java/tw/jruletest/testexamples/testprograms/Example.class"));
-            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/main/java/tw/jruletest/testexamples/testprograms/Test.class"));
-            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/main/java/tw/jruletest/testexamples/testprograms/Class.class"));
+            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/test/java/tw/jruletest/examples/sourceclasses/programs/Example.class"));
+            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/test/java/tw/jruletest/examples/sourceclasses/programs/Test.class"));
+            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/test/java/tw/jruletest/examples/sourceclasses/programs/Class.class"));
+            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/main/java/tw/jruletest/examples/sourceclasses/subpackage1/Example.class"));
+            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/main/java/tw/jruletest/examples/sourceclasses/subpackage2/Example.class"));
+            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/main/java/tw/jruletest/examples/sourceclasses/Example2.class"));
+            Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/main/java/tw/jruletest/examples/sourceclasses/ExampleClass.class"));
         } catch(IOException e) {
             System.out.println("Couldn't delete file.");
         }

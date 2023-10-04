@@ -2,7 +2,7 @@ package tw.jruletest.expectations;
 
 import org.junit.*;
 
-import tw.jruletest.testing.programs.Example;
+import tw.jruletest.examples.sourceclasses.programs.Example;
 
 public class TestExpectations {
 
