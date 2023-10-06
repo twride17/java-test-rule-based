@@ -60,6 +60,7 @@ public class GetValueNode extends TreeNode {
                 valueNode = new ValueNode();
                 valueNode.validateRule(ruleContent.substring(4));
                 endIndex = 4 + valueNode.getEndIndex();
+                return;
             }
         }
         throw new InvalidRuleStructureException(ruleContent, "Get Value Node");

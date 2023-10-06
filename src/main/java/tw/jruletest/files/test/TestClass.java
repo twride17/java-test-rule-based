@@ -2,6 +2,7 @@ package tw.jruletest.files.test;
 
 import tw.jruletest.virtualmachine.JavaClassLoader;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -54,11 +55,15 @@ public class TestClass {
     public TestClass(String className) throws ClassNotFoundException {
         try {
             Class<?> cls = Class.forName(className, false, JavaClassLoader.getLoader());
-            classInstance = cls.newInstance();
+            classInstance = cls.getDeclaredConstructor().newInstance();
             fields = TestField.orderFields(className, cls.getDeclaredFields());
             methods = TestMethod.orderMethods(className, cls.getDeclaredMethods());
         } catch (InstantiationException | IllegalAccessException e) {
-            System.out.println("Couldn't instantiate " + className);
+            System.out.println("Couldn't instantiate or access " + className);
+        } catch (InvocationTargetException e) {
+            System.out.println("Couldn't invoke " + className);
+        } catch (NoSuchMethodException e) {
+            System.out.println("Couldn't find constructor for " + className);
         }
 
         this.className = className;

@@ -44,7 +44,8 @@ public class TestValueNode {
         String rule = "value of xValue";
         node = new ValueNode();
         try {
-            Assert.assertEquals(rule.length(), node.validateRule(rule));
+            node.validateRule(rule);
+            Assert.assertEquals(rule.length(), node.getEndIndex());
         } catch(InvalidRuleStructureException e) {
             System.out.println(rule);
             Assert.fail("Failed");
@@ -66,7 +67,8 @@ public class TestValueNode {
         String rule = "Class.method";
         node = new ValueNode();
         try {
-            Assert.assertEquals(rule.length(), node.validateRule(rule));
+            node.validateRule(rule);
+            Assert.assertEquals(rule.length(), node.getEndIndex());
         } catch(InvalidRuleStructureException e) {
             System.out.println(rule);
             Assert.fail("Failed");
@@ -88,7 +90,8 @@ public class TestValueNode {
         String rule = "Class.method with arguments: `Hello world`, 10 and -0.89f, xValue";
         node = new ValueNode();
         try {
-            Assert.assertEquals(rule.length(), node.validateRule(rule));
+            node.validateRule(rule);
+            Assert.assertEquals(rule.length(), node.getEndIndex());
         } catch(InvalidRuleStructureException e) {
             System.out.println(rule);
             Assert.fail("Failed");
@@ -100,7 +103,8 @@ public class TestValueNode {
         String rule = "value of Example.x and store in y";
         node = new ValueNode();
         try {
-            Assert.assertEquals(18, node.validateRule(rule));
+            node.validateRule(rule);
+            Assert.assertEquals(18, node.getEndIndex());
         } catch(InvalidRuleStructureException e) {
             System.out.println(rule);
             Assert.fail("Failed");

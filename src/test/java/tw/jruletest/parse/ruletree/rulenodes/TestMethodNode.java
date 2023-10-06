@@ -45,10 +45,11 @@ public class TestMethodNode {
     @Test
     public void testMethodCallNoArguments() {
         String[] rules = {"method Class.method", "Class.method2", "Example.m"};
-        node = new MethodNode();
         for(String rule: rules) {
             try {
-                Assert.assertEquals(rule.length(), node.validateRule(rule));
+                node = new MethodNode();
+                node.validateRule(rule);
+                Assert.assertEquals(rule.length(), node.getEndIndex());
             } catch (InvalidRuleStructureException e) {
                 Assert.fail("'" + rule + "': failed");
             }
@@ -59,10 +60,11 @@ public class TestMethodNode {
     public void testMethodCallOneArgument() {
         String[] rules = {"method Class.method: `Hello world`", "method Class.method with arguments: 101.971f",
                             "Class.method with: -24", "Class.method: xValue", "Class.method: -90.45f", "Class.method: true"};
-        node = new MethodNode();
         for(String rule: rules) {
             try {
-                Assert.assertEquals(rule.length(), node.validateRule(rule));
+                node = new MethodNode();
+                node.validateRule(rule);
+                Assert.assertEquals(rule.length(), node.getEndIndex());
             } catch (InvalidRuleStructureException e) {
                 Assert.fail("'" + rule + "': failed");
             }
@@ -75,10 +77,11 @@ public class TestMethodNode {
                             "method Class.method with arguments: 101.971f and false", "Class.method: x1 and x2",
                             "Class.method: true, 123.45", "Class.method with: `Hello and goodbye` and `String`",
                             "Class.method: 12.3 and xValue", "Class.method: -90.45f and true", "Class.method: true and 0"};
-        node = new MethodNode();
         for(String rule: rules) {
             try {
-                Assert.assertEquals(rule.length(), node.validateRule(rule));
+                node = new MethodNode();
+                node.validateRule(rule);
+                Assert.assertEquals(rule.length(), node.getEndIndex());
             } catch (InvalidRuleStructureException e) {
                 Assert.fail("'" + rule + "': failed");
             }
@@ -89,10 +92,11 @@ public class TestMethodNode {
     public void testMethodCallThreeArguments() {
         String[] rules = {"method Class.method: `Hello world`, 32, -67.5f", "Class.method with: 101.971f, true and `This`",
                             "Class.method with arguments: 24 and false, xValue", "Class.method: xValue and -0.9f and false"};
-        node = new MethodNode();
         for(String rule: rules) {
             try {
-                Assert.assertEquals(rule.length(), node.validateRule(rule));
+                node = new MethodNode();
+                node.validateRule(rule);
+                Assert.assertEquals(rule.length(), node.getEndIndex());
             } catch (InvalidRuleStructureException e) {
                 Assert.fail("'" + rule + "': failed");
             }
@@ -107,10 +111,11 @@ public class TestMethodNode {
                             "method Class.method, call method Example.exampleMethod with arguments: `Hello` and `World`",
                             "method Class.method and call method Example.exampleMethod with arguments: `Hello` and `World`"};
         int[] indices = {52, 12, 15, 44, 12, 61, 19, 19};
-        node = new MethodNode();
         for(int i = 0; i < rules.length; i++) {
             try {
-                Assert.assertEquals(indices[i], node.validateRule(rules[i]));
+                node = new MethodNode();
+                node.validateRule(rules[i]);
+                Assert.assertEquals(indices[i], node.getEndIndex());
             } catch (InvalidRuleStructureException e) {
                 Assert.fail("'" + rules[i] + "': failed");
             }
@@ -129,7 +134,6 @@ public class TestMethodNode {
         node = new MethodNode();
         for(String rule: rules) {
             try {
-                System.out.println(rule);
                 node.validateRule(rule);
                 Assert.fail("Failed: '" + rule + "' passed but should have failed");
             } catch (InvalidRuleStructureException e) { }

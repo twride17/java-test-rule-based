@@ -85,12 +85,9 @@ public class StoreValueNode extends TreeNode {
             }
 
             variableTree = new VariableNode();
-            variableTree.validateStructure(requiredSegment);
-            endIndex += valueTree.getEndIndex();
-            if(!VariableStore.variableExists(Runner.getCurrentMethod(), variableTree.getArgument())) {
-                VariableStore.addVariable(Runner.getCurrentMethod(), variableTree.getArgument(), getType(), false);
-            }
-            this.endIndex = endIndex;
+            variableTree.validateRule(requiredSegment);
+            variableTree.getVariable().setType(getType());
+            this.endIndex = endIndex + variableTree.getEndIndex();
         } else {
             throw new InvalidRuleStructureException(ruleContent, "Store Value Node");
         }

@@ -23,7 +23,8 @@ public class TestVariableNode {
     public void testValidLocalVariable() {
         String rule = "xValue1";
         try {
-            Assert.assertEquals(rule.length(), node.validateRule(rule));
+            node.validateRule(rule);
+            Assert.assertEquals(rule.length(), node.getEndIndex());
             Assert.assertEquals(rule, node.generateCode());
         } catch(InvalidRuleStructureException e) {
             Assert.fail("Rule '" + rule + "': failed");
@@ -35,7 +36,7 @@ public class TestVariableNode {
         String rule = "Example.x";
         try {
             node.validateRule(rule);
-            Assert.fail("Rule '" + rule + "': passed when expected to fal");
+            Assert.fail("Rule '" + rule + "': passed when expected to fail");
         } catch (InvalidRuleStructureException e) {}
     }
 
@@ -43,7 +44,8 @@ public class TestVariableNode {
     public void testValidLocalVariablePlusExtraRule() {
         String rule = "xValue and other stuff";
         try {
-            Assert.assertEquals(6, node.validateRule(rule));
+            node.validateRule(rule);
+            Assert.assertEquals(6, node.getEndIndex());
             Assert.assertEquals("xValue", node.generateCode());
         } catch(InvalidRuleStructureException e) {
             Assert.fail("Rule '" + rule + "': failed");

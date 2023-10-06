@@ -13,7 +13,8 @@ public class TestStringNode {
     public void testValidString() {
         String rule = "`Hello world.`";
         try {
-            Assert.assertEquals(rule.length(), node.validateRule(rule));
+            node.validateRule(rule);
+            Assert.assertEquals(rule.length(), node.getEndIndex());
             Assert.assertEquals(rule, node.getArgumentString());
         } catch(InvalidRuleStructureException e) {
             Assert.fail("Rule '" + rule + "': failed");
@@ -24,7 +25,8 @@ public class TestStringNode {
     public void testValidStringPlusExtraEndRule() {
         String rule = "`Hello world` and store";
         try {
-            Assert.assertEquals(13, node.validateRule(rule));
+            node.validateRule(rule);
+            Assert.assertEquals(13, node.getEndIndex());
             Assert.assertEquals("`Hello world`", node.getArgumentString());
         } catch(InvalidRuleStructureException e) {
             Assert.fail("Rule '" + rule + "': failed");

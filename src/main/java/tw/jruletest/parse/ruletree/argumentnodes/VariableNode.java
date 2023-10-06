@@ -46,12 +46,11 @@ public class VariableNode extends TreeNode {
     @Override
     public void validateRule(String rule) throws InvalidRuleStructureException {
         String foundVariable = rule.substring(0, validateStructure(rule));
-        variable = VariableStore.findVariable(Runner.getCurrentMethod(), foundVariable);
-        if(variable != null) {
-            endIndex = variable.getName().length();
-        } else {
-            throw new InvalidRuleStructureException(rule, "Variable Node");
+        if(!VariableStore.variableExists(Runner.getCurrentMethod(), foundVariable)) {
+            VariableStore.addVariable(Runner.getCurrentMethod(), foundVariable, null, false);
         }
+        variable = VariableStore.findVariable(Runner.getCurrentMethod(), foundVariable);
+        endIndex = variable.getName().length();
     }
 
     /**
@@ -66,7 +65,7 @@ public class VariableNode extends TreeNode {
      * */
 
     public int validateStructure(String rule) throws InvalidRuleStructureException {
-        Matcher matcher = Pattern.compile("^(([a-z][A-Z0-9a-z]*)|(([A-Z][A-Z0-9a-z]*)\\.([a-z][A-Z0-9a-z]*)))").matcher(rule);
+        Matcher matcher = Pattern.compile("^([a-z][A-Z0-9a-z]*)").matcher(rule);
         if(matcher.find()) {
             if(!((matcher.end() != rule.length()) && (rule.charAt(matcher.end()) != ' ') && (rule.charAt(matcher.end()) != ','))) {
                 if(!matcher.group().equals("true") && !matcher.group().equals("false")) {
@@ -95,5 +94,9 @@ public class VariableNode extends TreeNode {
 
     public String getArgument() {
         return variable.getName();
+    }
+
+    public Variable getVariable() {
+        return variable;
     }
 }

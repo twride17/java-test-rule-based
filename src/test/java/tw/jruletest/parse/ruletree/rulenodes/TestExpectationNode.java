@@ -47,7 +47,8 @@ public class TestExpectationNode {
         String rule = "expect value to equal 1";
         node = new ExpectationNode();
         try {
-            Assert.assertEquals(rule.length(), node.validateRule(rule));
+            node.validateRule(rule);
+            Assert.assertEquals(rule.length(), node.getEndIndex());
         } catch(InvalidRuleStructureException e) {
             System.out.println(rule);
             Assert.fail("Failed");
@@ -59,7 +60,8 @@ public class TestExpectationNode {
         String rule = "value to equal -11.567";
         node = new ExpectationNode();
         try {
-            Assert.assertEquals(rule.length(), node.validateRule(rule));
+            node.validateRule(rule);
+            Assert.assertEquals(rule.length(), node.getEndIndex());
         } catch(InvalidRuleStructureException e) {
             System.out.println(rule);
             Assert.fail("Failed");
@@ -71,7 +73,8 @@ public class TestExpectationNode {
         String rule = "expect value to equal -11.5f";
         node = new ExpectationNode();
         try {
-            Assert.assertEquals(rule.length(), node.validateRule(rule));
+            node.validateRule(rule);
+            Assert.assertEquals(rule.length(), node.getEndIndex());
         } catch(InvalidRuleStructureException e) {
             System.out.println(rule);
             Assert.fail("Failed");
@@ -83,7 +86,8 @@ public class TestExpectationNode {
         String rule = "value to equal true";
         node = new ExpectationNode();
         try {
-            Assert.assertEquals(rule.length(), node.validateRule(rule));
+            node.validateRule(rule);
+            Assert.assertEquals(rule.length(), node.getEndIndex());
         } catch(InvalidRuleStructureException e) {
             System.out.println(rule);
             Assert.fail("Failed");
@@ -95,7 +99,8 @@ public class TestExpectationNode {
         String rule = "expect value to not equal `Hello World`";
         node = new ExpectationNode();
         try {
-            Assert.assertEquals(rule.length(), node.validateRule(rule));
+            node.validateRule(rule);
+            Assert.assertEquals(rule.length(), node.getEndIndex());
         } catch(InvalidRuleStructureException e) {
             System.out.println(rule);
             Assert.fail("Failed");
@@ -107,7 +112,8 @@ public class TestExpectationNode {
         String rule = "expect 1 to equal x";
         node = new ExpectationNode();
         try {
-            Assert.assertEquals(rule.length(), node.validateRule(rule));
+            node.validateRule(rule);
+            Assert.assertEquals(rule.length(), node.getEndIndex());
         } catch(InvalidRuleStructureException e) {
             System.out.println(rule);
             Assert.fail("Failed");
@@ -119,7 +125,8 @@ public class TestExpectationNode {
         String rule = "expect -11.567 to not equal xValue";
         node = new ExpectationNode();
         try {
-            Assert.assertEquals(rule.length(), node.validateRule(rule));
+            node.validateRule(rule);
+            Assert.assertEquals(rule.length(), node.getEndIndex());
         } catch(InvalidRuleStructureException e) {
             System.out.println(rule);
             Assert.fail("Failed");
@@ -131,7 +138,8 @@ public class TestExpectationNode {
         String rule = "expect -11.5f to equal value";
         node = new ExpectationNode();
         try {
-            Assert.assertEquals(rule.length(), node.validateRule(rule));
+            node.validateRule(rule);
+            Assert.assertEquals(rule.length(), node.getEndIndex());
         } catch(InvalidRuleStructureException e) {
             System.out.println(rule);
             Assert.fail("Failed");
@@ -143,7 +151,8 @@ public class TestExpectationNode {
         String rule = "true to not equal x";
         node = new ExpectationNode();
         try {
-            Assert.assertEquals(rule.length(), node.validateRule(rule));
+            node.validateRule(rule);
+            Assert.assertEquals(rule.length(), node.getEndIndex());
         } catch(InvalidRuleStructureException e) {
             System.out.println(rule);
             Assert.fail("Failed");
@@ -155,7 +164,8 @@ public class TestExpectationNode {
         String rule = "expect `Hello World` to not equal xValue";
         node = new ExpectationNode();
         try {
-            Assert.assertEquals(rule.length(), node.validateRule(rule));
+            node.validateRule(rule);
+            Assert.assertEquals(rule.length(), node.getEndIndex());
         } catch(InvalidRuleStructureException e) {
             System.out.println(rule);
             Assert.fail("Failed");
@@ -167,7 +177,8 @@ public class TestExpectationNode {
         String rule = "expect Class.method: 5, -0.9f and `String` to not equal -98f";
         node = new ExpectationNode();
         try {
-            Assert.assertEquals(rule.length(), node.validateRule(rule));
+            node.validateRule(rule);
+            Assert.assertEquals(rule.length(), node.getEndIndex());
         } catch(InvalidRuleStructureException e) {
             System.out.println(rule);
             Assert.fail("Failed");
@@ -179,7 +190,8 @@ public class TestExpectationNode {
         String rule = "Expect 8765.5678 to equal value of Class.method";
         node = new ExpectationNode();
         try {
-            Assert.assertEquals(rule.length(), node.validateRule(rule));
+            node.validateRule(rule);
+            Assert.assertEquals(rule.length(), node.getEndIndex());
         } catch(InvalidRuleStructureException e) {
             System.out.println(rule);
             Assert.fail("Failed");
@@ -191,7 +203,8 @@ public class TestExpectationNode {
         String rule = "Expect Example.x to equal value of Class.method and expect...";
         node = new ExpectationNode();
         try {
-            Assert.assertEquals(47, node.validateRule(rule));
+            node.validateRule(rule);
+            Assert.assertEquals(47, node.getEndIndex());
         } catch(InvalidRuleStructureException e) {
             System.out.println(rule);
             Assert.fail("Failed");

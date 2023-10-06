@@ -123,6 +123,7 @@ public class MethodNode extends TreeNode {
                     String firstWord = middleWords.trim().split(" ")[0];
                     if (firstWord.equals(",") || firstWord.equals("and") || firstWord.equals("in") || firstWord.equals("then")) {
                         endIndex = methodCallStart + methodCall.length();
+                        return;
                     } else if (!(middleWords.equals(" with arguments") || middleWords.equals(" with"))) {
                         throw new InvalidRuleStructureException(ruleContent, "Method Node");
                     }

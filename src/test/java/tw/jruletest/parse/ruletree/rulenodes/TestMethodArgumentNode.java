@@ -25,7 +25,8 @@ public class TestMethodArgumentNode {
         node = new MethodArgumentNode();
         for(String rule: rules) {
             try {
-                Assert.assertEquals(rule.length(), node.validateRule(rule));
+                node.validateRule(rule);
+                Assert.assertEquals(rule.length(), node.getEndIndex());
             } catch (InvalidRuleStructureException e) {
                 Assert.fail("'" + rule + "': failed");
             }
@@ -38,7 +39,8 @@ public class TestMethodArgumentNode {
         node = new MethodArgumentNode();
         for(String rule: rules) {
             try {
-                Assert.assertEquals(rule.length(), node.validateRule(rule));
+                node.validateRule(rule);
+                Assert.assertEquals(rule.length(), node.getEndIndex());
             } catch (InvalidRuleStructureException e) {
                 Assert.fail("'" + rule + "': failed");
             }
@@ -51,7 +53,8 @@ public class TestMethodArgumentNode {
         node = new MethodArgumentNode();
         for(String rule: rules) {
             try {
-                Assert.assertEquals(rule.length(), node.validateRule(rule));
+                node.validateRule(rule);
+                Assert.assertEquals(rule.length(), node.getEndIndex());
             } catch (InvalidRuleStructureException e) {
                 Assert.fail("'" + rule + "': failed");
             }
@@ -64,7 +67,8 @@ public class TestMethodArgumentNode {
         node = new MethodArgumentNode();
         for(String rule: rules) {
             try {
-                Assert.assertEquals(rule.length(), node.validateRule(rule));
+                node.validateRule(rule);
+                Assert.assertEquals(rule.length(), node.getEndIndex());
             } catch (InvalidRuleStructureException e) {
                 Assert.fail("'" + rule + "': failed");
             }
@@ -78,7 +82,8 @@ public class TestMethodArgumentNode {
         node = new MethodArgumentNode();
         for(String rule: rules) {
             try {
-                Assert.assertEquals(rule.length(), node.validateRule(rule));
+                node.validateRule(rule);
+                Assert.assertEquals(rule.length(), node.getEndIndex());
             } catch (InvalidRuleStructureException e) {
                 Assert.fail("'" + rule + "': failed");
             }
@@ -92,7 +97,8 @@ public class TestMethodArgumentNode {
         node = new MethodArgumentNode();
         for(int i = 0; i < 3; i++) {
             try {
-                Assert.assertEquals(indices[i], node.validateRule(rules[i]));
+                node.validateRule(rules[i]);
+                Assert.assertEquals(indices[i], node.getEndIndex());
             } catch (InvalidRuleStructureException e) {
                 Assert.fail("'" + rules[i] + "': failed");
             }

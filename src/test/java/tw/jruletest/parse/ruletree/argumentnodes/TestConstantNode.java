@@ -85,7 +85,7 @@ public class TestConstantNode {
         try {
             node.validateRule("0.678f");
         } catch(InvalidRuleStructureException e) {
-            Assert.fail("Rule '19f': failed");
+            Assert.fail("Rule '0.678f': failed");
         }
     }
 
@@ -94,14 +94,15 @@ public class TestConstantNode {
         try {
             node.validateRule("-1.9f");
         } catch(InvalidRuleStructureException e) {
-            Assert.fail("Rule '-19f': failed");
+            Assert.fail("Rule '-1.9f': failed");
         }
     }
 
     @Test
     public void testValidConstantPlusExtraAtRuleEnd() {
         try {
-            Assert.assertEquals(7, node.validateRule("-8.345f and something else"));
+            node.validateRule("-8.345f and something else");
+            Assert.assertEquals(7, node.getEndIndex());
         } catch(InvalidRuleStructureException e) {
             Assert.fail("Rule '-8.345f and something else': failed");
         }
@@ -110,7 +111,8 @@ public class TestConstantNode {
     @Test
     public void testValidBooleanPlusExtraAtRuleEnd() {
         try {
-            Assert.assertEquals(5, node.validateRule("false, something else"));
+            node.validateRule("false, something else");
+            Assert.assertEquals(5, node.getEndIndex());
         } catch(InvalidRuleStructureException e) {
             Assert.fail("Rule 'false, something else': failed");
         }

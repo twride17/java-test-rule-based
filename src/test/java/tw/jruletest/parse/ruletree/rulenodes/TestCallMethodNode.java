@@ -44,7 +44,8 @@ public class TestCallMethodNode {
         String rule = "Call method Class.method with arguments: `Hello`, true and -0.78f";
         node = new CallMethodNode();
         try {
-            Assert.assertEquals(rule.length(), node.validateRule(rule));
+            node.validateRule(rule);
+            Assert.assertEquals(rule.length(), node.getEndIndex());
         } catch(InvalidRuleStructureException e) {
             System.out.println(rule);
             Assert.fail("Failed");
@@ -66,7 +67,8 @@ public class TestCallMethodNode {
         String rule = "Call method Class.method with arguments: `Hello`, true and -0.78f and expect x to equal 0";
         node = new CallMethodNode();
         try {
-            Assert.assertEquals(65, node.validateRule(rule));
+            node.validateRule(rule);
+            Assert.assertEquals(65, node.getEndIndex());
         } catch(InvalidRuleStructureException e) {
             System.out.println(rule);
             Assert.fail("Failed");

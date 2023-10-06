@@ -48,7 +48,8 @@ public class TestStoreValueNode {
         node = new StoreValueNode();
         for(String rule: rules) {
             try {
-                Assert.assertEquals(rule.length(), node.validateRule(rule));
+                node.validateRule(rule);
+                Assert.assertEquals(rule.length(), node.getEndIndex());
             } catch (InvalidRuleStructureException e) {
                 Assert.fail("'" + rule + "': failed");
             }
@@ -61,7 +62,8 @@ public class TestStoreValueNode {
         node = new StoreValueNode();
         for(String rule: rules) {
             try {
-                Assert.assertEquals(rule.length(), node.validateRule(rule));
+                node.validateRule(rule);
+                Assert.assertEquals(rule.length(), node.getEndIndex());
             } catch (InvalidRuleStructureException e) {
                 Assert.fail("'" + rule + "': failed");
             }
@@ -74,7 +76,8 @@ public class TestStoreValueNode {
         node = new StoreValueNode();
         for(String rule: rules) {
             try {
-                Assert.assertEquals(rule.length(), node.validateRule(rule));
+                node.validateRule(rule);
+                Assert.assertEquals(rule.length(), node.getEndIndex());
             } catch (InvalidRuleStructureException e) {
                 Assert.fail("'" + rule + "': failed");
             }
@@ -113,7 +116,8 @@ public class TestStoreValueNode {
         node = new StoreValueNode();
         for(int i = 0; i < 5; i++) {
             try {
-                Assert.assertEquals(indices[i], node.validateRule(rules[i]));
+                node.validateRule(rules[i]);
+                Assert.assertEquals(indices[i], node.getEndIndex());
             } catch (InvalidRuleStructureException e) {
                 Assert.fail("'" + rules[i] + "': failed");
             }
@@ -142,14 +146,14 @@ public class TestStoreValueNode {
                             "Class.method with arguments: 1, 2 and 3 in test and expect", "Store 1 in x and expect"};
 
         String[] expectedStrings = {"xValue = Class.method();", "int value = Class.method(1, \"Hello\");", "int test = Class.method(0);",
-                                    "float test1 = 109.5f;", "String test2 = \"Hello\";", "test = true;", "boolean test3 = xValue;",
+                                    "float test1 = 109.5f;", "String test2 = \"Hello\";", "test = true;", "int test3 = xValue;",
                                     "char y = z;", "test = Class.method();", "test = Class.method(1, 2, 3);", "x = 1;"};
 
         for(int i = 0; i < rules.length; i++) {
             node = new StoreValueNode();
             try {
                 node.validateRule(rules[i]);
-                Assert.assertEquals(node.generateCode(), expectedStrings[i]);
+                Assert.assertEquals( expectedStrings[i], node.generateCode());
             } catch(InvalidRuleStructureException e) {
                 Assert.fail(rules[i] + ": failed");
             }

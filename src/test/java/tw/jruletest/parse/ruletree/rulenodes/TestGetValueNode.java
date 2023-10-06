@@ -44,7 +44,8 @@ public class TestGetValueNode {
         String rule = "Get value of xValue";
         node = new GetValueNode();
         try {
-            Assert.assertEquals(rule.length(), node.validateRule(rule));
+            node.validateRule(rule);
+            Assert.assertEquals(rule.length(), node.getEndIndex());
         } catch(InvalidRuleStructureException e) {
             System.out.println(rule);
             Assert.fail("Failed");
@@ -66,7 +67,8 @@ public class TestGetValueNode {
         String rule = "Get value of Class.method and get value of y";
         node = new GetValueNode();
         try {
-            Assert.assertEquals(25, node.validateRule(rule));
+            node.validateRule(rule);
+            Assert.assertEquals(25, node.getEndIndex());
         } catch(InvalidRuleStructureException e) {
             System.out.println(rule);
             Assert.fail("Failed");

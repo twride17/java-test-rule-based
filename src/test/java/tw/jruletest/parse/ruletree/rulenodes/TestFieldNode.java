@@ -41,7 +41,8 @@ public class TestFieldNode {
         String rule = "Test.x";
         node = new FieldNode();
         try {
-            Assert.assertEquals(rule.length(), node.validateRule(rule));
+            node.validateRule(rule);
+            Assert.assertEquals(rule.length(), node.getEndIndex());
         } catch (InvalidRuleStructureException e) {
             Assert.fail("'" + rule + "': failed");
         }
@@ -64,7 +65,8 @@ public class TestFieldNode {
         int[] indices = {6, 12};
         for(int i = 0; i < rules.length; i++) {
             try {
-                Assert.assertEquals(indices[i], node.validateRule(rules[i]));
+                node.validateRule(rules[i]);
+                Assert.assertEquals(indices[i], node.getEndIndex());
             } catch (InvalidRuleStructureException e) {
                 Assert.fail("'" + rules[i] + "': failed");
             }

@@ -48,6 +48,7 @@ public class StringNode extends TreeNode {
                     stringValue = rule.substring(0, nextQuoteIndex + 1);
                     if(!stringValue.contains("\"")) {
                         endIndex = nextQuoteIndex + 1;
+                        return;
                     }
                 }
             } catch(StringIndexOutOfBoundsException e) { }

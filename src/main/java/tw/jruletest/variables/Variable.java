@@ -13,6 +13,7 @@ public class Variable {
     private String name;
     private Type type;
     private boolean declared;
+
     /**
      * Constructor for a variable with a given name, type and flag for if the variable has been declared or not.
      *
@@ -63,5 +64,9 @@ public class Variable {
 
     public void makeDeclared() {
         declared = true;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
     }
 }
