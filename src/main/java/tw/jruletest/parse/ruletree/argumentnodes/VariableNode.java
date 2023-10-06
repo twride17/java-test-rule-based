@@ -3,6 +3,7 @@ package tw.jruletest.parse.ruletree.argumentnodes;
 import tw.jruletest.Runner;
 import tw.jruletest.exceptions.InvalidRuleStructureException;
 import tw.jruletest.parse.ruletree.TreeNode;
+import tw.jruletest.variables.Variable;
 import tw.jruletest.variables.VariableStore;
 
 import java.lang.reflect.Type;
@@ -15,7 +16,9 @@ import java.util.regex.Pattern;
  * @author Toby Wride
  * */
 
-public class VariableNode extends ArgumentNode implements TreeNode {
+public class VariableNode extends TreeNode {
+
+    private Variable variable;
 
     /**
      * Implementation of code generation from TreeNode interface.
@@ -26,7 +29,7 @@ public class VariableNode extends ArgumentNode implements TreeNode {
 
     @Override
     public String generateCode() {
-        return argumentString;
+        return variable.getName();
     }
 
     /**
@@ -41,13 +44,14 @@ public class VariableNode extends ArgumentNode implements TreeNode {
      * */
 
     @Override
-    public int validateRule(String rule) throws InvalidRuleStructureException {
-        // TODO allow for boolean expressions
+    public void validateRule(String rule) throws InvalidRuleStructureException {
         String foundVariable = rule.substring(0, validateStructure(rule));
-        if(VariableStore.variableExists(Runner.getCurrentMethod(), foundVariable)) {
-            return argumentString.length();
+        variable = VariableStore.findVariable(Runner.getCurrentMethod(), foundVariable);
+        if(variable != null) {
+            endIndex = variable.getName().length();
+        } else {
+            throw new InvalidRuleStructureException(rule, "Variable Node");
         }
-        throw new InvalidRuleStructureException(rule, "Variable Node");
     }
 
     /**
@@ -66,7 +70,6 @@ public class VariableNode extends ArgumentNode implements TreeNode {
         if(matcher.find()) {
             if(!((matcher.end() != rule.length()) && (rule.charAt(matcher.end()) != ' ') && (rule.charAt(matcher.end()) != ','))) {
                 if(!matcher.group().equals("true") && !matcher.group().equals("false")) {
-                    argumentString = matcher.group();
                     return matcher.end();
                 }
             }
@@ -81,7 +84,7 @@ public class VariableNode extends ArgumentNode implements TreeNode {
      * */
 
     public Type getType() {
-        return VariableStore.findVariable(Runner.getCurrentMethod(), argumentString).getType();
+        return variable.getType();
     }
 
     /**
@@ -91,6 +94,6 @@ public class VariableNode extends ArgumentNode implements TreeNode {
      * */
 
     public String getArgument() {
-        return argumentString;
+        return variable.getName();
     }
 }

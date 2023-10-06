@@ -4,7 +4,8 @@ import tw.jruletest.Runner;
 import tw.jruletest.analyzers.TypeIdentifier;
 import tw.jruletest.exceptions.InvalidRuleStructureException;
 import tw.jruletest.parse.ruletree.TreeNode;
-import tw.jruletest.parse.ruletree.argumentnodes.ArgumentNode;
+import tw.jruletest.parse.ruletree.argumentnodes.ConstantNode;
+import tw.jruletest.parse.ruletree.argumentnodes.StringNode;
 import tw.jruletest.parse.ruletree.argumentnodes.VariableNode;
 import tw.jruletest.variables.Variable;
 import tw.jruletest.variables.VariableStore;
@@ -20,7 +21,7 @@ import java.util.regex.Pattern;
  * @author Toby Wride
  * */
 
-public class StoreValueNode implements TreeNode {
+public class StoreValueNode extends TreeNode {
 
     private TreeNode valueTree;
     private VariableNode variableTree;
@@ -57,7 +58,8 @@ public class StoreValueNode implements TreeNode {
      * @throws InvalidRuleStructureException if the rule does not start with the 'store' keyword or the 'in' connective
      * */
 
-    public int validateRule(String ruleContent) throws InvalidRuleStructureException {
+    @Override
+    public void validateRule(String ruleContent) throws InvalidRuleStructureException {
         Matcher matcher = Pattern.compile("^(((S|s)tore\\s)?(.+))\\s(in)\\s([a-z][a-zA-Z0-9]*)").matcher(ruleContent);
         if(matcher.find()) {
             String requiredSegment;
@@ -73,17 +75,8 @@ public class StoreValueNode implements TreeNode {
                 throw new InvalidRuleStructureException(ruleContent, "Store Value Node");
             }
 
-            valueTree = new ValueNode();
-            try {
-                endIndex += valueTree.validateRule(requiredSegment);
-            } catch(InvalidRuleStructureException e) {
-                try {
-                    valueTree = Argument.getArgumentNode(requiredSegment);
-                    endIndex += valueTree.generateCode().length();
-                } catch(InvalidRuleStructureException e2) {
-                    throw new InvalidRuleStructureException(requiredSegment, "Get Value Node");
-                }
-            }
+            valueTree = TreeNode.getChildNode(requiredSegment, TreeNode.ARGUMENT_NODE);
+            endIndex += valueTree.getEndIndex();
 
             requiredSegment = ruleContent.substring(endIndex);
             if(requiredSegment.startsWith(" in") && !requiredSegment.trim().equals("in")) {
@@ -92,11 +85,12 @@ public class StoreValueNode implements TreeNode {
             }
 
             variableTree = new VariableNode();
-            endIndex += variableTree.validateStructure(requiredSegment);
+            variableTree.validateStructure(requiredSegment);
+            endIndex += valueTree.getEndIndex();
             if(!VariableStore.variableExists(Runner.getCurrentMethod(), variableTree.getArgument())) {
                 VariableStore.addVariable(Runner.getCurrentMethod(), variableTree.getArgument(), getType(), false);
             }
-            return endIndex;
+            this.endIndex = endIndex;
         } else {
             throw new InvalidRuleStructureException(ruleContent, "Store Value Node");
         }
@@ -111,8 +105,12 @@ public class StoreValueNode implements TreeNode {
     private Type getType() {
         if(valueTree instanceof ValueNode) {
             return ((ValueNode) valueTree).getType();
+        } else if(valueTree instanceof StringNode){
+            return ((StringNode) valueTree).getType();
+        } else if(valueTree instanceof ConstantNode){
+            return ((ConstantNode) valueTree).getType();
         } else {
-            return ((ArgumentNode) valueTree).getType();
+            return ((VariableNode) valueTree).getType();
         }
     }
 }

@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
  * @author Toby Wride
  * */
 
-public class MethodNode implements TreeNode {
+public class MethodNode extends TreeNode {
 
     private SourceMethod method;
 
@@ -56,7 +56,8 @@ public class MethodNode implements TreeNode {
      * @throws InvalidRuleStructureException thrown if the method name is not of a valid structure or does not exist in the loaded source classes
      * */
 
-    public int validateRule(String ruleContent) throws InvalidRuleStructureException {
+    @Override
+    public void validateRule(String ruleContent) throws InvalidRuleStructureException {
         int methodCallStart = 0;
         if(ruleContent.charAt(0) == ' ') {
             throw new InvalidRuleStructureException(ruleContent, "Method Node");
@@ -112,7 +113,7 @@ public class MethodNode implements TreeNode {
                     throw new InvalidRuleStructureException(ruleContent, "Method Node");
                 }
             }
-            return methodCallStart + methodCall.length();
+            endIndex = methodCallStart + methodCall.length();
         } else {
             String middleWords = ruleContent.substring(methodCallStart + methodCall.length(), colonIndex);
             if(!middleWords.isEmpty()) {
@@ -121,7 +122,7 @@ public class MethodNode implements TreeNode {
                 } else {
                     String firstWord = middleWords.trim().split(" ")[0];
                     if (firstWord.equals(",") || firstWord.equals("and") || firstWord.equals("in") || firstWord.equals("then")) {
-                        return methodCallStart + methodCall.length();
+                        endIndex = methodCallStart + methodCall.length();
                     } else if (!(middleWords.equals(" with arguments") || middleWords.equals(" with"))) {
                         throw new InvalidRuleStructureException(ruleContent, "Method Node");
                     }
@@ -133,7 +134,9 @@ public class MethodNode implements TreeNode {
             }
 
             arguments = new MethodArgumentNode();
-            return arguments.validateRule(ruleContent.substring(colonIndex+2)) + colonIndex + 2;
+            arguments.validateRule(ruleContent.substring(colonIndex+2));
+
+            endIndex = arguments.getEndIndex() + colonIndex + 2;
         }
     }
 

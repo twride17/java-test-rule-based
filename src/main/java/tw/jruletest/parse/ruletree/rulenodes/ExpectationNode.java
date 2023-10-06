@@ -3,7 +3,6 @@ package tw.jruletest.parse.ruletree.rulenodes;
 import tw.jruletest.analyzers.ImportCollector;
 import tw.jruletest.exceptions.InvalidRuleStructureException;
 import tw.jruletest.parse.ruletree.TreeNode;
-import tw.jruletest.parse.ruletree.argumentnodes.ArgumentNode;
 
 /**
  * Rule node that deals with creating expectation objects.
@@ -12,7 +11,7 @@ import tw.jruletest.parse.ruletree.argumentnodes.ArgumentNode;
  * @author Toby Wride
  * */
 
-public class ExpectationNode implements TreeNode {
+public class ExpectationNode extends TreeNode {
 
     private int keywordLength = 0;
 
@@ -58,7 +57,8 @@ public class ExpectationNode implements TreeNode {
      * one of allowed comparison keywords or one of the child nodes was not able to find a valid segment
      * */
 
-    public int validateRule(String ruleContent) throws InvalidRuleStructureException  {
+    @Override
+    public void validateRule(String ruleContent) throws InvalidRuleStructureException  {
         int comparatorIndex = -1;
         for(String comparator: POSSIBLE_COMPARATORS) {
             int newIndex = ruleContent.indexOf(comparator);
@@ -91,42 +91,15 @@ public class ExpectationNode implements TreeNode {
         String expectedSegment = remainingRule.substring(0, phraseIndex);
         String actualSegment = remainingRule.substring(phraseIndex + comparatorPhrase.length());
 
-        int firstArgumentIndex;
-        int secondArgumentIndex;
-        TreeNode currentNode;
-
-        try {
-            currentNode = new ValueNode();
-            firstArgumentIndex = currentNode.validateRule(expectedSegment);
-            expectedValueTree = currentNode;
-        } catch(InvalidRuleStructureException e) {
-            try {
-                currentNode = Argument.getArgumentNode(expectedSegment);
-                firstArgumentIndex = ((ArgumentNode)currentNode).getEndIndex() + 1;
-                expectedValueTree = currentNode;
-            } catch(InvalidRuleStructureException e2) {
-                throw new InvalidRuleStructureException(expectedSegment, "Expectation Node");
-            }
-        }
-
-        try {
-            currentNode = new ValueNode();
-            secondArgumentIndex = currentNode.validateRule(actualSegment);
-            actualValueTree = currentNode;
-        } catch(InvalidRuleStructureException e) {
-            try {
-                currentNode = Argument.getArgumentNode(actualSegment);
-                secondArgumentIndex = ((ArgumentNode)currentNode).getEndIndex() + 1;
-                actualValueTree = currentNode;
-            } catch(InvalidRuleStructureException e2) {
-                throw new InvalidRuleStructureException(actualSegment, "Expectation Node");
-            }
-        }
+        expectedValueTree = TreeNode.getChildNode(expectedSegment, TreeNode.ARGUMENT_NODE);
+        actualValueTree = TreeNode.getChildNode(actualSegment, TreeNode.ARGUMENT_NODE);
+        int firstArgumentIndex = expectedValueTree.getEndIndex();
+        int secondArgumentIndex = actualValueTree.getEndIndex();
 
         if(firstArgumentIndex != phraseIndex) {
             throw new InvalidRuleStructureException(remainingRule, "Expectation Node");
         } else {
-            return comparatorIndex + secondArgumentIndex;
+            endIndex = comparatorIndex + secondArgumentIndex;
         }
     }
 }

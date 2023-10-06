@@ -13,7 +13,10 @@ import java.util.regex.Pattern;
  * @author Toby Wride
  * */
 
-public class ConstantNode extends ArgumentNode implements TreeNode {
+public class ConstantNode extends TreeNode {
+
+    private String constantString;
+
     private Type type;
 
     /**
@@ -25,7 +28,7 @@ public class ConstantNode extends ArgumentNode implements TreeNode {
 
     @Override
     public String generateCode() {
-        return argumentString;
+        return constantString;
     }
 
     /**
@@ -41,22 +44,22 @@ public class ConstantNode extends ArgumentNode implements TreeNode {
      * */
 
     @Override
-    public int validateRule(String rule) throws InvalidRuleStructureException {
+    public void validateRule(String rule) throws InvalidRuleStructureException {
         // TODO Previously defined constants???
         Matcher matcher = Pattern.compile("^((-?)([0-9]+)((\\.[0-9]+)?)(f?))").matcher(rule);
         int endIndex;
         if(matcher.find()) {
             if(!(!matcher.group().equals(rule) && (rule.charAt(matcher.end()) != ' ') && (rule.charAt(matcher.end()) != ','))) {
-                argumentString = matcher.group();
+                constantString = matcher.group();
                 endIndex = matcher.end();
             } else {
                 throw new InvalidRuleStructureException(rule, "Constant Node");
             }
         } else if(rule.startsWith("true") & !((rule.length() > 4) && (rule.charAt(4) != ' ') && (rule.charAt(4) != ','))) {
-            argumentString = "true";
+            constantString = "true";
             endIndex = 4;
         } else if(rule.startsWith("false") & !((rule.length() > 5) && (rule.charAt(5) != ' ') && (rule.charAt(5) != ','))) {
-            argumentString = "false";
+            constantString = "false";
             endIndex = 5;
         } else {
             throw new InvalidRuleStructureException(rule, "Constant Node");
@@ -64,32 +67,32 @@ public class ConstantNode extends ArgumentNode implements TreeNode {
 
         type = findType();
         if(type != null) {
-            return endIndex;
+            this.endIndex = endIndex;
         } else {
             throw new InvalidRuleStructureException(rule, "Constant Node");
         }
     }
 
     private Type findType() {
-        if(argumentString.equals("true") || argumentString.equals("false")) {
+        if(constantString.equals("true") || constantString.equals("false")) {
             return boolean.class;
         } else {
             try {
-                Integer.parseInt(argumentString);
+                Integer.parseInt(constantString);
                 return int.class;
             } catch (NumberFormatException e) { }
 
             try {
-                Float.parseFloat(argumentString);
+                Float.parseFloat(constantString);
                 return float.class;
             } catch (NumberFormatException e) { }
 
             try {
-                Double.parseDouble(argumentString);
+                Double.parseDouble(constantString);
                 return double.class;
             } catch (NumberFormatException e) { }
 
-            if(argumentString.length() == 1) {
+            if(constantString.length() == 1) {
                 return char.class;
             } else {
                 return null;

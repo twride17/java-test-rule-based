@@ -125,8 +125,9 @@ public class Parser {
                 default:
                     throw new UnparsableRuleException(rule);
             }
+            node.validateRule(rule);
             rules.add(node);
-            return node.validateRule(rule);
+            return node.getEndIndex();
         } catch(InvalidRuleStructureException e) {
             e.printError();
             throw new UnparsableRuleException(rule);

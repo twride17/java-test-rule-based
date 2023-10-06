@@ -15,7 +15,7 @@ import java.lang.reflect.Type;
  * @author Toby Wride
  * */
 
-public class GetValueNode implements TreeNode {
+public class GetValueNode extends TreeNode {
 
     private ValueNode valueNode;
 
@@ -53,11 +53,13 @@ public class GetValueNode implements TreeNode {
      * is found to not be valid.
      * */
 
-    public int validateRule(String ruleContent) throws InvalidRuleStructureException {
+    @Override
+    public void validateRule(String ruleContent) throws InvalidRuleStructureException {
         if(ruleContent.split(" ")[0].equalsIgnoreCase("get")) {
             if(ruleContent.length() > 4) {
                 valueNode = new ValueNode();
-                return 4 + valueNode.validateRule(ruleContent.substring(4));
+                valueNode.validateRule(ruleContent.substring(4));
+                endIndex = 4 + valueNode.getEndIndex();
             }
         }
         throw new InvalidRuleStructureException(ruleContent, "Get Value Node");

@@ -11,7 +11,9 @@ import java.lang.reflect.Type;
  * @author Toby Wride
  * */
 
-public class StringNode extends ArgumentNode implements TreeNode {
+public class StringNode extends TreeNode {
+
+    private String stringValue;
 
     /**
      * Implementation of code generation from TreeNode interface.
@@ -22,7 +24,7 @@ public class StringNode extends ArgumentNode implements TreeNode {
 
     @Override
     public String generateCode() {
-        return argumentString.replace("`", "\"");
+        return stringValue.replace("`", "\"");
     }
 
     /**
@@ -37,15 +39,15 @@ public class StringNode extends ArgumentNode implements TreeNode {
      * */
 
     @Override
-    public int validateRule(String rule) throws InvalidRuleStructureException {
+    public void validateRule(String rule) throws InvalidRuleStructureException {
         int possibleQuoteIndex = rule.indexOf('`');
         if(possibleQuoteIndex == 0) {
             try {
                 int nextQuoteIndex = rule.substring(1).indexOf('`') + 1;
                 if(nextQuoteIndex > possibleQuoteIndex) {
-                    argumentString = rule.substring(0, nextQuoteIndex + 1);
-                    if(!argumentString.contains("\"")) {
-                        return nextQuoteIndex + 1;
+                    stringValue = rule.substring(0, nextQuoteIndex + 1);
+                    if(!stringValue.contains("\"")) {
+                        endIndex = nextQuoteIndex + 1;
                     }
                 }
             } catch(StringIndexOutOfBoundsException e) { }
@@ -70,6 +72,6 @@ public class StringNode extends ArgumentNode implements TreeNode {
      * */
 
     public String getArgumentString() {
-        return argumentString;
+        return stringValue;
     }
 }

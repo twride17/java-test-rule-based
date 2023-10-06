@@ -12,7 +12,7 @@ import java.util.ArrayList;
  * @author Toby Wride
  * */
 
-public class MethodArgumentNode implements TreeNode {
+public class MethodArgumentNode extends TreeNode {
 
     private ArrayList<TreeNode> arguments = new ArrayList<>();
 
@@ -44,7 +44,8 @@ public class MethodArgumentNode implements TreeNode {
      * @throws InvalidRuleStructureException if the connective between each argument is invalid or a connective is found when no extra rule exists.
      * */
 
-    public int validateRule(String ruleContent) throws InvalidRuleStructureException {
+    @Override
+    public void validateRule(String ruleContent) throws InvalidRuleStructureException {
         boolean valid = false;
         String remainingRule = ruleContent;
         int currentEnd = 0;
@@ -56,8 +57,8 @@ public class MethodArgumentNode implements TreeNode {
                 throw new InvalidRuleStructureException(ruleContent, "Method Argument Node");
             }
 
-            TreeNode argumentNode = Argument.getArgumentNode(remainingRule);
-            int argumentEndIndex = argumentNode.generateCode().length();
+            TreeNode argumentNode = TreeNode.getChildNode(remainingRule, TreeNode.BASIC_ARGUMENT_NODE);
+            int argumentEndIndex = argumentNode.getEndIndex();
             currentEnd += argumentEndIndex;
             arguments.add(argumentNode);
 
@@ -72,7 +73,8 @@ public class MethodArgumentNode implements TreeNode {
                 } else if(remainingRule.startsWith(",")) {
                     connective = ",";
                 } else if(remainingRule.startsWith(" in") || remainingRule.startsWith(" then")) {
-                    return currentEnd;
+                    endIndex = currentEnd;
+                    return;
                 } else {
                     throw new InvalidRuleStructureException(ruleContent, "Method Argument Node");
                 }
@@ -108,6 +110,6 @@ public class MethodArgumentNode implements TreeNode {
             }
         } while(!valid);
 
-        return currentEnd;
+        endIndex = currentEnd;
     }
 }

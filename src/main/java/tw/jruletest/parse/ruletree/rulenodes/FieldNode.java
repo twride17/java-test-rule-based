@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
  * @author Toby Wride
  * */
 
-public class FieldNode implements TreeNode {
+public class FieldNode extends TreeNode {
 
     private SourceField field;
     private String className;
@@ -41,7 +41,7 @@ public class FieldNode implements TreeNode {
 
 
     @Override
-    public int validateRule(String ruleContent) throws InvalidRuleStructureException {
+    public void validateRule(String ruleContent) throws InvalidRuleStructureException {
         String fieldCall = ruleContent;
         int nextSpaceIndex = ruleContent.indexOf(' ');
         if(nextSpaceIndex != -1) {
@@ -78,9 +78,9 @@ public class FieldNode implements TreeNode {
         }
 
         if(nextSpaceIndex == -1) {
-            return fieldCall.length();
+            endIndex = fieldCall.length();
         } else {
-            return nextSpaceIndex;
+            endIndex = nextSpaceIndex;
         }
 
     }

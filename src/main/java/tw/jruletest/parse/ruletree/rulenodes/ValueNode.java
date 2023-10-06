@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
  * @author Toby Wride
  * */
 
-public class ValueNode implements TreeNode {
+public class ValueNode extends TreeNode {
 
     private TreeNode valueSourceNode;
 
@@ -24,7 +24,7 @@ public class ValueNode implements TreeNode {
      * Implementation of code generation from TreeNode interface.
      * Code generation completely relies on the generation of code from the chosen child node.
      *
-     * @return the generated code segment for getting the value of a method, field, variable or argument.
+     * @return the generated code segment for getting the value of a method, field, variable.
      * */
 
     @Override
@@ -45,7 +45,8 @@ public class ValueNode implements TreeNode {
      * @throws InvalidRuleStructureException thrown if the basic structure does not start with 'value of', 'result of' or no keywords.
      * */
 
-    public int validateRule(String ruleContent) throws InvalidRuleStructureException {
+    @Override
+    public void validateRule(String ruleContent) throws InvalidRuleStructureException {
         Pattern regex = Pattern.compile("^((value|result)\\sof\\s)?(.+)");
         Matcher matcher = regex.matcher(ruleContent);
 
@@ -68,28 +69,14 @@ public class ValueNode implements TreeNode {
             }
         }
 
-        valueSourceNode = new MethodNode();
-        try {
-            return valueSourceNode.validateRule(nextSegment) + currentEnd;
-        } catch(InvalidRuleStructureException e) {
-            try {
-                valueSourceNode = new FieldNode();
-                return valueSourceNode.validateRule(nextSegment) + currentEnd;
-            } catch(InvalidRuleStructureException e1) {
-                try {
-                    valueSourceNode = new VariableNode();
-                    return currentEnd + valueSourceNode.validateRule(nextSegment);
-                } catch(InvalidRuleStructureException e2) {
-                    throw new InvalidRuleStructureException(nextSegment, "Value Node");
-                }
-            }
-        }
+        valueSourceNode = TreeNode.getChildNode(nextSegment, TreeNode.RETURN_VALUE_NODE);
+        endIndex = currentEnd + valueSourceNode.getEndIndex();
     }
 
     /**
      * Gets the type from the selected value source node
      *
-     * @return the type of the method, field, variable or argument
+     * @return the type of the method, field, variable
      * */
 
     public Type getType() {
@@ -105,7 +92,7 @@ public class ValueNode implements TreeNode {
     /**
      * Gets the name of the value's source from the selected value source node
      *
-     * @return the name of the method, field, variable or argument
+     * @return the name of the method, field, variable
      * */
 
     public String getCallName() {

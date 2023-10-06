@@ -10,7 +10,7 @@ import tw.jruletest.parse.ruletree.TreeNode;
  * @author Toby Wride
  * */
 
-public class CallMethodNode implements TreeNode {
+public class CallMethodNode extends TreeNode {
 
     private MethodNode methodNode;
 
@@ -37,10 +37,12 @@ public class CallMethodNode implements TreeNode {
      * @throws InvalidRuleStructureException thrown if the rule does not start with the 'call' keyword or if the rest of the rule could not be validated.
      * */
 
-    public int validateRule(String ruleContent) throws InvalidRuleStructureException {
+    @Override
+    public void validateRule(String ruleContent) throws InvalidRuleStructureException {
         if(ruleContent.toLowerCase().startsWith("call ")) {
             methodNode = new MethodNode();
-            return 5 + methodNode.validateRule(ruleContent.substring(5));
+            methodNode.validateRule(ruleContent.substring(5));
+            endIndex = 5 + methodNode.getEndIndex();
         } else {
             throw new InvalidRuleStructureException(ruleContent, "Method Call Node");
         }
