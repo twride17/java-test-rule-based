@@ -15,12 +15,10 @@ public abstract class TreeNode {
 
     protected int endIndex = 0;
 
-    public static final int RETURN_VALUE_NODE = 1;
-    public static final int ARGUMENT_NODE = 2;
-    public static final int EXPRESSION_NODE = 3;
-
-    // Use until complex arguments implemented
-    public static final int BASIC_ARGUMENT_NODE = 4;
+    public static final int CHILD_NODE = 1;
+    public static final int VALUE_RETRIEVAL_NODE = 2;
+    public static final int BOOLEAN_EXPRESSION_NODE = 3;
+    public static final int OPERABLE_NODE = 4;
 
     /**
      * Generate code based on child nodes' code generation and any extra syntax required for the code to compile.
@@ -55,17 +53,20 @@ public abstract class TreeNode {
     public static TreeNode getChildNode(String ruleContent, int possibleNodeIndex) throws InvalidRuleStructureException {
         TreeNode[] possibleNodes = {};
         switch(possibleNodeIndex) {
-            case RETURN_VALUE_NODE:
+            case CHILD_NODE:
+                possibleNodes = new TreeNode[] {new NegatedExpressionNode(), new BinaryBooleanExpressionNode(),
+                                                new LogicalComparisonNode(), new MathematicalExpressionNode(), new ValueNode(),
+                                                new StringNode(), new ConstantNode()};
+                break;
+            case VALUE_RETRIEVAL_NODE:
                 possibleNodes = new TreeNode[] {new MethodNode(), new FieldNode(), new VariableNode()};
                 break;
-            case ARGUMENT_NODE:
-                possibleNodes = new TreeNode[] {new ValueNode(), new StringNode(), new ConstantNode(), new VariableNode()};
+            case BOOLEAN_EXPRESSION_NODE:
+                possibleNodes = new TreeNode[] { new BinaryBooleanExpressionNode(), new NegatedExpressionNode(), new LogicalComparisonNode(),
+                                                new ValueNode(), new ConstantNode()};
                 break;
-            case EXPRESSION_NODE:
-                possibleNodes = new TreeNode[] {new MathematicalExpressionNode(), new BooleanExpressionNode(), new NumericalExpressionNode()};
-                break;
-            case BASIC_ARGUMENT_NODE:
-                possibleNodes = new TreeNode[] {new StringNode(), new ConstantNode(), new VariableNode()};
+            case OPERABLE_NODE:
+                possibleNodes = new TreeNode[] {new MathematicalExpressionNode(), new ValueNode(), new StringNode(), new ConstantNode()};
                 break;
         }
 

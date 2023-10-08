@@ -7,6 +7,10 @@ import tw.jruletest.parse.ruletree.TreeNode;
 import tw.jruletest.parse.ruletree.argumentnodes.ConstantNode;
 import tw.jruletest.parse.ruletree.argumentnodes.StringNode;
 import tw.jruletest.parse.ruletree.argumentnodes.VariableNode;
+import tw.jruletest.parse.ruletree.expressionnodes.BinaryBooleanExpressionNode;
+import tw.jruletest.parse.ruletree.expressionnodes.LogicalComparisonNode;
+import tw.jruletest.parse.ruletree.expressionnodes.MathematicalExpressionNode;
+import tw.jruletest.parse.ruletree.expressionnodes.NegatedExpressionNode;
 import tw.jruletest.variables.Variable;
 import tw.jruletest.variables.VariableStore;
 
@@ -75,7 +79,7 @@ public class StoreValueNode extends TreeNode {
                 throw new InvalidRuleStructureException(ruleContent, "Store Value Node");
             }
 
-            valueTree = TreeNode.getChildNode(requiredSegment, TreeNode.ARGUMENT_NODE);
+            valueTree = TreeNode.getChildNode(requiredSegment, TreeNode.CHILD_NODE);
             endIndex += valueTree.getEndIndex();
 
             requiredSegment = ruleContent.substring(endIndex);

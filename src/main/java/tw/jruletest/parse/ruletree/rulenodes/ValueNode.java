@@ -69,7 +69,7 @@ public class ValueNode extends TreeNode {
             }
         }
 
-        valueSourceNode = TreeNode.getChildNode(nextSegment, TreeNode.RETURN_VALUE_NODE);
+        valueSourceNode = TreeNode.getChildNode(nextSegment, TreeNode.VALUE_RETRIEVAL_NODE);
         endIndex = currentEnd + valueSourceNode.getEndIndex();
     }
 

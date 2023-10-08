@@ -3,6 +3,12 @@ package tw.jruletest.parse.ruletree.rulenodes;
 import tw.jruletest.exceptions.InvalidRuleStructureException;
 import tw.jruletest.parse.Parser;
 import tw.jruletest.parse.ruletree.TreeNode;
+import tw.jruletest.parse.ruletree.argumentnodes.ConstantNode;
+import tw.jruletest.parse.ruletree.argumentnodes.StringNode;
+import tw.jruletest.parse.ruletree.expressionnodes.BinaryBooleanExpressionNode;
+import tw.jruletest.parse.ruletree.expressionnodes.LogicalComparisonNode;
+import tw.jruletest.parse.ruletree.expressionnodes.MathematicalExpressionNode;
+import tw.jruletest.parse.ruletree.expressionnodes.NegatedExpressionNode;
 
 import java.util.ArrayList;
 
@@ -57,7 +63,7 @@ public class MethodArgumentNode extends TreeNode {
                 throw new InvalidRuleStructureException(ruleContent, "Method Argument Node");
             }
 
-            TreeNode argumentNode = TreeNode.getChildNode(remainingRule, TreeNode.BASIC_ARGUMENT_NODE);
+            TreeNode argumentNode = TreeNode.getChildNode(remainingRule, TreeNode.CHILD_NODE);
             int argumentEndIndex = argumentNode.getEndIndex();
             currentEnd += argumentEndIndex;
             arguments.add(argumentNode);

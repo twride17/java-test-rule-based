@@ -3,6 +3,12 @@ package tw.jruletest.parse.ruletree.rulenodes;
 import tw.jruletest.analyzers.ImportCollector;
 import tw.jruletest.exceptions.InvalidRuleStructureException;
 import tw.jruletest.parse.ruletree.TreeNode;
+import tw.jruletest.parse.ruletree.argumentnodes.ConstantNode;
+import tw.jruletest.parse.ruletree.argumentnodes.StringNode;
+import tw.jruletest.parse.ruletree.expressionnodes.BinaryBooleanExpressionNode;
+import tw.jruletest.parse.ruletree.expressionnodes.LogicalComparisonNode;
+import tw.jruletest.parse.ruletree.expressionnodes.MathematicalExpressionNode;
+import tw.jruletest.parse.ruletree.expressionnodes.NegatedExpressionNode;
 
 /**
  * Rule node that deals with creating expectation objects.
@@ -91,8 +97,8 @@ public class ExpectationNode extends TreeNode {
         String expectedSegment = remainingRule.substring(0, phraseIndex);
         String actualSegment = remainingRule.substring(phraseIndex + comparatorPhrase.length());
 
-        expectedValueTree = TreeNode.getChildNode(expectedSegment, TreeNode.ARGUMENT_NODE);
-        actualValueTree = TreeNode.getChildNode(actualSegment, TreeNode.ARGUMENT_NODE);
+        expectedValueTree = TreeNode.getChildNode(expectedSegment, TreeNode.CHILD_NODE);
+        actualValueTree = TreeNode.getChildNode(actualSegment, TreeNode.CHILD_NODE);
         int firstArgumentIndex = expectedValueTree.getEndIndex();
         int secondArgumentIndex = actualValueTree.getEndIndex();
 
