@@ -1,6 +1,6 @@
 package tw.jruletest.files.source;
 
-import tw.jruletest.exceptions.AmbiguousMemberException;
+import tw.jruletest.exceptions.AmbiguousClassException;
 import tw.jruletest.exceptions.UnidentifiedCallException;
 import tw.jruletest.virtualmachine.JavaClassLoader;
 
@@ -67,11 +67,11 @@ public class SourceClass {
      * @return the member found with the provided name
      *
      * @throws UnidentifiedCallException thrown when theis object does not have a field or method defined by the provided member name
-     * @throws AmbiguousMemberException thrown when there is more than one occurrence of members with the provided name
+     * @throws AmbiguousClassException thrown when there is more than one occurrence of members with the provided name
      * */
 
-    public SourceMember getMember(String memberName) throws UnidentifiedCallException, AmbiguousMemberException {
-        SourceMethod requiredMethod = findMethod(memberName);
+    public SourceMember getMember(String memberName) throws UnidentifiedCallException, AmbiguousClassException {
+        SourceMethod requiredMethod = findMethod(memberName, new ArrayList<>());
         SourceField requiredField = findField(memberName);
 
         if(requiredField == null) {
@@ -86,21 +86,21 @@ public class SourceClass {
                 return requiredField;
             }
             else {
-                throw new AmbiguousMemberException(memberName);
+                throw new AmbiguousClassException(memberName);
             }
         }
     }
 
-    private SourceMethod findMethod(String call) {
+    public SourceMethod findMethod(String call, ArrayList<String> parameterTypes) {
         for(SourceMethod method: methods) {
-            if(method.getName().equals(call)) {
+            if(method.getName().equals(call) && method.hasRequiredParameters(parameterTypes)) {
                 return method;
             }
         }
         return null;
     }
 
-    private SourceField findField(String call) {
+    public SourceField findField(String call) {
         for(SourceField field: fields) {
             if(field.getName().equals(call)) {
                 return field;

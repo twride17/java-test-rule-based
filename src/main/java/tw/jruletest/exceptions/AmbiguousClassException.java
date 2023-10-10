@@ -6,7 +6,7 @@ package tw.jruletest.exceptions;
  * @author Toby Wride
  * */
 
-public class AmbiguousMemberException extends Exception {
+public class AmbiguousClassException extends Exception {
 
     /**
      * Instance field for the name of the problem field or method
@@ -20,7 +20,7 @@ public class AmbiguousMemberException extends Exception {
      * @param fieldName name of the problematic field
      * */
 
-    public AmbiguousMemberException(String fieldName) {
+    public AmbiguousClassException(String fieldName) {
         this.fieldName = fieldName;
     }
 

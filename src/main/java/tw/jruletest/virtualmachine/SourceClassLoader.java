@@ -1,6 +1,6 @@
 package tw.jruletest.virtualmachine;
 
-import tw.jruletest.analyzers.JavaClassAnalyzer;
+import tw.jruletest.analyzers.SourceClassAnalyzer;
 import tw.jruletest.exceptions.CompilationFailureException;
 import tw.jruletest.files.source.SourceClass;
 
@@ -36,7 +36,7 @@ public class SourceClassLoader {
         ArrayList<String> classes = JavaClassLoader.loadClasses(requiredDirectory);
         for(String cls: classes) {
             try {
-                JavaClassAnalyzer.addSourceClass(new SourceClass(cls));
+                SourceClassAnalyzer.addSourceClass(new SourceClass(cls));
             } catch(ClassNotFoundException e) { }
         }
     }

@@ -1,7 +1,8 @@
 package tw.jruletest.analyzers;
 
-import tw.jruletest.exceptions.AmbiguousMemberException;
+import tw.jruletest.exceptions.AmbiguousClassException;
 import tw.jruletest.exceptions.UnidentifiedCallException;
+import tw.jruletest.exceptions.UnknownClassException;
 import tw.jruletest.files.source.SourceClass;
 
 import java.util.HashMap;
@@ -12,7 +13,7 @@ import java.util.HashMap;
  * @author Toby Wride
  * */
 
-public class JavaClassAnalyzer {
+public class SourceClassAnalyzer {
 
     /**
      * HashMap which maps the class name as a String to a SourceClass instance of the loaded class
@@ -26,11 +27,11 @@ public class JavaClassAnalyzer {
      * @param cls name of the required class.
      * @return SourceClass instance of the class that was found
      *
-     * @throws AmbiguousMemberException if there are multiple classes that match the provided class name.
-     * @throws UnidentifiedCallException if no class exists with the provided class name
+     * @throws AmbiguousClassException if there are multiple classes that match the provided class name.
+     * @throws UnknownClassException if no class exists with the provided class name
      * */
 
-    public static SourceClass identifySourceClass(String cls) throws AmbiguousMemberException, UnidentifiedCallException {
+    public static SourceClass identifySourceClass(String cls) throws AmbiguousClassException, UnknownClassException {
         SourceClass source = null;
         for(String sourceName: sourceClasses.keySet()) {
             String className = "";
@@ -44,13 +45,13 @@ public class JavaClassAnalyzer {
                 if(source == null) {
                     source = sourceClasses.get(sourceName);
                 } else {
-                    throw new AmbiguousMemberException(cls);
+                    throw new AmbiguousClassException(cls);
                 }
             }
         }
 
         if(source == null) {
-            throw new UnidentifiedCallException(cls);
+            throw new UnknownClassException(cls);
         } else {
             return source;
         }
