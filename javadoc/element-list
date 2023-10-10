@@ -11,5 +11,9 @@ tw.jruletest.parse
 tw.jruletest.parse.ruletree
 tw.jruletest.parse.ruletree.argumentnodes
 tw.jruletest.parse.ruletree.rulenodes
+tw.jruletest.testing.examples
+tw.jruletest.examples.sourceclasses.subpackage1
+tw.jruletest.examples.sourceclasses.subpackage2
+tw.jruletest.testing.programs
 tw.jruletest.variables
 tw.jruletest.virtualmachine
