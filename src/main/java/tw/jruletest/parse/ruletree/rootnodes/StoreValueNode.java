@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
  * @author Toby Wride
  * */
 
-public class StoreValueNode extends RuleNode implements Rule {
+public class StoreValueNode extends RootNode implements Rule {
 
     private RuleNode valueTree;
     private VariableNode variableTree;

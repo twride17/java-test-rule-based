@@ -3,6 +3,7 @@ package tw.jruletest.parse.ruletree.innernodes.argumentnodes;
 import tw.jruletest.exceptions.InvalidRuleStructureException;
 import tw.jruletest.parse.Rule;
 import tw.jruletest.parse.ruletree.RuleNode;
+import tw.jruletest.parse.ruletree.innernodes.ChildNode;
 
 import java.lang.reflect.Type;
 
@@ -12,7 +13,7 @@ import java.lang.reflect.Type;
  * @author Toby Wride
  * */
 
-public class StringNode extends RuleNode implements Rule {
+public class StringNode extends ChildNode implements Rule {
 
     private String stringValue;
 

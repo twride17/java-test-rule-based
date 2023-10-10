@@ -3,8 +3,11 @@ package tw.jruletest.parse.ruletree.innernodes.expressionnodes;
 import tw.jruletest.exceptions.InvalidRuleStructureException;
 import tw.jruletest.parse.Rule;
 import tw.jruletest.parse.ruletree.RuleNode;
+import tw.jruletest.parse.ruletree.innernodes.ChildNode;
 
-public class LogicalComparisonNode extends RuleNode implements Rule {
+import java.lang.reflect.Type;
+
+public class LogicalComparisonNode extends ChildNode implements Rule {
 
     private final String[] POSSIBLE_COMPARATORS = {" less than or equal to ", " less than ", "greater than or equal to ",
                                                     " greater than ", " not equal to ", " equal to "};
@@ -87,5 +90,10 @@ public class LogicalComparisonNode extends RuleNode implements Rule {
                 System.out.println("Failed to validate");
             }
         }
+    }
+
+    @Override
+    public Type getType() {
+        return boolean.class;
     }
 }

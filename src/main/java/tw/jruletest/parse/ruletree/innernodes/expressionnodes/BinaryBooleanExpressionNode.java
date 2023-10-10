@@ -3,15 +3,18 @@ package tw.jruletest.parse.ruletree.innernodes.expressionnodes;
 import tw.jruletest.exceptions.InvalidRuleStructureException;
 import tw.jruletest.parse.Rule;
 import tw.jruletest.parse.ruletree.RuleNode;
+import tw.jruletest.parse.ruletree.innernodes.ChildNode;
 
-public class BinaryBooleanExpressionNode extends RuleNode implements Rule {
+import java.lang.reflect.Type;
+
+public class BinaryBooleanExpressionNode extends ChildNode implements Rule {
 
     private static final String[] CONNECTIVES = {" and ", " or "};
 
     private String connective;
 
-    private RuleNode firstPredicateTree;
-    private RuleNode secondPredicateTree;
+    private ChildNode firstPredicateTree;
+    private ChildNode secondPredicateTree;
 
     @Override
     public String generateCode() {
@@ -62,5 +65,10 @@ public class BinaryBooleanExpressionNode extends RuleNode implements Rule {
                 System.out.println("Failed to validate");
             }
         }
+    }
+
+    @Override
+    public Type getType() {
+        return boolean.class;
     }
 }

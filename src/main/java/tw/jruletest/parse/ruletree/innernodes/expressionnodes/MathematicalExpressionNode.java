@@ -3,13 +3,16 @@ package tw.jruletest.parse.ruletree.innernodes.expressionnodes;
 import tw.jruletest.exceptions.InvalidRuleStructureException;
 import tw.jruletest.parse.Rule;
 import tw.jruletest.parse.ruletree.RuleNode;
+import tw.jruletest.parse.ruletree.innernodes.ChildNode;
 
-public class MathematicalExpressionNode extends RuleNode implements Rule {
+import java.lang.reflect.Type;
+
+public class MathematicalExpressionNode extends ChildNode implements Rule {
 
     private static final char[] OPERATORS = {'+', '-', '*', '/', '%'};
 
-    private RuleNode firstValueNode;
-    private RuleNode secondValueNode;
+    private ChildNode firstValueNode;
+    private ChildNode secondValueNode;
 
     private char operator;
 
@@ -69,5 +72,10 @@ public class MathematicalExpressionNode extends RuleNode implements Rule {
                 System.out.println("Failed to validate");
             }
         }
+    }
+
+    @Override
+    public Type getType() {
+        return firstValueNode.getType();
     }
 }

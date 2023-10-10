@@ -4,6 +4,7 @@ import tw.jruletest.Runner;
 import tw.jruletest.exceptions.InvalidRuleStructureException;
 import tw.jruletest.parse.Rule;
 import tw.jruletest.parse.ruletree.RuleNode;
+import tw.jruletest.parse.ruletree.innernodes.ChildNode;
 import tw.jruletest.variables.Variable;
 import tw.jruletest.variables.VariableStore;
 
@@ -17,7 +18,7 @@ import java.util.regex.Pattern;
  * @author Toby Wride
  * */
 
-public class VariableNode extends RuleNode implements Rule {
+public class VariableNode extends ChildNode implements Rule {
 
     private Variable variable;
 

@@ -3,10 +3,13 @@ package tw.jruletest.parse.ruletree.innernodes.expressionnodes;
 import tw.jruletest.exceptions.InvalidRuleStructureException;
 import tw.jruletest.parse.Rule;
 import tw.jruletest.parse.ruletree.RuleNode;
+import tw.jruletest.parse.ruletree.innernodes.ChildNode;
 
-public class NegatedExpressionNode extends RuleNode implements Rule {
+import java.lang.reflect.Type;
 
-    private RuleNode negatedExpressionTree;
+public class NegatedExpressionNode extends ChildNode implements Rule {
+
+    private ChildNode negatedExpressionTree;
 
     @Override
     public String generateCode() {
@@ -41,5 +44,10 @@ public class NegatedExpressionNode extends RuleNode implements Rule {
                 System.out.println("Failed to validate");
             }
         }
+    }
+
+    @Override
+    public Type getType() {
+        return boolean.class;
     }
 }

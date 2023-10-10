@@ -9,6 +9,7 @@ import tw.jruletest.files.source.SourceClass;
 import tw.jruletest.files.source.SourceField;
 import tw.jruletest.parse.Rule;
 import tw.jruletest.parse.ruletree.RuleNode;
+import tw.jruletest.parse.ruletree.innernodes.ChildNode;
 
 import java.lang.reflect.Type;
 import java.util.regex.Matcher;
@@ -20,7 +21,7 @@ import java.util.regex.Pattern;
  * @author Toby Wride
  * */
 
-public class FieldNode extends RuleNode implements Rule {
+public class FieldNode extends ChildNode implements Rule {
 
     private SourceField field;
     private String className;

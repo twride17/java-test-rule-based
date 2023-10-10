@@ -3,6 +3,7 @@ package tw.jruletest.parse.ruletree.innernodes.valuenodes;
 import tw.jruletest.exceptions.InvalidRuleStructureException;
 import tw.jruletest.parse.Rule;
 import tw.jruletest.parse.ruletree.RuleNode;
+import tw.jruletest.parse.ruletree.innernodes.ChildNode;
 
 import java.lang.reflect.Type;
 import java.util.regex.Matcher;
@@ -16,9 +17,9 @@ import java.util.regex.Pattern;
  * @author Toby Wride
  * */
 
-public class ValueNode extends RuleNode implements Rule {
+public class ValueNode extends ChildNode implements Rule {
 
-    private RuleNode valueSourceNode;
+    private ChildNode valueSourceNode;
 
     /**
      * Implementation of code generation from TreeNode interface.
@@ -80,13 +81,7 @@ public class ValueNode extends RuleNode implements Rule {
      * */
 
     public Type getType() {
-        if(valueSourceNode instanceof MethodNode) {
-            return ((MethodNode) valueSourceNode).getType();
-        } else if(valueSourceNode instanceof FieldNode) {
-            return ((FieldNode) valueSourceNode).getType();
-        } else {
-            return ((VariableNode) valueSourceNode).getType();
-        }
+        return valueSourceNode.getType();
     }
 
     /**

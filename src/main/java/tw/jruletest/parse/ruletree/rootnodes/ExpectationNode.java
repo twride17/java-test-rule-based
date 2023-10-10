@@ -12,7 +12,7 @@ import tw.jruletest.parse.ruletree.RuleNode;
  * @author Toby Wride
  * */
 
-public class ExpectationNode extends RuleNode implements Rule {
+public class ExpectationNode extends RootNode implements Rule {
 
     private int keywordLength = 0;
 

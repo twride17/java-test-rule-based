@@ -12,7 +12,7 @@ import tw.jruletest.parse.ruletree.innernodes.valuenodes.MethodNode;
  * @author Toby Wride
  * */
 
-public class CallMethodNode extends RuleNode implements Rule {
+public class CallMethodNode extends RootNode implements Rule {
 
     private MethodNode methodNode;
 

@@ -17,7 +17,7 @@ import java.lang.reflect.Type;
  * @author Toby Wride
  * */
 
-public class GetValueNode extends RuleNode implements Rule {
+public class GetValueNode extends RootNode implements Rule {
 
     private ValueNode valueNode;
 

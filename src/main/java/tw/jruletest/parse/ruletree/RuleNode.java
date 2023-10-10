@@ -2,6 +2,7 @@ package tw.jruletest.parse.ruletree;
 
 import tw.jruletest.exceptions.InvalidRuleStructureException;
 import tw.jruletest.parse.Rule;
+import tw.jruletest.parse.ruletree.innernodes.ChildNode;
 import tw.jruletest.parse.ruletree.innernodes.valuenodes.*;
 import tw.jruletest.parse.ruletree.innernodes.argumentnodes.*;
 import tw.jruletest.parse.ruletree.innernodes.expressionnodes.*;
@@ -31,27 +32,27 @@ public abstract class RuleNode {
         return endIndex;
     }
 
-    public static RuleNode getChildNode(String ruleContent, int possibleNodeIndex) throws InvalidRuleStructureException {
-        RuleNode[] possibleNodes = {};
+    public static ChildNode getChildNode(String ruleContent, int possibleNodeIndex) throws InvalidRuleStructureException {
+        ChildNode[] possibleNodes = {};
         switch(possibleNodeIndex) {
             case CHILD_NODE:
-                possibleNodes = new RuleNode[] {new NegatedExpressionNode(), new BinaryBooleanExpressionNode(),
+                possibleNodes = new ChildNode[] {new NegatedExpressionNode(), new BinaryBooleanExpressionNode(),
                                                 new LogicalComparisonNode(), new MathematicalExpressionNode(), new ValueNode(),
                                                 new StringNode(), new ConstantNode()};
                 break;
             case VALUE_RETRIEVAL_NODE:
-                possibleNodes = new RuleNode[] {new MethodNode(), new FieldNode(), new VariableNode()};
+                possibleNodes = new ChildNode[] {new MethodNode(), new FieldNode(), new VariableNode()};
                 break;
             case BOOLEAN_EXPRESSION_NODE:
-                possibleNodes = new RuleNode[] {new BinaryBooleanExpressionNode(), new NegatedExpressionNode(), new LogicalComparisonNode(),
+                possibleNodes = new ChildNode[] {new BinaryBooleanExpressionNode(), new NegatedExpressionNode(), new LogicalComparisonNode(),
                                                 new ValueNode(), new ConstantNode()};
                 break;
             case OPERABLE_NODE:
-                possibleNodes = new RuleNode[] {new MathematicalExpressionNode(), new ValueNode(), new StringNode(), new ConstantNode()};
+                possibleNodes = new ChildNode[] {new MathematicalExpressionNode(), new ValueNode(), new StringNode(), new ConstantNode()};
                 break;
         }
 
-        for(RuleNode possibleNode: possibleNodes) {
+        for(ChildNode possibleNode: possibleNodes) {
             try {
                 ((Rule)possibleNode).validateRule(ruleContent);
                 return possibleNode;
