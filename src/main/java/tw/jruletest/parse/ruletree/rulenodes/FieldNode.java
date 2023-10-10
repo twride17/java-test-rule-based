@@ -1,13 +1,13 @@
 package tw.jruletest.parse.ruletree.rulenodes;
 
 import tw.jruletest.analyzers.ImportCollector;
-import tw.jruletest.analyzers.JavaClassAnalyzer;
-import tw.jruletest.exceptions.AmbiguousMemberException;
+import tw.jruletest.analyzers.SourceClassAnalyzer;
+import tw.jruletest.exceptions.AmbiguousClassException;
 import tw.jruletest.exceptions.InvalidRuleStructureException;
 import tw.jruletest.exceptions.UnidentifiedCallException;
+import tw.jruletest.exceptions.UnknownClassException;
 import tw.jruletest.files.source.SourceClass;
 import tw.jruletest.files.source.SourceField;
-import tw.jruletest.files.source.SourceMember;
 import tw.jruletest.parse.ruletree.TreeNode;
 
 import java.lang.reflect.Type;
@@ -63,17 +63,17 @@ public class FieldNode extends TreeNode {
             }
         }
 
-        SourceMember field;
+        SourceField field;
         try {
-            SourceClass cls = JavaClassAnalyzer.identifySourceClass(fieldCall.split("\\.")[0]);
+            SourceClass cls = SourceClassAnalyzer.identifySourceClass(fieldCall.split("\\.")[0]);
             className = cls.getClassName();
-            field = cls.getMember(fieldCall.split("\\.")[1]);
-            if(field instanceof SourceField) {
-                this.field = (SourceField) field;
+            field = cls.findField(fieldCall.split("\\.")[1]);
+            if(field != null) {
+                this.field = field;
             } else {
                 throw new InvalidRuleStructureException(fieldCall, "Field Node");
             }
-        } catch(AmbiguousMemberException | UnidentifiedCallException e) {
+        } catch(AmbiguousClassException | UnknownClassException e) {
             throw new InvalidRuleStructureException(fieldCall, "Field Node");
         }
 

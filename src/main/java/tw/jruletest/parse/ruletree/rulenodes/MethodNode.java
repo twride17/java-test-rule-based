@@ -1,10 +1,11 @@
 package tw.jruletest.parse.ruletree.rulenodes;
 
 import tw.jruletest.analyzers.ImportCollector;
-import tw.jruletest.analyzers.JavaClassAnalyzer;
-import tw.jruletest.exceptions.AmbiguousMemberException;
+import tw.jruletest.analyzers.SourceClassAnalyzer;
+import tw.jruletest.exceptions.AmbiguousClassException;
 import tw.jruletest.exceptions.InvalidRuleStructureException;
 import tw.jruletest.exceptions.UnidentifiedCallException;
+import tw.jruletest.exceptions.UnknownClassException;
 import tw.jruletest.files.source.SourceMember;
 import tw.jruletest.files.source.SourceMethod;
 import tw.jruletest.parse.ruletree.TreeNode;
@@ -95,13 +96,13 @@ public class MethodNode extends TreeNode {
         // Test method call exists
         SourceMember method;
         try {
-            method = JavaClassAnalyzer.identifySourceClass(methodCall.split("\\.")[0]).getMember(methodCall.split("\\.")[1]);
+            method = SourceClassAnalyzer.identifySourceClass(methodCall.split("\\.")[0]).getMember(methodCall.split("\\.")[1]);
             if(method instanceof SourceMethod) {
                 this.method = (SourceMethod) method;
             } else {
                 throw new InvalidRuleStructureException(methodCall, "Method Node");
             }
-        } catch(AmbiguousMemberException | UnidentifiedCallException e) {
+        } catch(AmbiguousClassException | UnidentifiedCallException | UnknownClassException e) {
             throw new InvalidRuleStructureException(methodCall, "Method Node");
         }
 

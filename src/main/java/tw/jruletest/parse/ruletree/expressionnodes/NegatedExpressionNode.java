@@ -1,10 +1,7 @@
 package tw.jruletest.parse.ruletree.expressionnodes;
 
-import tw.jruletest.exceptions.AmbiguousMemberException;
 import tw.jruletest.exceptions.InvalidRuleStructureException;
 import tw.jruletest.parse.ruletree.TreeNode;
-import tw.jruletest.parse.ruletree.argumentnodes.ConstantNode;
-import tw.jruletest.parse.ruletree.rulenodes.ValueNode;
 
 public class NegatedExpressionNode extends TreeNode {
 
