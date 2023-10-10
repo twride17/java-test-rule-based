@@ -2,9 +2,10 @@ package tw.jruletest.analyzers;
 
 import org.junit.*;
 import tw.jruletest.Runner;
-import tw.jruletest.exceptions.AmbiguousMemberException;
+import tw.jruletest.exceptions.AmbiguousClassException;
 import tw.jruletest.exceptions.CompilationFailureException;
 import tw.jruletest.exceptions.UnidentifiedCallException;
+import tw.jruletest.exceptions.UnknownClassException;
 import tw.jruletest.files.FileFinder;
 import tw.jruletest.files.source.SourceClass;
 import tw.jruletest.virtualmachine.JavaClassLoader;
@@ -25,7 +26,7 @@ public class TestJavaClassAnalyzer {
         try {
             ArrayList<String> classes = JavaClassLoader.loadClasses("sourceclasses");
             for(String name: classes) {
-                JavaClassAnalyzer.addSourceClass(new SourceClass(name));
+                SourceClassAnalyzer.addSourceClass(new SourceClass(name));
             }
         } catch(CompilationFailureException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -35,9 +36,9 @@ public class TestJavaClassAnalyzer {
     @Test
     public void testSourceIdentification() {
         try {
-            SourceClass cls = JavaClassAnalyzer.identifySourceClass("ExampleClass");
+            SourceClass cls = SourceClassAnalyzer.identifySourceClass("ExampleClass");
             Assert.assertEquals("ExampleClass", cls.getClassName());
-        } catch(UnidentifiedCallException | AmbiguousMemberException e) {
+        } catch(AmbiguousClassException | UnknownClassException e) {
             Assert.fail("Failed");
         }
     }
@@ -45,10 +46,10 @@ public class TestJavaClassAnalyzer {
     @Test
     public void testAmbiguousSource() {
         try {
-            JavaClassAnalyzer.identifySourceClass("SubExample");
+            SourceClassAnalyzer.identifySourceClass("SubExample");
             Assert.fail("Passed when should fail");
-        } catch(AmbiguousMemberException e) { }
-        catch(UnidentifiedCallException e) {
+        } catch(AmbiguousClassException e) { }
+        catch(UnknownClassException e) {
             Assert.fail("Failed for wrong reason");
         }
     }
@@ -56,16 +57,16 @@ public class TestJavaClassAnalyzer {
     @Test
     public void testUnidentifiedSource() {
         try {
-            JavaClassAnalyzer.identifySourceClass("Example3");
+            SourceClassAnalyzer.identifySourceClass("Example3");
             Assert.fail("Passed when should fail");
-        } catch(AmbiguousMemberException e) {
+        } catch(AmbiguousClassException e) {
             Assert.fail("Failed for wrong reason");
-        }  catch(UnidentifiedCallException e) { }
+        }  catch(UnknownClassException e) { }
     }
 
     @After
     public void teardown() {
-        JavaClassAnalyzer.resetSourceClasses();
+        SourceClassAnalyzer.resetSourceClasses();
         try {
             Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/main/java/tw/jruletest/examples/sourceclasses/subpackage1/Example.class"));
             Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/main/java/tw/jruletest/examples/sourceclasses/subpackage2/Example.class"));

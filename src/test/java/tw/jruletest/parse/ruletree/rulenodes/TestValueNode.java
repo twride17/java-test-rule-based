@@ -2,20 +2,19 @@ package tw.jruletest.parse.ruletree.rulenodes;
 
 import org.junit.*;
 import tw.jruletest.Runner;
-import tw.jruletest.analyzers.JavaClassAnalyzer;
+import tw.jruletest.analyzers.SourceClassAnalyzer;
 import tw.jruletest.exceptions.CompilationFailureException;
 import tw.jruletest.exceptions.InvalidRuleStructureException;
 import tw.jruletest.files.FileFinder;
 import tw.jruletest.files.source.SourceClass;
+import tw.jruletest.parse.ruletree.innernodes.valuenodes.ValueNode;
 import tw.jruletest.variables.VariableStore;
 import tw.jruletest.virtualmachine.JavaClassLoader;
-import tw.jruletest.virtualmachine.SourceClassLoader;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class TestValueNode {
 
@@ -32,7 +31,7 @@ public class TestValueNode {
         try {
             ArrayList<String> classes = JavaClassLoader.loadClasses("programs");
             for(String name: classes) {
-                JavaClassAnalyzer.addSourceClass(new SourceClass(name));
+                SourceClassAnalyzer.addSourceClass(new SourceClass(name));
             }
         } catch(CompilationFailureException | ClassNotFoundException e) {}
 
@@ -146,7 +145,7 @@ public class TestValueNode {
     @After
     public void teardown() {
         VariableStore.reset();
-        JavaClassAnalyzer.resetSourceClasses();
+        SourceClassAnalyzer.resetSourceClasses();
         try {
             Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/test/java/tw/jruletest/examples/sourceclasses/subpackage1/SubExample.class"));
             Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/test/java/tw/jruletest/examples/sourceclasses/subpackage2/SubExample.class"));

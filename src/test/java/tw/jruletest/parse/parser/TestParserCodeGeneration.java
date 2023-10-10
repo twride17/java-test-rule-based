@@ -2,20 +2,18 @@ package tw.jruletest.parse.parser;
 
 import org.junit.*;
 import tw.jruletest.Runner;
-import tw.jruletest.analyzers.JavaClassAnalyzer;
+import tw.jruletest.analyzers.SourceClassAnalyzer;
 import tw.jruletest.exceptions.CompilationFailureException;
 import tw.jruletest.files.FileFinder;
 import tw.jruletest.files.source.SourceClass;
 import tw.jruletest.parse.Parser;
 import tw.jruletest.variables.VariableStore;
 import tw.jruletest.virtualmachine.JavaClassLoader;
-import tw.jruletest.virtualmachine.SourceClassLoader;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class TestParserCodeGeneration {
 
@@ -29,7 +27,7 @@ public class TestParserCodeGeneration {
         try {
             ArrayList<String> classes = JavaClassLoader.loadClasses("sourceclasses");
             for(String name: classes) {
-                JavaClassAnalyzer.addSourceClass(new SourceClass(name));
+                SourceClassAnalyzer.addSourceClass(new SourceClass(name));
             }
         } catch(CompilationFailureException | ClassNotFoundException e) {}
     }
@@ -75,7 +73,7 @@ public class TestParserCodeGeneration {
     @After
     public void teardown() {
         VariableStore.reset();
-        JavaClassAnalyzer.resetSourceClasses();
+        SourceClassAnalyzer.resetSourceClasses();
         try {
             Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/test/java/tw/jruletest/examples/sourceclasses/programs/Example.class"));
             Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/test/java/tw/jruletest/examples/sourceclasses/programs/Test.class"));

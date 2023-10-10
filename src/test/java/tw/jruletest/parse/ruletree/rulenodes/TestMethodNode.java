@@ -2,20 +2,19 @@ package tw.jruletest.parse.ruletree.rulenodes;
 
 import org.junit.*;
 import tw.jruletest.Runner;
-import tw.jruletest.analyzers.JavaClassAnalyzer;
+import tw.jruletest.analyzers.SourceClassAnalyzer;
 import tw.jruletest.exceptions.CompilationFailureException;
 import tw.jruletest.exceptions.InvalidRuleStructureException;
 import tw.jruletest.files.FileFinder;
 import tw.jruletest.files.source.SourceClass;
+import tw.jruletest.parse.ruletree.innernodes.valuenodes.MethodNode;
 import tw.jruletest.variables.VariableStore;
 import tw.jruletest.virtualmachine.JavaClassLoader;
-import tw.jruletest.virtualmachine.SourceClassLoader;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class TestMethodNode {
 
@@ -32,7 +31,7 @@ public class TestMethodNode {
         try {
             ArrayList<String> classes = JavaClassLoader.loadClasses("programs");
             for(String name: classes) {
-                JavaClassAnalyzer.addSourceClass(new SourceClass(name));
+                SourceClassAnalyzer.addSourceClass(new SourceClass(name));
             }
         } catch(CompilationFailureException | ClassNotFoundException e) {}
 
@@ -131,12 +130,30 @@ public class TestMethodNode {
                             "call example.method", "call example.Method", "call Example.Method", "Call method .method",
                             "call example.method, with arguments: 1", "call example.method and with arguments: 1",
                             "call example.method with arguments: 1", "call example.method then with arguments: 1"};
+        for(String rule: rules) {
+            try {
+                node = new MethodNode();
+                node.validateRule(rule);
+                Assert.assertEquals(rule.length(), node.getEndIndex());
+            } catch (InvalidRuleStructureException e) {
+                Assert.fail("'" + rule + "': failed");
+            }
+        }
+    }
+
+    @Test
+    public void testNestedCalls() {
+        String[] rules = {"method Test.example2 with: 67, value of Class.method and `Hello`",
+                            "method Test.example2 with: 67, value of Class.method, `Hello`"};
         node = new MethodNode();
         for(String rule: rules) {
             try {
                 node.validateRule(rule);
+                System.out.println();
                 Assert.fail("Failed: '" + rule + "' passed but should have failed");
-            } catch (InvalidRuleStructureException e) { }
+            } catch (InvalidRuleStructureException e) {
+                Assert.fail("'" + rule + "': failed");
+            }
         }
     }
 
@@ -176,7 +193,7 @@ public class TestMethodNode {
     @After
     public void teardown() {
         VariableStore.reset();
-        JavaClassAnalyzer.resetSourceClasses();
+        SourceClassAnalyzer.resetSourceClasses();
         try {
             Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/test/java/tw/jruletest/examples/sourceclasses/programs/Example.class"));
             Files.deleteIfExists(Paths.get(System.getProperty("user.dir") + "/src/test/java/tw/jruletest/examples/sourceclasses/programs/Test.class"));

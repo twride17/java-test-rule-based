@@ -2,13 +2,12 @@ package tw.jruletest.files.test;
 
 import org.junit.*;
 import tw.jruletest.Runner;
-import tw.jruletest.analyzers.JavaClassAnalyzer;
+import tw.jruletest.analyzers.SourceClassAnalyzer;
 import tw.jruletest.analyzers.RuleExtractor;
 import tw.jruletest.exceptions.CompilationFailureException;
 import tw.jruletest.files.FileFinder;
 import tw.jruletest.files.source.SourceClass;
 import tw.jruletest.virtualmachine.JavaClassLoader;
-import tw.jruletest.virtualmachine.SourceClassLoader;
 import tw.jruletest.virtualmachine.TestClassLoader;
 
 import java.io.File;
@@ -45,7 +44,7 @@ public class TestTestClass {
             TestClassLoader.loadClasses("testclasses");
             ArrayList<String> classes = JavaClassLoader.loadClasses("programs");
             for(String name: classes) {
-                JavaClassAnalyzer.addSourceClass(new SourceClass(name));
+                SourceClassAnalyzer.addSourceClass(new SourceClass(name));
             }
         } catch(CompilationFailureException | ClassNotFoundException e) {}
     }

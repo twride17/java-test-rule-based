@@ -3,6 +3,7 @@ package tw.jruletest.parse.ruletree.argumentnodes;
 import org.junit.*;
 import tw.jruletest.Runner;
 import tw.jruletest.exceptions.InvalidRuleStructureException;
+import tw.jruletest.parse.ruletree.innernodes.valuenodes.VariableNode;
 import tw.jruletest.variables.VariableStore;
 
 public class TestVariableNode {

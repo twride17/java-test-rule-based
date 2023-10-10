@@ -12,4 +12,6 @@ public class Test {
     public static void exampleMethod(int newX) {
         x = newX;
     }
+
+    public static void example2(double num1, int num2, String num3) { }
 }
