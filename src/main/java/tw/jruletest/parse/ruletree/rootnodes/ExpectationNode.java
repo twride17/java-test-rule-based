@@ -1,14 +1,9 @@
-package tw.jruletest.parse.ruletree.rulenodes;
+package tw.jruletest.parse.ruletree.rootnodes;
 
 import tw.jruletest.analyzers.ImportCollector;
 import tw.jruletest.exceptions.InvalidRuleStructureException;
-import tw.jruletest.parse.ruletree.TreeNode;
-import tw.jruletest.parse.ruletree.argumentnodes.ConstantNode;
-import tw.jruletest.parse.ruletree.argumentnodes.StringNode;
-import tw.jruletest.parse.ruletree.expressionnodes.BinaryBooleanExpressionNode;
-import tw.jruletest.parse.ruletree.expressionnodes.LogicalComparisonNode;
-import tw.jruletest.parse.ruletree.expressionnodes.MathematicalExpressionNode;
-import tw.jruletest.parse.ruletree.expressionnodes.NegatedExpressionNode;
+import tw.jruletest.parse.Rule;
+import tw.jruletest.parse.ruletree.RuleNode;
 
 /**
  * Rule node that deals with creating expectation objects.
@@ -17,12 +12,12 @@ import tw.jruletest.parse.ruletree.expressionnodes.NegatedExpressionNode;
  * @author Toby Wride
  * */
 
-public class ExpectationNode extends TreeNode {
+public class ExpectationNode extends RuleNode implements Rule {
 
     private int keywordLength = 0;
 
-    private TreeNode expectedValueTree;
-    private TreeNode actualValueTree;
+    private RuleNode expectedValueTree;
+    private RuleNode actualValueTree;
     private String comparator;
 
     private boolean negated = false;
@@ -40,13 +35,13 @@ public class ExpectationNode extends TreeNode {
     public String generateCode() {
         ImportCollector.addImport("import tw.jruletest.expectations.*;");
 
-        String code = "Expectations.expect(" + expectedValueTree.generateCode() + ").to";
+        String code = "Expectations.expect(" + ((Rule)expectedValueTree).generateCode() + ").to";
         if(negated) {
             code += "Not";
         }
         comparator = comparator.trim();
         code += comparator.substring(0, 1).toUpperCase() + comparator.substring(1) + "(";
-        return code + actualValueTree.generateCode() + ");";
+        return code + ((Rule)actualValueTree).generateCode() + ");";
     }
 
     /**
@@ -97,8 +92,8 @@ public class ExpectationNode extends TreeNode {
         String expectedSegment = remainingRule.substring(0, phraseIndex);
         String actualSegment = remainingRule.substring(phraseIndex + comparatorPhrase.length());
 
-        expectedValueTree = TreeNode.getChildNode(expectedSegment, TreeNode.CHILD_NODE);
-        actualValueTree = TreeNode.getChildNode(actualSegment, TreeNode.CHILD_NODE);
+        expectedValueTree = RuleNode.getChildNode(expectedSegment, RuleNode.CHILD_NODE);
+        actualValueTree = RuleNode.getChildNode(actualSegment, RuleNode.CHILD_NODE);
         int firstArgumentIndex = expectedValueTree.getEndIndex();
         int secondArgumentIndex = actualValueTree.getEndIndex();
 

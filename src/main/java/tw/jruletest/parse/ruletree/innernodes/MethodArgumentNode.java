@@ -1,14 +1,9 @@
-package tw.jruletest.parse.ruletree.rulenodes;
+package tw.jruletest.parse.ruletree.innernodes;
 
 import tw.jruletest.exceptions.InvalidRuleStructureException;
 import tw.jruletest.parse.Parser;
-import tw.jruletest.parse.ruletree.TreeNode;
-import tw.jruletest.parse.ruletree.argumentnodes.ConstantNode;
-import tw.jruletest.parse.ruletree.argumentnodes.StringNode;
-import tw.jruletest.parse.ruletree.expressionnodes.BinaryBooleanExpressionNode;
-import tw.jruletest.parse.ruletree.expressionnodes.LogicalComparisonNode;
-import tw.jruletest.parse.ruletree.expressionnodes.MathematicalExpressionNode;
-import tw.jruletest.parse.ruletree.expressionnodes.NegatedExpressionNode;
+import tw.jruletest.parse.Rule;
+import tw.jruletest.parse.ruletree.RuleNode;
 
 import java.util.ArrayList;
 
@@ -18,9 +13,9 @@ import java.util.ArrayList;
  * @author Toby Wride
  * */
 
-public class MethodArgumentNode extends TreeNode {
+public class MethodArgumentNode extends RuleNode implements Rule {
 
-    private ArrayList<TreeNode> arguments = new ArrayList<>();
+    private ArrayList<RuleNode> arguments = new ArrayList<>();
 
     /**
      * Implementation of code generation from TreeNode interface.
@@ -31,9 +26,9 @@ public class MethodArgumentNode extends TreeNode {
 
     @Override
     public String generateCode() {
-        String code = arguments.get(0).generateCode();
+        String code = ((Rule)arguments.get(0)).generateCode();
         for(int i = 1; i < arguments.size(); i++) {
-            code += ", " + arguments.get(i).generateCode();
+            code += ", " + ((Rule)arguments.get(i)).generateCode();
         }
         return code;
     }
@@ -63,7 +58,7 @@ public class MethodArgumentNode extends TreeNode {
                 throw new InvalidRuleStructureException(ruleContent, "Method Argument Node");
             }
 
-            TreeNode argumentNode = TreeNode.getChildNode(remainingRule, TreeNode.CHILD_NODE);
+            RuleNode argumentNode = RuleNode.getChildNode(remainingRule, RuleNode.CHILD_NODE);
             int argumentEndIndex = argumentNode.getEndIndex();
             currentEnd += argumentEndIndex;
             arguments.add(argumentNode);

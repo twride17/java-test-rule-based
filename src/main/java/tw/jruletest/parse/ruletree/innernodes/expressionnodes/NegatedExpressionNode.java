@@ -1,15 +1,16 @@
-package tw.jruletest.parse.ruletree.expressionnodes;
+package tw.jruletest.parse.ruletree.innernodes.expressionnodes;
 
 import tw.jruletest.exceptions.InvalidRuleStructureException;
-import tw.jruletest.parse.ruletree.TreeNode;
+import tw.jruletest.parse.Rule;
+import tw.jruletest.parse.ruletree.RuleNode;
 
-public class NegatedExpressionNode extends TreeNode {
+public class NegatedExpressionNode extends RuleNode implements Rule {
 
-    private TreeNode negatedExpressionTree;
+    private RuleNode negatedExpressionTree;
 
     @Override
     public String generateCode() {
-        return "!" + negatedExpressionTree.generateCode();
+        return "!" + ((Rule)negatedExpressionTree).generateCode();
     }
 
     @Override
@@ -17,7 +18,7 @@ public class NegatedExpressionNode extends TreeNode {
         String[] words = ruleContent.split(" ");
         try {
             if(words[0].equals("not") && (words.length != 1)) {
-                negatedExpressionTree = TreeNode.getChildNode(ruleContent.substring(4), TreeNode.BOOLEAN_EXPRESSION_NODE);
+                negatedExpressionTree = RuleNode.getChildNode(ruleContent.substring(4), RuleNode.BOOLEAN_EXPRESSION_NODE);
                 endIndex = 4 + negatedExpressionTree.getEndIndex();
             } else {
                 throw new InvalidRuleStructureException(ruleContent, "Negated Boolean Expression Node");
@@ -31,11 +32,11 @@ public class NegatedExpressionNode extends TreeNode {
         String[] rules = {"not true and false", "not true and false or true", "not true or not false and true"};
         for(String rule: rules) {
             System.out.println(rule);
-            TreeNode node = new NegatedExpressionNode();
+            RuleNode node = new NegatedExpressionNode();
             try {
-                node.validateRule(rule);
+                ((Rule)node).validateRule(rule);
                 System.out.println(rule.substring(0, node.getEndIndex()));
-                System.out.println(node.generateCode());
+                System.out.println(((Rule)node).generateCode());
             } catch(InvalidRuleStructureException e) {
                 System.out.println("Failed to validate");
             }

@@ -1,9 +1,11 @@
-package tw.jruletest.parse.ruletree.rulenodes;
+package tw.jruletest.parse.ruletree.rootnodes;
 
 import tw.jruletest.Runner;
 import tw.jruletest.analyzers.TypeIdentifier;
 import tw.jruletest.exceptions.InvalidRuleStructureException;
-import tw.jruletest.parse.ruletree.TreeNode;
+import tw.jruletest.parse.Rule;
+import tw.jruletest.parse.ruletree.RuleNode;
+import tw.jruletest.parse.ruletree.innernodes.valuenodes.ValueNode;
 import tw.jruletest.variables.VariableStore;
 
 import java.lang.reflect.Type;
@@ -15,7 +17,7 @@ import java.lang.reflect.Type;
  * @author Toby Wride
  * */
 
-public class GetValueNode extends TreeNode {
+public class GetValueNode extends RuleNode implements Rule {
 
     private ValueNode valueNode;
 

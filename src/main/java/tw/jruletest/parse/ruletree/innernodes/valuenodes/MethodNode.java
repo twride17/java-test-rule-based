@@ -1,4 +1,4 @@
-package tw.jruletest.parse.ruletree.rulenodes;
+package tw.jruletest.parse.ruletree.innernodes.valuenodes;
 
 import tw.jruletest.analyzers.ImportCollector;
 import tw.jruletest.analyzers.SourceClassAnalyzer;
@@ -8,7 +8,9 @@ import tw.jruletest.exceptions.UnidentifiedCallException;
 import tw.jruletest.exceptions.UnknownClassException;
 import tw.jruletest.files.source.SourceMember;
 import tw.jruletest.files.source.SourceMethod;
-import tw.jruletest.parse.ruletree.TreeNode;
+import tw.jruletest.parse.Rule;
+import tw.jruletest.parse.ruletree.RuleNode;
+import tw.jruletest.parse.ruletree.innernodes.MethodArgumentNode;
 
 import java.lang.reflect.Type;
 import java.util.regex.Matcher;
@@ -20,7 +22,7 @@ import java.util.regex.Pattern;
  * @author Toby Wride
  * */
 
-public class MethodNode extends TreeNode {
+public class MethodNode extends RuleNode implements Rule {
 
     private SourceMethod method;
 

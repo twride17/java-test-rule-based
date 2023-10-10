@@ -1,21 +1,22 @@
-package tw.jruletest.parse.ruletree.expressionnodes;
+package tw.jruletest.parse.ruletree.innernodes.expressionnodes;
 
 import tw.jruletest.exceptions.InvalidRuleStructureException;
-import tw.jruletest.parse.ruletree.TreeNode;
+import tw.jruletest.parse.Rule;
+import tw.jruletest.parse.ruletree.RuleNode;
 
-public class LogicalComparisonNode extends TreeNode {
+public class LogicalComparisonNode extends RuleNode implements Rule {
 
     private final String[] POSSIBLE_COMPARATORS = {" less than or equal to ", " less than ", "greater than or equal to ",
                                                     " greater than ", " not equal to ", " equal to "};
 
-    private TreeNode firstComparisonArgument;
-    private TreeNode secondComparisonArgument;
+    private RuleNode firstComparisonArgument;
+    private RuleNode secondComparisonArgument;
 
     private String comparator;
 
     @Override
     public String generateCode() {
-        String code = "(" + firstComparisonArgument.generateCode();
+        String code = "(" + ((Rule)firstComparisonArgument).generateCode();
         switch(comparator.trim()) {
             case "equal to":
                 code += " == ";
@@ -36,7 +37,7 @@ public class LogicalComparisonNode extends TreeNode {
                 code += " >= ";
                 break;
         }
-        return code + secondComparisonArgument.generateCode() + ")";
+        return code + ((Rule)secondComparisonArgument).generateCode() + ")";
     }
 
     @Override
@@ -59,8 +60,8 @@ public class LogicalComparisonNode extends TreeNode {
         String firstSegment = ruleContent.substring(0, phraseIndex);
         String secondSegment = ruleContent.substring(phraseIndex + comparatorPhrase.length());
 
-        firstComparisonArgument = TreeNode.getChildNode(firstSegment, TreeNode.OPERABLE_NODE);
-        secondComparisonArgument = TreeNode.getChildNode(secondSegment, TreeNode.OPERABLE_NODE);
+        firstComparisonArgument = RuleNode.getChildNode(firstSegment, RuleNode.OPERABLE_NODE);
+        secondComparisonArgument = RuleNode.getChildNode(secondSegment, RuleNode.OPERABLE_NODE);
         int firstArgumentIndex = firstComparisonArgument.getEndIndex();
         int secondArgumentIndex = secondComparisonArgument.getEndIndex();
 
@@ -77,11 +78,11 @@ public class LogicalComparisonNode extends TreeNode {
 
         for(String rule: rules) {
             System.out.println(rule);
-            TreeNode node = new LogicalComparisonNode();
+            RuleNode node = new LogicalComparisonNode();
             try {
-                node.validateRule(rule);
+                ((Rule)node).validateRule(rule);
                 System.out.println(rule.substring(0, node.getEndIndex()));
-                System.out.println(node.generateCode());
+                System.out.println(((Rule)node).generateCode());
             } catch(InvalidRuleStructureException e) {
                 System.out.println("Failed to validate");
             }

@@ -1,7 +1,9 @@
-package tw.jruletest.parse.ruletree.rulenodes;
+package tw.jruletest.parse.ruletree.rootnodes;
 
 import tw.jruletest.exceptions.InvalidRuleStructureException;
-import tw.jruletest.parse.ruletree.TreeNode;
+import tw.jruletest.parse.Rule;
+import tw.jruletest.parse.ruletree.RuleNode;
+import tw.jruletest.parse.ruletree.innernodes.valuenodes.MethodNode;
 
 /**
  * Rule node that deals with calling source methods.
@@ -10,7 +12,7 @@ import tw.jruletest.parse.ruletree.TreeNode;
  * @author Toby Wride
  * */
 
-public class CallMethodNode extends TreeNode {
+public class CallMethodNode extends RuleNode implements Rule {
 
     private MethodNode methodNode;
 

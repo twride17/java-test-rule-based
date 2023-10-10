@@ -2,8 +2,11 @@ package tw.jruletest.parse;
 
 import tw.jruletest.exceptions.InvalidRuleStructureException;
 import tw.jruletest.exceptions.UnparsableRuleException;
-import tw.jruletest.parse.ruletree.TreeNode;
-import tw.jruletest.parse.ruletree.rulenodes.*;
+import tw.jruletest.parse.ruletree.RuleNode;
+import tw.jruletest.parse.ruletree.rootnodes.CallMethodNode;
+import tw.jruletest.parse.ruletree.rootnodes.ExpectationNode;
+import tw.jruletest.parse.ruletree.rootnodes.GetValueNode;
+import tw.jruletest.parse.ruletree.rootnodes.StoreValueNode;
 
 import java.util.*;
 
@@ -22,7 +25,7 @@ public class Parser {
     public static final ArrayList<String> KEYWORDS = new ArrayList<>(Arrays.asList("call", "get", "store", "expect"));
     private static final ArrayList<String> POSSIBLE_CONNECTIVES = new ArrayList<>(Arrays.asList(",", "and", "then"));
 
-    private static LinkedList<TreeNode> rules = new LinkedList<>();
+    private static LinkedList<RuleNode> rules = new LinkedList<>();
 
     /**
      * Decodes and generates the code from a set o rules
@@ -54,7 +57,7 @@ public class Parser {
         for(String subRule: subRules) {
             try {
                 generateTrees(subRule);
-                for (TreeNode ruleNode : rules) {
+                for (RuleNode ruleNode : rules) {
                     codeBlock += ruleNode.generateCode() + "\n";
                 }
             } catch(UnparsableRuleException e) {
@@ -107,7 +110,7 @@ public class Parser {
     }
 
     private static int getEndOfSubRule(String rule, String startCommand) throws UnparsableRuleException {
-        TreeNode node;
+        RuleNode node;
         try {
             switch (startCommand.toLowerCase()) {
                 case "expect":

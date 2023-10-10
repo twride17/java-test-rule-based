@@ -1,8 +1,8 @@
-package tw.jruletest.parse.ruletree.rulenodes;
+package tw.jruletest.parse.ruletree.innernodes.valuenodes;
 
 import tw.jruletest.exceptions.InvalidRuleStructureException;
-import tw.jruletest.parse.ruletree.TreeNode;
-import tw.jruletest.parse.ruletree.argumentnodes.VariableNode;
+import tw.jruletest.parse.Rule;
+import tw.jruletest.parse.ruletree.RuleNode;
 
 import java.lang.reflect.Type;
 import java.util.regex.Matcher;
@@ -16,9 +16,9 @@ import java.util.regex.Pattern;
  * @author Toby Wride
  * */
 
-public class ValueNode extends TreeNode {
+public class ValueNode extends RuleNode implements Rule {
 
-    private TreeNode valueSourceNode;
+    private RuleNode valueSourceNode;
 
     /**
      * Implementation of code generation from TreeNode interface.
@@ -29,7 +29,7 @@ public class ValueNode extends TreeNode {
 
     @Override
     public String generateCode() {
-        return valueSourceNode.generateCode();
+        return ((Rule)valueSourceNode).generateCode();
     }
 
     /**
@@ -69,7 +69,7 @@ public class ValueNode extends TreeNode {
             }
         }
 
-        valueSourceNode = TreeNode.getChildNode(nextSegment, TreeNode.VALUE_RETRIEVAL_NODE);
+        valueSourceNode = RuleNode.getChildNode(nextSegment, RuleNode.VALUE_RETRIEVAL_NODE);
         endIndex = currentEnd + valueSourceNode.getEndIndex();
     }
 

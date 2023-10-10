@@ -1,16 +1,14 @@
-package tw.jruletest.parse.ruletree.rulenodes;
+package tw.jruletest.parse.ruletree.rootnodes;
 
 import tw.jruletest.Runner;
 import tw.jruletest.analyzers.TypeIdentifier;
 import tw.jruletest.exceptions.InvalidRuleStructureException;
-import tw.jruletest.parse.ruletree.TreeNode;
-import tw.jruletest.parse.ruletree.argumentnodes.ConstantNode;
-import tw.jruletest.parse.ruletree.argumentnodes.StringNode;
-import tw.jruletest.parse.ruletree.argumentnodes.VariableNode;
-import tw.jruletest.parse.ruletree.expressionnodes.BinaryBooleanExpressionNode;
-import tw.jruletest.parse.ruletree.expressionnodes.LogicalComparisonNode;
-import tw.jruletest.parse.ruletree.expressionnodes.MathematicalExpressionNode;
-import tw.jruletest.parse.ruletree.expressionnodes.NegatedExpressionNode;
+import tw.jruletest.parse.Rule;
+import tw.jruletest.parse.ruletree.RuleNode;
+import tw.jruletest.parse.ruletree.innernodes.argumentnodes.ConstantNode;
+import tw.jruletest.parse.ruletree.innernodes.argumentnodes.StringNode;
+import tw.jruletest.parse.ruletree.innernodes.valuenodes.VariableNode;
+import tw.jruletest.parse.ruletree.innernodes.valuenodes.ValueNode;
 import tw.jruletest.variables.Variable;
 import tw.jruletest.variables.VariableStore;
 
@@ -25,9 +23,9 @@ import java.util.regex.Pattern;
  * @author Toby Wride
  * */
 
-public class StoreValueNode extends TreeNode {
+public class StoreValueNode extends RuleNode implements Rule {
 
-    private TreeNode valueTree;
+    private RuleNode valueTree;
     private VariableNode variableTree;
 
     /**
@@ -40,7 +38,7 @@ public class StoreValueNode extends TreeNode {
     @Override
     public String generateCode() {
         String variableName = variableTree.getArgument();
-        String code = variableName + " = " + valueTree.generateCode() + ";";
+        String code = variableName + " = " + ((Rule)valueTree).generateCode() + ";";
 
         Variable variable = VariableStore.findVariable(Runner.getCurrentMethod(), variableName);
         if(!variable.isDeclared()) {
@@ -79,7 +77,7 @@ public class StoreValueNode extends TreeNode {
                 throw new InvalidRuleStructureException(ruleContent, "Store Value Node");
             }
 
-            valueTree = TreeNode.getChildNode(requiredSegment, TreeNode.CHILD_NODE);
+            valueTree = RuleNode.getChildNode(requiredSegment, RuleNode.CHILD_NODE);
             endIndex += valueTree.getEndIndex();
 
             requiredSegment = ruleContent.substring(endIndex);

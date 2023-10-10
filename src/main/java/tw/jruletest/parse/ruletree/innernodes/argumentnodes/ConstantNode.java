@@ -1,7 +1,8 @@
-package tw.jruletest.parse.ruletree.argumentnodes;
+package tw.jruletest.parse.ruletree.innernodes.argumentnodes;
 
 import tw.jruletest.exceptions.InvalidRuleStructureException;
-import tw.jruletest.parse.ruletree.TreeNode;
+import tw.jruletest.parse.Rule;
+import tw.jruletest.parse.ruletree.RuleNode;
 
 import java.lang.reflect.Type;
 import java.util.regex.Matcher;
@@ -13,7 +14,7 @@ import java.util.regex.Pattern;
  * @author Toby Wride
  * */
 
-public class ConstantNode extends TreeNode {
+public class ConstantNode extends RuleNode implements Rule {
 
     private String constantString;
 

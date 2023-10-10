@@ -1,16 +1,17 @@
-package tw.jruletest.parse.ruletree.expressionnodes;
+package tw.jruletest.parse.ruletree.innernodes.expressionnodes;
 
 import tw.jruletest.exceptions.InvalidRuleStructureException;
-import tw.jruletest.parse.ruletree.TreeNode;
+import tw.jruletest.parse.Rule;
+import tw.jruletest.parse.ruletree.RuleNode;
 
-public class BinaryBooleanExpressionNode extends TreeNode {
+public class BinaryBooleanExpressionNode extends RuleNode implements Rule {
 
     private static final String[] CONNECTIVES = {" and ", " or "};
 
     private String connective;
 
-    private TreeNode firstPredicateTree;
-    private TreeNode secondPredicateTree;
+    private RuleNode firstPredicateTree;
+    private RuleNode secondPredicateTree;
 
     @Override
     public String generateCode() {
@@ -20,7 +21,7 @@ public class BinaryBooleanExpressionNode extends TreeNode {
         } else {
             connectiveCode = "||";
         }
-        return "(" + firstPredicateTree.generateCode() + " " + connectiveCode + " " + secondPredicateTree.generateCode() + ")";
+        return "(" + ((Rule)firstPredicateTree).generateCode() + " " + connectiveCode + " " + ((Rule)secondPredicateTree).generateCode() + ")";
     }
 
     @Override
@@ -41,10 +42,10 @@ public class BinaryBooleanExpressionNode extends TreeNode {
             throw new InvalidRuleStructureException(ruleContent, "Mathematical Expression Node");
         }
 
-        firstPredicateTree = TreeNode.getChildNode(ruleContent.substring(0, closestIndex), TreeNode.BOOLEAN_EXPRESSION_NODE);
-        secondPredicateTree = TreeNode.getChildNode(ruleContent.substring(closestIndex + connective.length()), TreeNode.BOOLEAN_EXPRESSION_NODE);
+        firstPredicateTree = RuleNode.getChildNode(ruleContent.substring(0, closestIndex), RuleNode.BOOLEAN_EXPRESSION_NODE);
+        secondPredicateTree = RuleNode.getChildNode(ruleContent.substring(closestIndex + connective.length()), RuleNode.BOOLEAN_EXPRESSION_NODE);
 
-        endIndex += firstPredicateTree.getEndIndex() + connective.length() + secondPredicateTree.getEndIndex();
+        endIndex += ((RuleNode)firstPredicateTree).getEndIndex() + connective.length() + ((RuleNode)secondPredicateTree).getEndIndex();
     }
 
     public static void main(String[] args) {
@@ -52,10 +53,10 @@ public class BinaryBooleanExpressionNode extends TreeNode {
                             "not true and false", "not true and not false", "not true or not false", "true or not false and true"};
         for(String rule: rules) {
             System.out.println(rule);
-            TreeNode node = new BinaryBooleanExpressionNode();
+            Rule node = new BinaryBooleanExpressionNode();
             try {
                 node.validateRule(rule);
-                System.out.println(rule.substring(0, node.getEndIndex()));
+                System.out.println(rule.substring(0, ((RuleNode)node).getEndIndex()));
                 System.out.println(node.generateCode());
             } catch(InvalidRuleStructureException e) {
                 System.out.println("Failed to validate");

@@ -1,23 +1,21 @@
-package tw.jruletest.parse.ruletree.expressionnodes;
+package tw.jruletest.parse.ruletree.innernodes.expressionnodes;
 
 import tw.jruletest.exceptions.InvalidRuleStructureException;
-import tw.jruletest.parse.ruletree.TreeNode;
-import tw.jruletest.parse.ruletree.argumentnodes.ConstantNode;
-import tw.jruletest.parse.ruletree.argumentnodes.StringNode;
-import tw.jruletest.parse.ruletree.rulenodes.ValueNode;
+import tw.jruletest.parse.Rule;
+import tw.jruletest.parse.ruletree.RuleNode;
 
-public class MathematicalExpressionNode extends TreeNode {
+public class MathematicalExpressionNode extends RuleNode implements Rule {
 
     private static final char[] OPERATORS = {'+', '-', '*', '/', '%'};
 
-    private TreeNode firstValueNode;
-    private TreeNode secondValueNode;
+    private RuleNode firstValueNode;
+    private RuleNode secondValueNode;
 
     private char operator;
 
     @Override
     public String generateCode() {
-        return "(" + firstValueNode.generateCode() + " " + operator + " " + secondValueNode.generateCode() + ")";
+        return "(" + ((Rule)firstValueNode).generateCode() + " " + operator + " " + ((Rule)secondValueNode).generateCode() + ")";
     }
 
     @Override
@@ -52,8 +50,8 @@ public class MathematicalExpressionNode extends TreeNode {
             endIndex += 1;
         }
 
-        firstValueNode = TreeNode.getChildNode(firstValue, TreeNode.OPERABLE_NODE);
-        secondValueNode = TreeNode.getChildNode(secondValue, TreeNode.OPERABLE_NODE);
+        firstValueNode = RuleNode.getChildNode(firstValue, RuleNode.OPERABLE_NODE);
+        secondValueNode = RuleNode.getChildNode(secondValue, RuleNode.OPERABLE_NODE);
 
         endIndex += firstValueNode.getEndIndex() + 1 + secondValueNode.getEndIndex();
     }
@@ -62,11 +60,11 @@ public class MathematicalExpressionNode extends TreeNode {
         String[] rules = {"2 + -2", "3-2", "1*6", "2 / 4", "34 % 3", "-0.987f + 6", "67 - 3 + 4", "2+ 3", "4 *5"};
         for(String rule: rules) {
             System.out.println(rule);
-            TreeNode node = new MathematicalExpressionNode();
+            RuleNode node = new MathematicalExpressionNode();
             try {
-                node.validateRule(rule);
+                ((Rule)node).validateRule(rule);
                 System.out.println(rule.substring(0, node.getEndIndex()));
-                System.out.println(node.generateCode());
+                System.out.println(((Rule)node).generateCode());
             } catch(InvalidRuleStructureException e) {
                 System.out.println("Failed to validate");
             }
