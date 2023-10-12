@@ -158,8 +158,8 @@ public class MethodNode extends ChildNode implements Rule {
             if (i >= 0) {
                 String connective = "";
                 String argument = "";
-                if(remainingRule.indexOf("and ") == 0) {
-                    connective = "and ";
+                if(remainingRule.indexOf(" and ") == 0) {
+                    connective = " and ";
                 } else if(remainingRule.indexOf(", ") == 0) {
                     connective = ", ";
                 }

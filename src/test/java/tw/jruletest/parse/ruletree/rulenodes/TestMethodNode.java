@@ -144,7 +144,7 @@ public class TestMethodNode {
     @Test
     public void testNestedCalls() {
         String[] rules = {"method Test.example2 with: 67, value of Class.method, `Hello`",
-                            "method Test.example2 with: value of Example.m2 with arguments: `Test String`, Class.method, -90, 805, `Hello`"};
+                            "method Test.example2 with: value of Example.m2 with arguments: `Test String` and Class.method, -90 and 805 and `Hello`"};
         node = new MethodNode();
         for(String rule: rules) {
             try {
