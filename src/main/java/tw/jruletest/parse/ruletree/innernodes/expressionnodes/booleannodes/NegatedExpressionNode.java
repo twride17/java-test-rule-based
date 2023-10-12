@@ -1,4 +1,4 @@
-package tw.jruletest.parse.ruletree.innernodes.expressionnodes;
+package tw.jruletest.parse.ruletree.innernodes.expressionnodes.booleannodes;
 
 import tw.jruletest.exceptions.InvalidRuleStructureException;
 import tw.jruletest.parse.Rule;

@@ -1,4 +1,4 @@
-package tw.jruletest.parse.ruletree.innernodes.expressionnodes;
+package tw.jruletest.parse.ruletree.innernodes.expressionnodes.mathematicalnodes;
 
 import tw.jruletest.exceptions.InvalidRuleStructureException;
 import tw.jruletest.parse.Rule;
@@ -14,17 +14,18 @@ public class MathematicalExpressionNode extends ChildNode implements Rule {
     private ChildNode firstValueNode;
     private ChildNode secondValueNode;
 
-    private char operator;
+    private Operator operator;
 
     @Override
     public String generateCode() {
-        return "(" + ((Rule)firstValueNode).generateCode() + " " + operator + " " + ((Rule)secondValueNode).generateCode() + ")";
+        return "(" + ((Rule)firstValueNode).generateCode() + " " + operator.getOperator()+ " " + ((Rule)secondValueNode).generateCode() + ")";
     }
 
     @Override
     public void validateRule(String ruleContent) throws InvalidRuleStructureException {
         int closestIndex = ruleContent.length();
         int bestOperatorIndex = -1;
+        char bestOperator;
         for(int i = 0; i < OPERATORS.length; i++) {
             int currentIndex = ruleContent.indexOf(OPERATORS[i]);
             if((currentIndex != -1) && (currentIndex < closestIndex)) {
@@ -36,7 +37,8 @@ public class MathematicalExpressionNode extends ChildNode implements Rule {
         }
 
         try {
-            operator = OPERATORS[bestOperatorIndex];
+            bestOperator = OPERATORS[bestOperatorIndex];
+            operator = new Operator(bestOperator);
         } catch(ArrayIndexOutOfBoundsException e) {
             throw new InvalidRuleStructureException(ruleContent, "Mathematical Expression Node");
         }
@@ -76,6 +78,6 @@ public class MathematicalExpressionNode extends ChildNode implements Rule {
 
     @Override
     public Type getType() {
-        return firstValueNode.getType();
+        return operator.getFinalType(firstValueNode, secondValueNode);
     }
 }

@@ -1,5 +1,6 @@
-package tw.jruletest.parse.ruletree.innernodes.expressionnodes;
+package tw.jruletest.parse.ruletree.innernodes.expressionnodes.booleannodes;
 
+import tw.jruletest.analyzers.TypeIdentifier;
 import tw.jruletest.exceptions.InvalidRuleStructureException;
 import tw.jruletest.parse.Rule;
 import tw.jruletest.parse.ruletree.RuleNode;
@@ -7,7 +8,7 @@ import tw.jruletest.parse.ruletree.innernodes.ChildNode;
 
 import java.lang.reflect.Type;
 
-public class BinaryBooleanExpressionNode extends ChildNode implements Rule {
+public class BinaryExpressionNode extends ChildNode implements Rule {
 
     private static final String[] CONNECTIVES = {" and ", " or "};
 
@@ -42,13 +43,18 @@ public class BinaryBooleanExpressionNode extends ChildNode implements Rule {
         try {
             connective = CONNECTIVES[bestConnectiveIndex];
         } catch(ArrayIndexOutOfBoundsException e) {
-            throw new InvalidRuleStructureException(ruleContent, "Mathematical Expression Node");
+            throw new InvalidRuleStructureException(ruleContent, "Binary Boolean Expression Node");
         }
 
         firstPredicateTree = RuleNode.getChildNode(ruleContent.substring(0, closestIndex), RuleNode.BOOLEAN_EXPRESSION_NODE);
         secondPredicateTree = RuleNode.getChildNode(ruleContent.substring(closestIndex + connective.length()), RuleNode.BOOLEAN_EXPRESSION_NODE);
+        if((firstPredicateTree.getType() == boolean.class) && (secondPredicateTree.getType() == boolean.class)) {
+            endIndex += firstPredicateTree.getEndIndex() + connective.length() + secondPredicateTree.getEndIndex();
+        } else {
+            throw new InvalidRuleStructureException(ruleContent, "Binary Boolean Expression Node");
+        }
 
-        endIndex += ((RuleNode)firstPredicateTree).getEndIndex() + connective.length() + ((RuleNode)secondPredicateTree).getEndIndex();
+
     }
 
     public static void main(String[] args) {
@@ -56,7 +62,7 @@ public class BinaryBooleanExpressionNode extends ChildNode implements Rule {
                             "not true and false", "not true and not false", "not true or not false", "true or not false and true"};
         for(String rule: rules) {
             System.out.println(rule);
-            Rule node = new BinaryBooleanExpressionNode();
+            Rule node = new BinaryExpressionNode();
             try {
                 node.validateRule(rule);
                 System.out.println(rule.substring(0, ((RuleNode)node).getEndIndex()));

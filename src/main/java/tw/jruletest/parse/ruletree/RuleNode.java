@@ -3,9 +3,10 @@ package tw.jruletest.parse.ruletree;
 import tw.jruletest.exceptions.InvalidRuleStructureException;
 import tw.jruletest.parse.Rule;
 import tw.jruletest.parse.ruletree.innernodes.ChildNode;
+import tw.jruletest.parse.ruletree.innernodes.expressionnodes.booleannodes.*;
+import tw.jruletest.parse.ruletree.innernodes.expressionnodes.mathematicalnodes.MathematicalExpressionNode;
 import tw.jruletest.parse.ruletree.innernodes.valuenodes.*;
 import tw.jruletest.parse.ruletree.innernodes.argumentnodes.*;
-import tw.jruletest.parse.ruletree.innernodes.expressionnodes.*;
 
 /**
  * Interface for the expected implementation of nodes to be added to a tree in order to validate rules and generate the required code.
@@ -36,7 +37,7 @@ public abstract class RuleNode {
         ChildNode[] possibleNodes = {};
         switch(possibleNodeIndex) {
             case CHILD_NODE:
-                possibleNodes = new ChildNode[] {new StringNode(), new NegatedExpressionNode(), new BinaryBooleanExpressionNode(),
+                possibleNodes = new ChildNode[] {new StringNode(), new NegatedExpressionNode(), new BinaryExpressionNode(),
                                                 new LogicalComparisonNode(), new MathematicalExpressionNode(), new ValueNode(),
                                                 new ConstantNode()};
                 break;
@@ -44,7 +45,7 @@ public abstract class RuleNode {
                 possibleNodes = new ChildNode[] {new MethodNode(), new FieldNode(), new VariableNode()};
                 break;
             case BOOLEAN_EXPRESSION_NODE:
-                possibleNodes = new ChildNode[] {new BinaryBooleanExpressionNode(), new NegatedExpressionNode(), new LogicalComparisonNode(),
+                possibleNodes = new ChildNode[] {new BinaryExpressionNode(), new NegatedExpressionNode(), new LogicalComparisonNode(),
                                                 new ValueNode(), new ConstantNode()};
                 break;
             case OPERABLE_NODE:

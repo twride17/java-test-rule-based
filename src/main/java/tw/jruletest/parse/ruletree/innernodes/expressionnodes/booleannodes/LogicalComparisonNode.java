@@ -1,4 +1,4 @@
-package tw.jruletest.parse.ruletree.innernodes.expressionnodes;
+package tw.jruletest.parse.ruletree.innernodes.expressionnodes.booleannodes;
 
 import tw.jruletest.exceptions.InvalidRuleStructureException;
 import tw.jruletest.parse.Rule;
@@ -57,7 +57,7 @@ public class LogicalComparisonNode extends ChildNode implements Rule {
         String comparatorPhrase = " is" + comparator;
         int phraseIndex = ruleContent.indexOf(comparatorPhrase);
         if(phraseIndex == -1) {
-            throw new InvalidRuleStructureException(ruleContent, "Expectation Node");
+            throw new InvalidRuleStructureException(ruleContent, "Logical Comparison Node");
         }
 
         String firstSegment = ruleContent.substring(0, phraseIndex);
@@ -69,7 +69,7 @@ public class LogicalComparisonNode extends ChildNode implements Rule {
         int secondArgumentIndex = secondComparisonArgument.getEndIndex();
 
         if(firstArgumentIndex != phraseIndex) {
-            throw new InvalidRuleStructureException(ruleContent, "Expectation Node");
+            throw new InvalidRuleStructureException(ruleContent, "Logical Comparison Node");
         } else {
             endIndex = comparatorIndex + secondArgumentIndex;
         }
