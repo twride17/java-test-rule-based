@@ -45,11 +45,11 @@ public class LogicalComparisonNode extends ChildNode implements Rule {
 
     @Override
     public void validateRule(String ruleContent) throws InvalidRuleStructureException {
-        int comparatorIndex = -1;
+        int comparatorIndex = ruleContent.length();
         for(String comparator: POSSIBLE_COMPARATORS) {
             int newIndex = ruleContent.indexOf(comparator);
-            if((newIndex >= 0) && (comparatorIndex < 0)) {
-                comparatorIndex = newIndex + comparator.length();
+            if((newIndex >= 0) && (newIndex < comparatorIndex)) {
+                comparatorIndex = newIndex;
                 this.comparator = comparator;
             }
         }
@@ -71,7 +71,7 @@ public class LogicalComparisonNode extends ChildNode implements Rule {
         if(firstArgumentIndex != phraseIndex) {
             throw new InvalidRuleStructureException(ruleContent, "Logical Comparison Node");
         } else {
-            endIndex = comparatorIndex + secondArgumentIndex;
+            endIndex = comparatorIndex + comparator.length() + secondArgumentIndex;
         }
     }
 

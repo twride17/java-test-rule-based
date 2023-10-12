@@ -48,6 +48,10 @@ public class MathematicalExpressionNode extends ChildNode implements Rule {
             firstValue = firstValue.trim();
             endIndex += 1;
         }
+        firstValueNode = RuleNode.getChildNode(firstValue, RuleNode.OPERABLE_NODE);
+        if(firstValueNode.getEndIndex() != closestIndex - endIndex) {
+            throw new InvalidRuleStructureException(ruleContent, "Mathematical Expression Node");
+        }
 
         String secondValue = ruleContent.substring(closestIndex + 1);
         if(secondValue.charAt(0) == ' ') {
@@ -55,7 +59,7 @@ public class MathematicalExpressionNode extends ChildNode implements Rule {
             endIndex += 1;
         }
 
-        firstValueNode = RuleNode.getChildNode(firstValue, RuleNode.OPERABLE_NODE);
+
         secondValueNode = RuleNode.getChildNode(secondValue, RuleNode.OPERABLE_NODE);
 
         endIndex += firstValueNode.getEndIndex() + 1 + secondValueNode.getEndIndex();

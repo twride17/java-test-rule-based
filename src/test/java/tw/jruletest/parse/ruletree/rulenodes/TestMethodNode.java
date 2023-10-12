@@ -144,13 +144,17 @@ public class TestMethodNode {
     @Test
     public void testNestedCalls() {
         String[] rules = {"method Test.example2 with: 67, value of Class.method, `Hello`",
-                            "method Test.example2 with: value of Example.m2 with arguments: `Test String` and Class.method, -90 and 805 and `Hello`"};
+                            "method Test.example2 with: value of Example.m2 with arguments: `Test String` and Class.method, -90 and 805 and `Hello`",
+                            "Test.example3: not true and false, 54 + 0.9f - 6 and true and false or not false",
+                            "Test.example3: true and Class.method is equal to 10 and 0.9f * 8.9f / 23, not Class.method is not equal to 89",
+                            "Test.example2 with: value of Example.m2 with arguments: `Test String` and Class.method, -100 + 56 and 78 * 9 + 4 - 56 and `Hello` + 4"};
         node = new MethodNode();
         for(String rule: rules) {
             try {
                 node.validateRule(rule);
                 System.out.println(rule.substring(0, node.getEndIndex()));
                 System.out.println(node.generateCode());
+                System.out.println();
                 Assert.assertEquals(rule.length(), node.getEndIndex());
             } catch (InvalidRuleStructureException e) {
                 Assert.fail("'" + rule + "': failed");

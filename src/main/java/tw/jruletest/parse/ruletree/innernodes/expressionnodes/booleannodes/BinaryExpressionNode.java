@@ -46,7 +46,13 @@ public class BinaryExpressionNode extends ChildNode implements Rule {
             throw new InvalidRuleStructureException(ruleContent, "Binary Boolean Expression Node");
         }
 
+        String arg1 = ruleContent.substring(0, closestIndex);
+        String arg2 = ruleContent.substring(closestIndex + connective.length());
+
         firstPredicateTree = RuleNode.getChildNode(ruleContent.substring(0, closestIndex), RuleNode.BOOLEAN_EXPRESSION_NODE);
+        if(firstPredicateTree.getEndIndex() != closestIndex) {
+            throw new InvalidRuleStructureException(ruleContent, "Binary Boolean Expression Node");
+        }
         secondPredicateTree = RuleNode.getChildNode(ruleContent.substring(closestIndex + connective.length()), RuleNode.BOOLEAN_EXPRESSION_NODE);
         if((firstPredicateTree.getType() == boolean.class) && (secondPredicateTree.getType() == boolean.class)) {
             endIndex += firstPredicateTree.getEndIndex() + connective.length() + secondPredicateTree.getEndIndex();

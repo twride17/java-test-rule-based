@@ -37,9 +37,9 @@ public abstract class RuleNode {
         ChildNode[] possibleNodes = {};
         switch(possibleNodeIndex) {
             case CHILD_NODE:
-                possibleNodes = new ChildNode[] {new StringNode(), new NegatedExpressionNode(), new BinaryExpressionNode(),
+                possibleNodes = new ChildNode[] {new NegatedExpressionNode(), new BinaryExpressionNode(),
                                                 new LogicalComparisonNode(), new MathematicalExpressionNode(), new ValueNode(),
-                                                new ConstantNode()};
+                                                new StringNode(), new ConstantNode()};
                 break;
             case VALUE_RETRIEVAL_NODE:
                 possibleNodes = new ChildNode[] {new MethodNode(), new FieldNode(), new VariableNode()};

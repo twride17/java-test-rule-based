@@ -25,6 +25,8 @@ public class Operator {
             return float.class;
         } else if(leftNodeType.equals("int") && rightNodeType.equals("int")) {
             return int.class;
+        } else if(leftNodeType.equals(rightNodeType)) {
+            return leftNode.getType();
         } else {
             // Make exception - type mismatch
             return null;
