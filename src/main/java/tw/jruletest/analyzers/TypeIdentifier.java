@@ -26,4 +26,17 @@ public class TypeIdentifier {
             return typeName.substring(endPackageIndex + 1);
         }
     }
+
+    public static boolean typesAreCompatible(Type parameterType, Type argumentType) {
+        String parameter = getType(parameterType);
+        String argument = getType(argumentType);
+        switch(argument) {
+            case "int":
+                return parameter.equals("int") || parameter.equals("double") || parameter.equals("float");
+            case "float":
+                return parameter.equals("double") || parameter.equals("float");
+            default:
+                return parameter.equals(argument);
+        }
+    }
 }

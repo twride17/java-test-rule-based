@@ -7,6 +7,7 @@ import tw.jruletest.virtualmachine.JavaClassLoader;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 /**
@@ -91,7 +92,7 @@ public class SourceClass {
         }
     }
 
-    public SourceMethod findMethod(String call, ArrayList<String> parameterTypes) {
+    public SourceMethod findMethod(String call, ArrayList<Type> parameterTypes) {
         for(SourceMethod method: methods) {
             if(method.getName().equals(call) && method.hasRequiredParameters(parameterTypes)) {
                 return method;

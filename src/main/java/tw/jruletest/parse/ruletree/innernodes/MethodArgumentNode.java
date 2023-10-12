@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 public class MethodArgumentNode extends RuleNode implements Rule {
 
-    private ArrayList<RuleNode> arguments = new ArrayList<>();
+    private ArrayList<ChildNode> arguments = new ArrayList<>();
 
     /**
      * Implementation of code generation from TreeNode interface.
@@ -58,7 +58,7 @@ public class MethodArgumentNode extends RuleNode implements Rule {
                 throw new InvalidRuleStructureException(ruleContent, "Method Argument Node");
             }
 
-            RuleNode argumentNode = RuleNode.getChildNode(remainingRule, RuleNode.CHILD_NODE);
+            ChildNode argumentNode = RuleNode.getChildNode(remainingRule, RuleNode.CHILD_NODE);
             int argumentEndIndex = argumentNode.getEndIndex();
             currentEnd += argumentEndIndex;
             arguments.add(argumentNode);
@@ -112,5 +112,16 @@ public class MethodArgumentNode extends RuleNode implements Rule {
         } while(!valid);
 
         endIndex = currentEnd;
+    }
+
+    public ArrayList<ChildNode> getArguments() {
+        return arguments;
+    }
+
+    public void setArgumentSubset(int numToKeep) {
+        int totalArguments = arguments.size();
+        for(int i = 0; i < totalArguments - numToKeep; i++) {
+            arguments.remove(arguments.size()-1);
+        }
     }
 }

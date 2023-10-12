@@ -12,4 +12,8 @@ public class Example {
     public static String m() {
         return "";
     }
+
+    public static double m2(String x, int y, float z) {
+        return 0;
+    }
 }

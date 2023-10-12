@@ -33,12 +33,12 @@ public class SourceMethod extends SourceMember {
         parameters = method.getParameterTypes();
     }
 
-    public boolean hasRequiredParameters(ArrayList<String> parameterNames) {
+    public boolean hasRequiredParameters(ArrayList<Type> parameterNames) {
         if(parameterNames.size() != parameters.length) {
             return false;
         } else {
             for(int i = 0; i < parameters.length; i++) {
-                if(!parameterNames.get(i).equals(TypeIdentifier.getType(parameters[i]))) {
+                if(!TypeIdentifier.typesAreCompatible(parameters[i], parameterNames.get(i))) {
                     return false;
                 }
             }
