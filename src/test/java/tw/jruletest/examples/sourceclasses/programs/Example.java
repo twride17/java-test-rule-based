@@ -16,4 +16,6 @@ public class Example {
     public static double m2(String x, int y, float z) {
         return 0;
     }
+
+    public static void m3(float x) {}
 }

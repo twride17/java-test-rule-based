@@ -35,7 +35,7 @@ public class TestExpectationNode {
             }
         } catch(CompilationFailureException | ClassNotFoundException e) {}
 
-        String[] variables = {"x", "value", "xValue"};
+        String[] variables = {"x", "xValue"};
         for(String variable: variables) {
             VariableStore.addVariable(Runner.getCurrentMethod(), variable, int.class);
         }
@@ -43,7 +43,7 @@ public class TestExpectationNode {
 
     @Test
     public void testIntegerValueAsActual() {
-        String rule = "expect value to equal 1";
+        String rule = "expect x to equal 1";
         node = new ExpectationNode();
         try {
             node.validateRule(rule);
@@ -56,7 +56,7 @@ public class TestExpectationNode {
 
     @Test
     public void testDoubleValueAsActual() {
-        String rule = "value to equal -11.567";
+        String rule = "xValue to equal -11.567";
         node = new ExpectationNode();
         try {
             node.validateRule(rule);
@@ -69,7 +69,7 @@ public class TestExpectationNode {
 
     @Test
     public void testFloatValueAsActual() {
-        String rule = "expect value to equal -11.5f";
+        String rule = "expect xValue to equal -11.5f";
         node = new ExpectationNode();
         try {
             node.validateRule(rule);
@@ -82,7 +82,7 @@ public class TestExpectationNode {
 
     @Test
     public void testBooleanValueAsActual() {
-        String rule = "value to equal true";
+        String rule = "x to equal true";
         node = new ExpectationNode();
         try {
             node.validateRule(rule);
@@ -95,7 +95,7 @@ public class TestExpectationNode {
 
     @Test
     public void testStringValueAsActual() {
-        String rule = "expect value to not equal `Hello World`";
+        String rule = "expect x to not equal `Hello World`";
         node = new ExpectationNode();
         try {
             node.validateRule(rule);
@@ -134,7 +134,7 @@ public class TestExpectationNode {
 
     @Test
     public void testFloatValueAsExpected() {
-        String rule = "expect -11.5f to equal value";
+        String rule = "expect -11.5f to equal xValue";
         node = new ExpectationNode();
         try {
             node.validateRule(rule);
@@ -147,7 +147,7 @@ public class TestExpectationNode {
 
     @Test
     public void testBooleanValueAsExpected() {
-        String rule = "true to not equal x";
+        String rule = "true to not equal xValue";
         node = new ExpectationNode();
         try {
             node.validateRule(rule);
@@ -173,7 +173,7 @@ public class TestExpectationNode {
 
     @Test
     public void testMethodReturnValueAsExpected() {
-        String rule = "expect Class.method: 5, -0.9f and `String` to not equal -98f";
+        String rule = "expect Class.method2: `String`, Class.method is less than or equal to 12 and -0.9f to not equal -98f";
         node = new ExpectationNode();
         try {
             node.validateRule(rule);
@@ -226,18 +226,18 @@ public class TestExpectationNode {
     /* Testing code generation for Expectation node */
     @Test
     public void testCodeGeneration() {
-        String[] rules = {"expect Example.x to equal 1", "value to equal -11.567", "expect value to equal -11.5f", "value to equal true",
-                            "expect value to not equal `Hello World`", "expect 1 to equal x", "expect -11.567 to not equal xValue",
-                            "expect -11.5f to equal value", "true to not equal x", "expect `Hello World` to not equal xValue",
-                            "expect Class.method: 5, -0.9f and `String` to not equal -98f", "Expect 8765.5678 to equal value of Class.method",
+        String[] rules = {"expect Example.x to equal 1", "xValue to equal -11.567", "expect xValue to equal -11.5f", "xValue to equal true",
+                            "expect xValue to not equal `Hello World`", "expect 1 to equal x", "expect -11.567 to not equal xValue",
+                            "expect -11.5f to equal xValue", "true to not equal x", "expect `Hello World` to not equal xValue",
+                            "expect Test.example2: -89.9 - 89, 5+ 6 and `String` to not equal -98f", "Expect 8765.5678 to equal value of Class.method",
                             "Expect -4501.2345f to equal value of Class.method: 12.5f and `New string`, false and 123 and expect x to equal 2"};
 
-        String[] expectedStrings = {"Expectations.expect(Example.x).toEqual(1);", "Expectations.expect(value).toEqual(-11.567);",
-                                    "Expectations.expect(value).toEqual(-11.5f);", "Expectations.expect(value).toEqual(true);",
-                                    "Expectations.expect(value).toNotEqual(\"Hello World\");", "Expectations.expect(1).toEqual(x);",
-                                    "Expectations.expect(-11.567).toNotEqual(xValue);", "Expectations.expect(-11.5f).toEqual(value);",
+        String[] expectedStrings = {"Expectations.expect(Example.x).toEqual(1);", "Expectations.expect(xValue).toEqual(-11.567);",
+                                    "Expectations.expect(xValue).toEqual(-11.5f);", "Expectations.expect(xValue).toEqual(true);",
+                                    "Expectations.expect(xValue).toNotEqual(\"Hello World\");", "Expectations.expect(1).toEqual(x);",
+                                    "Expectations.expect(-11.567).toNotEqual(xValue);", "Expectations.expect(-11.5f).toEqual(xValue);",
                                     "Expectations.expect(true).toNotEqual(x);", "Expectations.expect(\"Hello World\").toNotEqual(xValue);",
-                                    "Expectations.expect(Class.method(5, -0.9f, \"String\")).toNotEqual(-98f);",
+                                    "Expectations.expect(Test.example2((-89.9 - 89), (5+ 6) and \"String\").toNotEqual(-98f);",
                                     "Expectations.expect(8765.5678).toEqual(Class.method());",
                                     "Expectations.expect(-4501.2345f).toEqual(Class.method(12.5f, \"New string\", false, 123));"};
 

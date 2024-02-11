@@ -118,6 +118,7 @@ public class TestStoreValueNode {
                 node.validateRule(rules[i]);
                 Assert.assertEquals(indices[i], node.getEndIndex());
             } catch (InvalidRuleStructureException e) {
+                e.printStackTrace();
                 Assert.fail("'" + rules[i] + "': failed");
             }
         }

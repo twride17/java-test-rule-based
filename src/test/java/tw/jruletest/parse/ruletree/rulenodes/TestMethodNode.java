@@ -142,7 +142,7 @@ public class TestMethodNode {
     }
 
     @Test
-    public void testNestedCalls() {
+    public void testComplexArguments() {
         String[] rules = {"method Test.example2 with: 67, value of Class.method, `Hello`",
                             "method Test.example2 with: value of Example.m2 with arguments: `Test String` and Class.method, -90 and 805 and `Hello`",
                             "Test.example3: not true and false, 54 + 0.9f - 6 and true and false or not false",
@@ -173,7 +173,10 @@ public class TestMethodNode {
                             "method Class.method: `Hello world`, 32, -67.5f", "Class.method with: 101.971f, true and `This`",
                             "Class.method: 123, `hello, it's me`, -0.98f and true and store value in y", "Class.method, store",
                             "Class.method: 1 in dummy", "Class.method and store", "Example.exampleMethod: 1, -2 and 45.6f, true and `New` and 56 in xValue",
-                            "method Class.method and call method Example.exampleMethod with arguments: `Hello` and `World`"};
+                            "method Class.method and call method Example.exampleMethod with arguments: `Hello` and `World`",
+                            "Test.example3: not true and false, 54 + 0.9f - 6 and true and false or not false",
+                            "Test.example3: true and Class.method is equal to 10 and 0.9f * 8.9f / 23, not Class.method is not equal to 89",
+                            "Test.example2 with: value of Example.m2 with arguments: `Test String` and Class.method, -100 + 56 and 78 * 9 + 4 - 56 and `Hello` + 4"};
 
         String[] expectedStrings = {"Class.method()", "Test.exampleMethod()", "Class.method(\"Hello world\")",
                                     "Class.method(101.971f)", "Class.method(-24)", "Class.method(xValue)",
@@ -182,7 +185,10 @@ public class TestMethodNode {
                                     "Class.method(12.3, xValue)", "Class.method(true, 0)", "Class.method(\"Hello world\", 32, -67.5f)",
                                     "Class.method(101.971f, true, \"This\")", "Class.method(123, \"hello, it's me\", -0.98f, true)",
                                     "Class.method()", "Class.method(1)", "Class.method()",
-                                    "Example.exampleMethod(1, -2, 45.6f, true, \"New\", 56)", "Class.method()"};
+                                    "Example.exampleMethod(1, -2, 45.6f, true, \"New\", 56)", "Class.method()",
+                                    "Test.example3(!(true && false), (54 + (0.9f - 6)), (true && (false || !false)))",
+                                    "Test.example3((true && (Class.method == 10)), (0.9f * (8.9f / 23)), !(Class.method != 89))",
+                                    "Test.example2(Example.m2(\"Test String\", Class.method(), (-100 + 56)), (78 * (9 + (4-56))), (\"Hello\" + 4))"};
 
         for(int i = 0; i < rules.length; i++) {
             node = new MethodNode();

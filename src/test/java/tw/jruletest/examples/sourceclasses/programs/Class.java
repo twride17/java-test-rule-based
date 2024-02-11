@@ -10,7 +10,15 @@ public class Class {
         return 0f;
     }
 
-    public static int method2() {
+    public static void method1(int x) {}
+
+    public static int method2(String x, boolean y, float z) {
         return 0;
+    }
+
+    public static void method3(String x) {}
+
+    public static boolean isTrue(boolean flag) {
+        return !flag;
     }
 }
