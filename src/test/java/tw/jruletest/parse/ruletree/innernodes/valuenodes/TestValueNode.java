@@ -1,4 +1,4 @@
-package tw.jruletest.parse.ruletree.rulenodes;
+package tw.jruletest.parse.ruletree.innernodes.valuenodes;
 
 import org.junit.*;
 import tw.jruletest.Runner;
@@ -7,7 +7,6 @@ import tw.jruletest.exceptions.CompilationFailureException;
 import tw.jruletest.exceptions.InvalidRuleStructureException;
 import tw.jruletest.files.FileFinder;
 import tw.jruletest.files.source.SourceClass;
-import tw.jruletest.parse.ruletree.innernodes.valuenodes.ValueNode;
 import tw.jruletest.variables.VariableStore;
 import tw.jruletest.virtualmachine.JavaClassLoader;
 

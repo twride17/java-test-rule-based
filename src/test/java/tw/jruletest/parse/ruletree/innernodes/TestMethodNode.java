@@ -1,4 +1,4 @@
-package tw.jruletest.parse.ruletree.rulenodes;
+package tw.jruletest.parse.ruletree.innernodes;
 
 import org.junit.*;
 import tw.jruletest.Runner;
