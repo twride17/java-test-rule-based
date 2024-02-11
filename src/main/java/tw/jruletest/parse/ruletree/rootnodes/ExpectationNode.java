@@ -60,47 +60,62 @@ public class ExpectationNode extends RootNode implements Rule {
 
     @Override
     public void validateRule(String ruleContent) throws InvalidRuleStructureException  {
-        int comparatorIndex = -1;
-        for(String comparator: POSSIBLE_COMPARATORS) {
-            int newIndex = ruleContent.indexOf(comparator);
-            if((newIndex >= 0) && (comparatorIndex < 0)) {
-                comparatorIndex = newIndex + comparator.length();
-                this.comparator = comparator;
-
-                String[] segments = ruleContent.substring(0, newIndex).split(" ");
-                negated = segments[segments.length-1].equals("not");
-            }
-        }
-
-        String comparatorPhrase = " to";
-        if(negated) {
-            comparatorPhrase += " not";
-        }
-        comparatorPhrase += comparator;
-
         String remainingRule = ruleContent;
+        // Throw exception if not???
         if(ruleContent.toLowerCase().startsWith("expect ")) {
             keywordLength = 7;
         }
         remainingRule = remainingRule.substring(keywordLength);
 
-        int phraseIndex = remainingRule.indexOf(comparatorPhrase);
-        if(phraseIndex == -1) {
-            throw new InvalidRuleStructureException(ruleContent, "Expectation Node");
+        int bestComparatorIndex = ruleContent.length();
+        String comparatorPhrase = "";
+        int comparingPhraseIndex = -1;
+        for(String comparator: POSSIBLE_COMPARATORS) {
+            String ruleEnding = remainingRule;
+            boolean finishedSearch = false;
+            while(!finishedSearch) {
+                int currentIndex = ruleEnding.indexOf(comparator);
+                if(currentIndex == -1) {
+                    finishedSearch = true;
+                } else {
+                    String[] previousSegments = ruleEnding.substring(0, currentIndex).split(" ");
+                    negated = previousSegments[previousSegments.length - 1].equals("not");
+
+                    String currentComparatorPhrase = " to";
+                    if (negated) {
+                        currentComparatorPhrase += " not";
+                    }
+                    currentComparatorPhrase += comparator;
+
+                    comparingPhraseIndex = remainingRule.indexOf(currentComparatorPhrase);
+                    if (comparingPhraseIndex != -1) {
+                        this.comparator = comparator;
+                        comparatorPhrase = currentComparatorPhrase;
+                        bestComparatorIndex = comparingPhraseIndex + currentComparatorPhrase.length();
+                        finishedSearch = true;
+                    } else {
+                        ruleEnding = ruleEnding.substring(currentIndex + comparator.length());
+                    }
+                }
+            }
         }
 
-        String expectedSegment = remainingRule.substring(0, phraseIndex);
-        String actualSegment = remainingRule.substring(phraseIndex + comparatorPhrase.length());
+        try {
+            String expectedSegment = remainingRule.substring(0, comparingPhraseIndex);
+            String actualSegment = remainingRule.substring(comparingPhraseIndex + comparatorPhrase.length());
 
-        expectedValueTree = RuleNode.getChildNode(expectedSegment, RuleNode.CHILD_NODE);
-        actualValueTree = RuleNode.getChildNode(actualSegment, RuleNode.CHILD_NODE);
-        int firstArgumentIndex = expectedValueTree.getEndIndex();
-        int secondArgumentIndex = actualValueTree.getEndIndex();
+            expectedValueTree = RuleNode.getChildNode(expectedSegment, RuleNode.CHILD_NODE);
+            actualValueTree = RuleNode.getChildNode(actualSegment, RuleNode.CHILD_NODE);
+            int firstArgumentIndex = expectedValueTree.getEndIndex();
+            int secondArgumentIndex = actualValueTree.getEndIndex();
 
-        if(firstArgumentIndex != phraseIndex) {
-            throw new InvalidRuleStructureException(remainingRule, "Expectation Node");
-        } else {
-            endIndex = comparatorIndex + secondArgumentIndex;
+            if (firstArgumentIndex != comparingPhraseIndex) {
+                throw new InvalidRuleStructureException(remainingRule, "Expectation Node");
+            } else {
+                endIndex = keywordLength + bestComparatorIndex + secondArgumentIndex;
+            }
+        } catch(StringIndexOutOfBoundsException e) {
+            throw new InvalidRuleStructureException(ruleContent, "Expectation Node");
         }
     }
 }
