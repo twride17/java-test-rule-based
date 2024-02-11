@@ -179,7 +179,7 @@ public class MethodNode extends ChildNode implements Rule {
             }
         }
 
-        if (method == null) {
+        if ((method == null) || ((numArguments == 0) && (!argumentNodes.isEmpty()))) {
             throw new InvalidRuleStructureException(ruleContent, "Method Node");
         } else if (!currentArguments.isEmpty()) {
             endIndex = colonIndex + 2;
