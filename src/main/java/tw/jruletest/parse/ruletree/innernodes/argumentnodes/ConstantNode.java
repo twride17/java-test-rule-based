@@ -85,12 +85,10 @@ public class ConstantNode extends ChildNode implements Rule {
             } catch (NumberFormatException e) { }
 
             try {
-                Float.parseFloat(constantString);
-                return float.class;
-            } catch (NumberFormatException e) { }
-
-            try {
                 Double.parseDouble(constantString);
+                if(constantString.charAt(constantString.length()-1) == 'f') {
+                    return float.class;
+                }
                 return double.class;
             } catch (NumberFormatException e) { }
 

@@ -17,20 +17,21 @@ public class Operator {
         String leftNodeType = TypeIdentifier.getType(leftNode.getType());
         String rightNodeType = TypeIdentifier.getType(rightNode.getType());
 
-        if((operator == '+') && (leftNodeType.equals("String") || rightNodeType.equals("String"))) {
-            return String.class;
-        } else if(leftNodeType.equals("double") || rightNodeType.equals("double")) {
-            return double.class;
-        } else if((leftNodeType.equals("int") && rightNodeType.equals("float")) || ((leftNodeType.equals("float") && rightNodeType.equals("int")))) {
-            return float.class;
-        } else if(leftNodeType.equals("int") && rightNodeType.equals("int")) {
-            return int.class;
+        if(leftNodeType.equals("boolean") || rightNodeType.equals("boolean")) {
+            // Make exception, booleans not allowed in mathematical expressions
+            return null;
+        } else if(leftNodeType.equals("String") || rightNodeType.equals("String")) {
+            if(operator == '+') {
+                return String.class;
+            }
         } else if(leftNodeType.equals(rightNodeType)) {
             return leftNode.getType();
-        } else {
-            // Make exception - type mismatch
-            return null;
+        } else if(leftNodeType.equals("double") || rightNodeType.equals("double")) {
+            return double.class;
         }
+
+        // Make exception, types not allowed as combination
+        return null;
     }
 
     public char getOperator() {
