@@ -46,9 +46,6 @@ public class BinaryExpressionNode extends ChildNode implements Rule {
             throw new InvalidRuleStructureException(ruleContent, "Binary Boolean Expression Node");
         }
 
-        String arg1 = ruleContent.substring(0, closestIndex);
-        String arg2 = ruleContent.substring(closestIndex + connective.length());
-
         firstPredicateTree = RuleNode.getChildNode(ruleContent.substring(0, closestIndex), RuleNode.BOOLEAN_EXPRESSION_NODE);
         if(firstPredicateTree.getEndIndex() != closestIndex) {
             throw new InvalidRuleStructureException(ruleContent, "Binary Boolean Expression Node");
@@ -58,24 +55,6 @@ public class BinaryExpressionNode extends ChildNode implements Rule {
             endIndex += firstPredicateTree.getEndIndex() + connective.length() + secondPredicateTree.getEndIndex();
         } else {
             throw new InvalidRuleStructureException(ruleContent, "Binary Boolean Expression Node");
-        }
-
-
-    }
-
-    public static void main(String[] args) {
-        String[] rules = {"true and false", "true and false or true", "true and false and true", "true and not false",
-                            "not true and false", "not true and not false", "not true or not false", "true or not false and true"};
-        for(String rule: rules) {
-            System.out.println(rule);
-            Rule node = new BinaryExpressionNode();
-            try {
-                node.validateRule(rule);
-                System.out.println(rule.substring(0, ((RuleNode)node).getEndIndex()));
-                System.out.println(node.generateCode());
-            } catch(InvalidRuleStructureException e) {
-                System.out.println("Failed to validate");
-            }
         }
     }
 
