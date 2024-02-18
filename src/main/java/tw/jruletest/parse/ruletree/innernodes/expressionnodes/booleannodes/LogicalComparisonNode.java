@@ -24,7 +24,7 @@ public class LogicalComparisonNode extends ChildNode implements Rule {
             case "equal to":
                 code += " == ";
                 break;
-            case "not equal to":
+            case "not equal to": case "does not equal":
                 code += " != ";
                 break;
             case "less than":
