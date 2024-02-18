@@ -3,6 +3,8 @@ package tw.jruletest.parse.ruletree.innernodes.expressionnodes.mathematicalnodes
 import org.junit.Assert;
 import org.junit.Test;
 import tw.jruletest.exceptions.InvalidRuleStructureException;
+import tw.jruletest.parse.Rule;
+import tw.jruletest.parse.ruletree.RuleNode;
 
 public class TestMathematicalExpressionNode {
 
@@ -91,6 +93,16 @@ public class TestMathematicalExpressionNode {
 
     @Test
     public void testCodeGeneration() {
-
+        String[] expressions = {"2 + -2", "3-2", "1*6", "2 / 4", "-0.987f + 6", "67 - 3 + 4", "2+ 3", "4 *5", "-3.4 - 9"};
+        String[] expectedCode = {"(2 + -2)", "(3 - 2)", "(1 * 6)", "(2 / 4)", "(-0.987f + 6)", "(67 - (3 + 4))", "(2 + 3)", "(4 * 5)", "(-3.4 - 9)"};
+        for(int i = 0; i < expressions.length; i++) {
+            node = new MathematicalExpressionNode();
+            try {
+                node.validateRule(expressions[i]);
+                Assert.assertEquals(expectedCode[i], node.generateCode());
+            } catch(InvalidRuleStructureException e) {
+                Assert.fail("Failed: '" + expressions[i] + "' failed but should have passed validation");
+            }
+        }
     }
 }
