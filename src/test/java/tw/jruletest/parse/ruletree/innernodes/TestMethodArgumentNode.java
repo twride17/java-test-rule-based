@@ -1,4 +1,4 @@
-package tw.jruletest.parse.ruletree.innernodes.valuenodes;
+package tw.jruletest.parse.ruletree.innernodes;
 
 import org.junit.*;
 import tw.jruletest.Runner;
@@ -10,7 +10,7 @@ public class TestMethodArgumentNode {
 
     private MethodArgumentNode node;
 
-    /* Testing rule validation for Method Argument node */
+    /* Testing rule validation for MethodArgumentNode */
 
     @Before
     public void setup() {
@@ -130,7 +130,7 @@ public class TestMethodArgumentNode {
         }
     }
 
-    /* Testing code generation for Method Argument node */
+    /* Testing code generation for MethodArgumentNode */
     @Test
     public void testCodeGeneration() {
         String[] rules = {"`Hello world`", "-10.67f", "`hello, and goodbye` and 67", "-0.567f, xValue", "false and `new string`",

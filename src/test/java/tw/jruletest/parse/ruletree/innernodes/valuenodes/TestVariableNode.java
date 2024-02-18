@@ -10,7 +10,7 @@ public class TestVariableNode {
 
     private VariableNode node = new VariableNode();
 
-    /* Testing rule validation for Variable node */
+    /* Testing rule validation for VariableNode */
 
     @Before
     public void setup() {
@@ -64,7 +64,7 @@ public class TestVariableNode {
         }
     }
 
-    /* Testing code generation for Variable node */
+    /* Testing code generation for VariableNode */
     @Test
     public void testCodeGeneration() {
         String[] rules = {"value1 and value2", "xValue", "x, y", "value1", "x1 and x2 and x3", "floatValue"};

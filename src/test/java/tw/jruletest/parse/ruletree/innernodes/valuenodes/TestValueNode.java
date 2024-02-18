@@ -19,7 +19,7 @@ public class TestValueNode {
 
     private ValueNode node;
 
-    /* Testing rule validation for Value node */
+    /* Testing rule validation for ValueNode */
 
     @Before
     public void setup() {
@@ -121,7 +121,7 @@ public class TestValueNode {
         }
     }
 
-    /* Testing code generation for Value node */
+    /* Testing code generation for ValueNode */
     @Test
     public void testCodeGeneration() {
         String[] rules = {"value of xValue", "Class.method", /*"Get value of Example.x and store in y",*/

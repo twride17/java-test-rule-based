@@ -3,14 +3,12 @@ package tw.jruletest.parse.ruletree.innernodes.expressionnodes.mathematicalnodes
 import org.junit.Assert;
 import org.junit.Test;
 import tw.jruletest.exceptions.InvalidRuleStructureException;
-import tw.jruletest.parse.Rule;
-import tw.jruletest.parse.ruletree.RuleNode;
 
 public class TestMathematicalExpressionNode {
 
     private MathematicalExpressionNode node;
 
-    /* Testing rule validation for Method node */
+    /* Testing rule validation for MathematicalExpressionNode */
 
     @Test
     public void testAdditionRuleValidation() {

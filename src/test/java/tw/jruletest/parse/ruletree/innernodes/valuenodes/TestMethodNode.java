@@ -1,4 +1,4 @@
-package tw.jruletest.parse.ruletree.innernodes;
+package tw.jruletest.parse.ruletree.innernodes.valuenodes;
 
 import org.junit.*;
 import tw.jruletest.Runner;
@@ -20,7 +20,7 @@ public class TestMethodNode {
 
     private MethodNode node;
 
-    /* Testing rule validation for Method node */
+    /* Testing rule validation for MethodNode */
 
     @Before
     public void setup() {
@@ -162,7 +162,7 @@ public class TestMethodNode {
         }
     }
 
-    /* Testing code generation for Method node */
+    /* Testing code generation for MethodNode */
     @Test
     public void testCodeGeneration() {
         String[] rules = {"method Class.method", "Test.exampleMethod", "method Class.method: `Hello world`",

@@ -8,7 +8,7 @@ public class TestLogicalComparisonNode {
 
     private LogicalComparisonNode node;
 
-    /* Testing rule validation for Method node */
+    /* Testing rule validation for LogicalComparisonNode */
 
     @Test
     public void testEqualityExpression() {
@@ -100,7 +100,7 @@ public class TestLogicalComparisonNode {
         }
     }
 
-    /* Test for code generation of MathematicalExpressionNode */
+    /* Test for code generation of LogicalComparisonNode */
 
     @Test
     public void testCodeGeneration() {

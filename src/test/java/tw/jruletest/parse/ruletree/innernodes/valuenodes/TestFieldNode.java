@@ -18,7 +18,7 @@ public class TestFieldNode {
 
     private FieldNode node;
 
-    /* Testing rule validation for Method node */
+    /* Testing rule validation for FieldNode */
 
     @Before
     public void setup() {
@@ -71,7 +71,7 @@ public class TestFieldNode {
         }
     }
 
-    /* Testing code generation for Method node */
+    /* Testing code generation for FieldNode */
     @Test
     public void testCodeGeneration() {
         node = new FieldNode();
