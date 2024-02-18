@@ -31,21 +31,6 @@ public class NegatedExpressionNode extends ChildNode implements Rule {
         }
     }
 
-    public static void main(String[] args) {
-        String[] rules = {"not true and false", "not true and false or true", "not true or not false and true"};
-        for(String rule: rules) {
-            System.out.println(rule);
-            RuleNode node = new NegatedExpressionNode();
-            try {
-                ((Rule)node).validateRule(rule);
-                System.out.println(rule.substring(0, node.getEndIndex()));
-                System.out.println(((Rule)node).generateCode());
-            } catch(InvalidRuleStructureException e) {
-                System.out.println("Failed to validate");
-            }
-        }
-    }
-
     @Override
     public Type getType() {
         return boolean.class;
