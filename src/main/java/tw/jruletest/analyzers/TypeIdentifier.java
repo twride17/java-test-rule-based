@@ -30,11 +30,11 @@ public class TypeIdentifier {
     public static boolean typesAreCompatible(Type parameterType, Type argumentType) {
         String parameter = getType(parameterType);
         String argument = getType(argumentType);
-        switch(argument) {
-            case "int":
-                return parameter.equals("int") || parameter.equals("double") || parameter.equals("float");
+        switch(parameter) {
+            case "double":
+                return argument.equals("int") || argument.equals("double") || argument.equals("float");
             case "float":
-                return parameter.equals("double") || parameter.equals("float");
+                return argument.equals("int") || argument.equals("float");
             default:
                 return parameter.equals(argument);
         }
