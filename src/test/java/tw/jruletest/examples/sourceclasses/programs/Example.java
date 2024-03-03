@@ -18,4 +18,6 @@ public class Example {
     }
 
     public static void m3(float x) {}
+
+    public static String concat(String s1, String s2) { return "Hello World"; }
 }

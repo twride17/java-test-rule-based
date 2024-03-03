@@ -43,7 +43,7 @@ public class TestMethodNode {
 
     @Test
     public void testMethodCallNoArguments() {
-        String[] rules = {"method Class.method", "Class.method2", "Example.m"};
+        String[] rules = {"method Class.method", "Class.example", "Example.m"};
         for(String rule: rules) {
             try {
                 node = new MethodNode();
@@ -57,8 +57,8 @@ public class TestMethodNode {
 
     @Test
     public void testMethodCallOneArgument() {
-        String[] rules = {"method Class.method: `Hello world`", "method Class.method with arguments: 101.971f",
-                            "Class.method with: -24", "Class.method: xValue", "Class.method: -90.45f", "Class.method: true"};
+        String[] rules = {"method Class.method3: `Hello world`", "method Example.m3 with arguments: 101.971f",
+                            "Class.method1 with: -24", "Class.method1: xValue", "Example.m3: -90.45f", "Class.isTrue: true"};
         for(String rule: rules) {
             try {
                 node = new MethodNode();
@@ -72,10 +72,10 @@ public class TestMethodNode {
 
     @Test
     public void testMethodCallTwoArguments() {
-        String[] rules = {"method Class.method: `Hello, world and his wife`, -90.5f",
-                            "method Class.method with arguments: 101.971f and false", "Class.method: x1 and x2",
-                            "Class.method: true, 123.45", "Class.method with: `Hello and goodbye` and `String`",
-                            "Class.method: 12.3 and xValue", "Class.method: -90.45f and true", "Class.method: true and 0"};
+        String[] rules = {"method Test.example4: `Hello, world and his wife`, -90.5f",
+                            "method Class.method4 with arguments: 101.971f and false", "Test.example2: x1 and x2",
+                            "Test.example2: 123.45, -90", "Example.concat with: `Hello and goodbye` and `String`",
+                            "Test.example2 with: 12.3 and xValue", "Class.method4: -90.45f and true"};
         for(String rule: rules) {
             try {
                 node = new MethodNode();
@@ -89,8 +89,8 @@ public class TestMethodNode {
 
     @Test
     public void testMethodCallThreeArguments() {
-        String[] rules = {"method Class.method: `Hello world`, 32, -67.5f", "Class.method with: 101.971f, true and `This`",
-                            "Class.method with arguments: 24 and false, xValue", "Class.method: xValue and -0.9f and false"};
+        String[] rules = {"method Example.m2: `Hello world`, x, -67.5f", "Class.method2 with: `This`, true and 101.971f",
+                            "Test.example3 with arguments: false and 0.67f, true", "Class.method2: `That`, false and -1f"};
         for(String rule: rules) {
             try {
                 node = new MethodNode();
@@ -104,12 +104,11 @@ public class TestMethodNode {
 
     @Test
     public void testValidRulesPlusExtraRule() {
-        String[] rules = {"Class.method: 123, `hello, it's me`, -0.98f and true and store value in y", "Class.method, store",
-                            "Class.method: 1 in dummy", "Class.example with arguments: 0.0f, `String` and store",
-                            "Class.method and store", "Example.exampleMethod: 1, -2 and 45.6f, true and `New` and 56 in xValue",
-                            "method Class.method, call method Example.exampleMethod with arguments: `Hello` and `World`",
-                            "method Class.method and call method Example.exampleMethod with arguments: `Hello` and `World`"};
-        int[] indices = {52, 12, 15, 44, 12, 61, 19, 19};
+        String[] rules = {"Class.method and store value in y", "Class.method, store", "Class.method1: 1 in dummy",
+                            "Class.method2 with arguments: `String`, true and 0.0f and store", "Class.example and get",
+                            "Test.example2: 45.6, 1 in xValue", "method Example.concat with: `Hello` and `World` and call",
+                            "method Class.method and call method Example.concat with arguments: `Hello` and `World`"};
+        int[] indices = {12, 12, 16, 53, 13, 22, 47, 19};
         for(int i = 0; i < rules.length; i++) {
             try {
                 node = new MethodNode();
@@ -118,6 +117,19 @@ public class TestMethodNode {
             } catch (InvalidRuleStructureException e) {
                 Assert.fail("'" + rules[i] + "': failed");
             }
+        }
+    }
+
+    @Test
+    public void testValidRuleStructuresInvalidParameterTypes() {
+        String[] rules = {"Class.method: 3", "Class.example: 3 and 4", "Class.method3 with: 67.5f", "Test.setValue: -0.5",
+                            "Example.m2 with arguments: `Hello` and 23", "Class.isTrue: 45", "Test.example4: 90.45f, `Hi`"};
+        for(String rule: rules) {
+            try {
+                node = new MethodNode();
+                node.validateRule(rule);
+                Assert.fail("'" + rule + "': passed when expected to fail");
+            } catch (InvalidRuleStructureException e) { }
         }
     }
 
@@ -134,28 +146,24 @@ public class TestMethodNode {
             try {
                 node = new MethodNode();
                 node.validateRule(rule);
-                Assert.assertEquals(rule.length(), node.getEndIndex());
-            } catch (InvalidRuleStructureException e) {
-                Assert.fail("'" + rule + "': failed");
-            }
+                Assert.fail("'" + rule + "': passed when expected to fail");
+            } catch (InvalidRuleStructureException e) { }
         }
     }
 
     @Test
     public void testComplexArguments() {
-        String[] rules = {"method Test.example2 with: 67, value of Class.method, `Hello`",
-                            "method Test.example2 with: value of Example.m2 with arguments: `Test String` and Class.method, -90 and 805 and `Hello`",
-                            "Test.example3: not true and false, 54 + 0.9f - 6 and true and false or not false",
-                            "Test.example3: true and Class.method is equal to 10 and 0.9f * 8.9f / 23, not Class.method is not equal to 89",
-                            "Test.example2 with: value of Example.m2 with arguments: `Test String` and Class.method, -100 + 56 and 78 * 9 + 4 - 56 and `Hello` + 4"};
-        node = new MethodNode();
-        for(String rule: rules) {
+        String[] rules = {"method Test.example2 with: 67, value of Class.method", "Test.example4: `Hello` + `World` and 0.545f * 3 / 5",
+                "method Class.isTrue with arguments: value of Class.example is greater than 0 and value of x is equal to xValue + 7",
+                "Test.example2: value of Example.m2: Example.concat with: value of Example.m and `String`, -5 - Class.method and Class.example / -1.5f and x2 + 10 * x1",
+                "Class.method4: 3.5f * -3.5f * -9, value of x is not equal to x1 or not x is greater than 0.9f and x is equal to xValue",
+                "Test.example3 with: x is less than x2 and not Class.isTrue with: x is greater than 1, 0.5f * xValue, Class.isTrue with: false"};
+        for (String rule : rules) {
             try {
+                node = new MethodNode();
+                System.out.println(rule);
                 node.validateRule(rule);
-                System.out.println(rule.substring(0, node.getEndIndex()));
-                System.out.println(node.generateCode());
-                System.out.println();
-                Assert.assertEquals(rule.length(), node.getEndIndex());
+                System.out.println("Completed");
             } catch (InvalidRuleStructureException e) {
                 Assert.fail("'" + rule + "': failed");
             }
@@ -165,36 +173,40 @@ public class TestMethodNode {
     /* Testing code generation for MethodNode */
     @Test
     public void testCodeGeneration() {
-        String[] rules = {"method Class.method", "Test.exampleMethod", "method Class.method: `Hello world`",
-                            "method Class.method with arguments: 101.971f", "Class.method with: -24", "Class.method: xValue",
-                            "Class.method: -90.45f", "method Class.method: true", "method Class.method: `Hello, world and his wife`, -90.5f",
-                            "method Class.method with arguments: 101.971f and false", "Class.method: true, 123.45",
-                            "Class.method with: `Hello and goodbye` and `String`", "Class.method: 12.3 and xValue", "Class.method: true and 0",
-                            "method Class.method: `Hello world`, 32, -67.5f", "Class.method with: 101.971f, true and `This`",
-                            "Class.method: 123, `hello, it's me`, -0.98f and true and store value in y", "Class.method, store",
-                            "Class.method: 1 in dummy", "Class.method and store", "Example.exampleMethod: 1, -2 and 45.6f, true and `New` and 56 in xValue",
-                            "method Class.method and call method Example.exampleMethod with arguments: `Hello` and `World`",
-                            "Test.example3: not true and false, 54 + 0.9f - 6 and true and false or not false",
-                            "Test.example3: true and Class.method is equal to 10 and 0.9f * 8.9f / 23, not Class.method is not equal to 89",
-                            "Test.example2 with: value of Example.m2 with arguments: `Test String` and Class.method, -100 + 56 and 78 * 9 + 4 - 56 and `Hello` + 4"};
+        String[] rules = {"method Class.method", "Class.example", "Example.m", "method Class.method3: `Hello world`",
+                            "method Example.m3 with arguments: 101.971f", "Class.method1 with: -24", "Class.method1: xValue",
+                            "Example.m3: -90.45f", "Class.isTrue: true", "method Test.example4: `Hello, world and his wife`, -90.5f",
+                            "method Class.method4 with arguments: 101.971f and false", "Test.example2: x1 and x2",
+                            "Test.example2: 123.45, -90", "Example.concat with: `Hello and goodbye` and `String`",
+                            "Test.example2 with: 12.3 and xValue", "Class.method4: -90.45f and true",
+                            "method Example.m2: `Hello world`, x, -67.5f", "Class.method2 with: `This`, true and 101.971f",
+                            "Test.example3 with arguments: false and 0.67f, true", "Class.method2: `That`, false and -1f",
+                            "method Test.example2 with: 67, value of Class.method", "Test.example4: `Hello` + `World` and 0.545f * 3 / 5",
+                            "method Class.isTrue with arguments: value of Class.example is greater than 0 and value of x is equal to xValue + 7",
+                            "Test.example2: value of Example.m2: Example.concat with: value of Example.m and `String`, -5 - Class.method and Class.example / -1.5f and x2 + 10 * x1",
+                            "Class.method4: 3.5f * -3.5f * -9, value of x is not equal to x1 or not x is greater than 0.9f and x is equal to xValue",
+                            "Test.example3 with: x is less than x2 and not Class.isTrue with: x is greater than 1, 0.5f * xValue, Class.isTrue with: false"};
 
-        String[] expectedStrings = {"Class.method()", "Test.exampleMethod()", "Class.method(\"Hello world\")",
-                                    "Class.method(101.971f)", "Class.method(-24)", "Class.method(xValue)",
-                                    "Class.method(-90.45f)", "Class.method(true)", "Class.method(\"Hello, world and his wife\", -90.5f)",
-                                    "Class.method(101.971f, false)", "Class.method(true, 123.45)", "Class.method(\"Hello and goodbye\", \"String\")",
-                                    "Class.method(12.3, xValue)", "Class.method(true, 0)", "Class.method(\"Hello world\", 32, -67.5f)",
-                                    "Class.method(101.971f, true, \"This\")", "Class.method(123, \"hello, it's me\", -0.98f, true)",
-                                    "Class.method()", "Class.method(1)", "Class.method()",
-                                    "Example.exampleMethod(1, -2, 45.6f, true, \"New\", 56)", "Class.method()",
-                                    "Test.example3(!(true && false), (54 + (0.9f - 6)), (true && (false || !false)))",
-                                    "Test.example3((true && (Class.method == 10)), (0.9f * (8.9f / 23)), !(Class.method != 89))",
-                                    "Test.example2(Example.m2(\"Test String\", Class.method(), (-100 + 56)), (78 * (9 + (4-56))), (\"Hello\" + 4))"};
+        String[] expectedStrings = {"Class.method()", "Class.example()", "Example.m()", "Class.method3(\"Hello world\")",
+                                    "Example.m3(101.971f)", "Class.method1(-24)", "Class.method1(xValue)", "Example.m3(-90.45f)",
+                                    "Class.isTrue(true)", "Test.example4(\"Hello, world and his wife\", -90.5f)",
+                                    "Class.method4(101.971f, false)", "Test.example2(x1, x2)", "Test.example2(123.45, -90)",
+                                    "Example.concat(\"Hello and goodbye\", \"String\")", "Test.example2(12.3, xValue)",
+                                    "Class.method4(-90.45f, true)", "Example.m2(\"Hello world\", x, -67.5f)",
+                                    "Class.method2(\"This\", true, 101.971f)", "Test.example3(false, 0.67f, true)",
+                                    "Class.method2(\"That\", false, -1f)", "Test.example2(67, Class.method())",
+                                    "Test.example4((\"Hello\" + \"World\"), (0.545f * (3 / 5)))",
+                                    "Class.isTrue(((Class.example() > 0) && (x == (xValue + 7))))",
+                                    "Test.example2(Example.m2(Example.concat(Example.m(), \"String\"), (-5 - Class.method()), (Class.example() / -1.5f)), (x2 + (10 * x1)))",
+                                    "Class.method4((3.5f * (-3.5f * -9)), ((x != x1) || (!(x > 0.9f) && (x == xValue))))",
+                                    "Test.example3(((x < x2) && !Class.isTrue((x > 1))), (0.5f * xValue), Class.isTrue(false))"};
 
         for(int i = 0; i < rules.length; i++) {
             node = new MethodNode();
             try {
+                System.out.println(rules[i]);
                 node.validateRule(rules[i]);
-                Assert.assertEquals(node.generateCode(), expectedStrings[i]);
+                Assert.assertEquals(expectedStrings[i], node.generateCode());
             } catch(InvalidRuleStructureException e) {
                 Assert.fail(rules[i] + ": failed");
             }

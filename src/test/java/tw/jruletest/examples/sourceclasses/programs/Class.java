@@ -18,6 +18,8 @@ public class Class {
 
     public static void method3(String x) {}
 
+    public static void method4(float x, boolean flag) { }
+
     public static boolean isTrue(boolean flag) {
         return !flag;
     }
