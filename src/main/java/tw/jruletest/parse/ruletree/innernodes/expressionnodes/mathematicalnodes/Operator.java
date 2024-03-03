@@ -20,21 +20,36 @@ public class Operator {
         if(leftNodeType.equals("boolean") || rightNodeType.equals("boolean")) {
             // Make exception, booleans not allowed in mathematical expressions
             return null;
-        } else if(leftNodeType.equals("String") || rightNodeType.equals("String")) {
+        }
+
+        if((leftNodeType.equals("String") || rightNodeType.equals("String"))) {
             if(operator == '+') {
                 return String.class;
             }
-        } else if(leftNodeType.equals(rightNodeType)) {
-            return leftNode.getType();
-        } else if(leftNodeType.equals("double") || rightNodeType.equals("double")) {
-            return double.class;
+            // Make exception, strings only allowed in concatenation expressions
+            return null;
         }
 
-        // Make exception, types not allowed as combination
+        if(leftNodeType.equals("double") || rightNodeType.equals("double")) {
+            return double.class;
+        } else if(leftNodeType.equals("float") || rightNodeType.equals("float")) {
+            return float.class;
+        } else if(leftNodeType.equals("int") && rightNodeType.equals("int")) {
+            return int.class;
+        }
+
+        // Make exception, types not compatible
         return null;
     }
 
     public char getOperator() {
         return operator;
+    }
+
+    public static void main(String[] args) {
+        int z = 2;
+        double x = 4.5;
+        float y = 2.5f;
+        System.out.println(z+y);
     }
 }

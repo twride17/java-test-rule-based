@@ -35,7 +35,7 @@ public class TestOperator {
     }
 
     @Test
-    public void testGetFinalTypeStringConcatenation() {
+    public void testGetFinalType_StringConcatenation() {
         operator = new Operator('+');
         ChildNode[] leftNodes = {intNode, doubleNode, floatNode, stringNode, stringNode, stringNode, stringNode};
         ChildNode[] rightNodes = {stringNode, stringNode, stringNode, stringNode, intNode, doubleNode, floatNode};
@@ -45,17 +45,7 @@ public class TestOperator {
     }
 
     @Test
-    public void testGetFinalTypeEquivalentOperands() {
-        ChildNode[] nodes = {intNode, doubleNode, floatNode};
-        Class<?>[] expectedTypes = {int.class, double.class, float.class};
-        operator = new Operator('+');
-        for(int i = 0; i < nodes.length; i++) {
-            Assert.assertEquals(expectedTypes[i], operator.getFinalType(nodes[i], nodes[i]));
-        }
-    }
-
-    @Test
-    public void testGetFinalTypeDoubleLeftOperand() {
+    public void testGetFinalType_DoubleLeftOperand() {
         char[] operators = {'+', '-', '*', '/'};
         ChildNode[] rightNodes = {intNode, floatNode, doubleNode};
 
@@ -68,7 +58,7 @@ public class TestOperator {
     }
 
     @Test
-    public void testGetFinalTypeDoubleRightOperand() {
+    public void testGetFinalType_DoubleRightOperand() {
         char[] operators = {'+', '-', '*', '/'};
         ChildNode[] leftNodes = {intNode, floatNode, doubleNode};
 
@@ -77,6 +67,29 @@ public class TestOperator {
             for(ChildNode leftNode: leftNodes) {
                 Assert.assertEquals(double.class, operator.getFinalType(leftNode, doubleNode));
             }
+        }
+    }
+
+    @Test
+    public void testGetFinalType_NoDouble() {
+        char[] operators = {'+', '-', '*', '/'};
+        ChildNode[] rightNodes = {intNode, floatNode, floatNode};
+        ChildNode[] leftNodes = {floatNode, intNode, floatNode};
+
+        for(char operatorSymbol: operators) {
+            operator = new Operator(operatorSymbol);
+            for(int i = 0; i < rightNodes.length; i++) {
+                Assert.assertEquals(float.class, operator.getFinalType(leftNodes[i], rightNodes[i]));
+            }
+        }
+    }
+
+    @Test
+    public void testGetFinalType_NoFloat_NoDouble() {
+        char[] operators = {'+', '-', '*', '/'};
+        for(char operatorSymbol: operators) {
+            operator = new Operator(operatorSymbol);
+            Assert.assertEquals(int.class, operator.getFinalType(intNode, intNode));
         }
     }
 
