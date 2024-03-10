@@ -34,17 +34,17 @@ public class TestParserCodeGeneration {
 
     @Test
     public void testCodeGenerationOfSingleRules() {
-        String[] rules = {"Get value of Class.method: 1 and `Hello`, store value in xValue then expect xValue to equal 1",
-                            "Call method Example.exampleMethod then store value of xValue in xValue1 and expect xValue1 to equal `New string`",
-                            "call Example.exampleMethod: -0.987f, call Class.method then store value of Example.m with: true in x and expect x to not equal `String`",
-                            "  Store -100 in x, store 0.5f in y, store value of Class.method with arguments: false and `New string`, -3.4 in test",
-                            "Get value of xValue, store Class.method with: `Hello and goodbye`, 1.5 and false in z then expect x to equal z  "};
+        String[] rules = {"Get value of Example.concat: `Hello` and `1`, store 10 * 3 + 4 in xValue then expect xValue to equal 1",
+                            "Call method Class.example then store value of xValue in xValue1 and expect xValue1 to equal `New string`",
+                            "call Example.m3: -0.987f, call Class.method then store value of Class.isTrue with: xValue is equal to 1 in x and expect x to not equal `String`",
+                            "  Store -100 in x, store 0.5f in y, store value of Class.method2 with arguments: `New string`, false and -3 / 0.1f in test",
+                            "Get value of xValue, store Class.method2 with: `Hello and goodbye`, not true and 3 * -0.5f in z then expect x to equal z  "};
 
-        String[] expectedCodeBlocks = {"int methodValue = Class.method(1, \"Hello\");\nint xValue = value;\nExpectations.expect(xValue).toEqual(1);\n",
-                                        "Example.exampleMethod();\nint xValue1 = xValue;\nExpectations.expect(xValue1).toEqual(\"New string\");\n",
-                                        "Example.exampleMethod(-0.987f);\nClass.method();\nString x = Example.m(true);\nExpectations.expect(x).toNotEqual(\"String\");\n",
-                                        "x = -100;\nfloat y = 0.5f;\nint test = Class.method(false, \"New string\", -3.4);\n",
-                                        "int xValue2 = xValue;\nint z = Class.method(\"Hello and goodbye\", 1.5, false);\nExpectations.expect(x).toEqual(z);\n"};
+        String[] expectedCodeBlocks = {"String concatValue = Example.concat(\"Hello\", \"1\");\nint xValue = (10 * (3 + 4));\nExpectations.expect(xValue).toEqual(1);\n",
+                                    "Class.example();\nint xValue1 = xValue;\nExpectations.expect(xValue1).toEqual(\"New string\");\n",
+                                    "Example.m3(-0.987f);\nClass.method();\nboolean x = Class.isTrue((xValue == 1));\nExpectations.expect(x).toNotEqual(\"String\");\n",
+                                    "x = -100;\nfloat y = 0.5f;\nint test = Class.method2(\"New string\", false, (-3 / 0.1f));\n",
+                                    "int xValue2 = xValue;\nfloat z = (Class.method2(\"Hello and goodbye\", !true, 3) * -0.5f);\nExpectations.expect(x).toEqual(z);\n"};
 
         for(int i = 0; i < rules.length; i++) {
             System.out.println(rules[i]);
@@ -54,18 +54,17 @@ public class TestParserCodeGeneration {
 
     @Test
     public void testCodeGenerationOfRuleBlock() {
+        String[] rules = {"Get value of Example.concat: `Hello` and `1`, store 10 * 3 + 4 in xValue then expect xValue to equal 1",
+                            "Call method Class.example then store value of xValue in xValue1 and expect xValue1 to equal `New string`",
+                            "call Example.m3: -0.987f, call Class.method then store value of Class.isTrue with: xValue is equal to 1 in x and expect x to not equal `String`",
+                            "  Store -100 in x, store 0.5f in y, store value of Class.method2 with arguments: `New string`, false and -3 / 0.1f in test",
+                            "Get value of xValue, store Class.method2 with: `Hello and goodbye`, not true and 3 * -0.5f in z then expect x to equal z  "};
 
-        String[] rules = {"Get value of Class.method: 1 and `Hello`, store value in xValue then expect xValue to equal 1",
-                "Call method Example.exampleMethod then store value of xValue in xValue1 and expect xValue1 to equal `New string`",
-                "call Example.exampleMethod: -0.987f, call Class.method then store value of Example.m with: true in x and expect x to not equal `String`",
-                "  Store -100 in x, store 0.5f in y, store value of Class.method with arguments: false and `New string`, -3.4 in test",
-                "Get value of xValue, store Class.method with: `Hello and goodbye`, 1.5 and false in z then expect x to equal z  "};
-
-        String expectedCode = "int methodValue = Class.method(1, \"Hello\");\nint xValue = value;\nExpectations.expect(xValue).toEqual(1);\n"
-                            + "Example.exampleMethod();\nint xValue1 = xValue;\nExpectations.expect(xValue1).toEqual(\"New string\");\n"
-                            + "Example.exampleMethod(-0.987f);\nClass.method();\nString x = Example.m(true);\nExpectations.expect(x).toNotEqual(\"String\");\n"
-                            + "x = -100;\nfloat y = 0.5f;\nint test = Class.method(false, \"New string\", -3.4);\n"
-                            + "int xValue2 = xValue;\nint z = Class.method(\"Hello and goodbye\", 1.5, false);\nExpectations.expect(x).toEqual(z);\n";
+        String expectedCode = "String concatValue = Example.concat(\"Hello\", \"1\");\nint xValue = (10 * (3 + 4));\nExpectations.expect(xValue).toEqual(1);\n"
+                            + "Class.example();\nint xValue1 = xValue;\nExpectations.expect(xValue1).toEqual(\"New string\");\n"
+                            + "Example.m3(-0.987f);\nClass.method();\nboolean x = Class.isTrue((xValue == 1));\nExpectations.expect(x).toNotEqual(\"String\");\n"
+                            + "x = -100;\nfloat y = 0.5f;\nint test = Class.method2(\"New string\", false, (-3 / 0.1f));\n"
+                            + "int xValue2 = xValue;\nfloat z = (Class.method2(\"Hello and goodbye\", !true, 3) * -0.5f);\nExpectations.expect(x).toEqual(z);\n";
 
         Assert.assertEquals(expectedCode, Parser.parseRules(rules));
     }

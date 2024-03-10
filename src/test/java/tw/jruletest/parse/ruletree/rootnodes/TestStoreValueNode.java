@@ -42,8 +42,8 @@ public class TestStoreValueNode {
 
     @Test
     public void testStoreMethodResultInVariable() {
-        String[] rules = {"Store value of Class.method in xValue", "store value of Class.method: 1 in xValue1",
-                            "result of Class.method with: 1 and `Hello` in value", "store result of Class.method with arguments: 0 in test"};
+        String[] rules = {"Store value of Class.method in xValue", "store value of Class.isTrue: false in xValue1",
+                            "result of Class.method2 with: `Hello`, true and 0.5f in value", "store result of Class.isTrue with arguments: not false in test"};
         node = new StoreValueNode();
         for(String rule: rules) {
             try {
@@ -109,16 +109,15 @@ public class TestStoreValueNode {
 
     @Test
     public void testStoreValueRulesPlusExtraEnding() {
-        String[] rules = {"Store 1 in x and expect", "store Class.method in test, expect", "Class.method: 1 in dummy and expect",
-                "store `New string` in xValue and store", "Class.method with arguments: 1, 2 and 3 in test and expect"};
-        int[] indices = {12, 26, 24, 28, 47};
+        String[] rules = {"Store 1 in x and expect", "store Class.method in test, expect", "Class.isTrue: true in dummy and expect",
+                            "store `New string` in xValue and store", "Class.method2 with arguments: `1`, 2 is equal to 3 and 3.5f in test and expect"};
+        int[] indices = {12, 26, 27, 28, 67};
         node = new StoreValueNode();
         for(int i = 0; i < 5; i++) {
             try {
                 node.validateRule(rules[i]);
                 Assert.assertEquals(indices[i], node.getEndIndex());
             } catch (InvalidRuleStructureException e) {
-                e.printStackTrace();
                 Assert.fail("'" + rules[i] + "': failed");
             }
         }
@@ -140,14 +139,14 @@ public class TestStoreValueNode {
     /* Testing code generation for Store Value node */
     @Test
     public void testCodeGeneration() {
-        String[] rules = {"Store value of Class.method in xValue", "result of Class.method with: 1 and `Hello` in value",
-                            "store result of Class.method with arguments: 0 in test", "store 109.5f in test1", "Store `Hello` in test2",
+        String[] rules = {"Store value of Class.method in xValue", "result of Example.concat with: `Hello` and `World` in value",
+                            "store result of Class.isTrue with arguments: not false in test", "store 109.5f in test1", "Store `Hello` in test2",
                             "true in test", "store value of xValue in test3", "store z in y", "store Class.method in test, expect",
-                            "Class.method with arguments: 1, 2 and 3 in test and expect", "Store 1 in x and expect"};
+                            "Class.method2 with arguments: `1`, 2 is equal to 3 and 3.5f in test and expect", "Store 1 in x and expect"};
 
-        String[] expectedStrings = {"xValue = Class.method();", "int value = Class.method(1, \"Hello\");", "int test = Class.method(0);",
+        String[] expectedStrings = {"xValue = Class.method();", "String value = Example.concat(\"Hello\", \"World\");", "boolean test = Class.isTrue(!false);",
                                     "float test1 = 109.5f;", "String test2 = \"Hello\";", "test = true;", "int test3 = xValue;",
-                                    "char y = z;", "test = Class.method();", "test = Class.method(1, 2, 3);", "x = 1;"};
+                                    "char y = z;", "test = Class.method();", "test = Class.method2(\"1\", (2 == 3), 3.5f);", "x = 1;"};
 
         for(int i = 0; i < rules.length; i++) {
             node = new StoreValueNode();

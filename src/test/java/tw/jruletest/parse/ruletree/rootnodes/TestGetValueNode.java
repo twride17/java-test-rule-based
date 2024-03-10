@@ -78,10 +78,10 @@ public class TestGetValueNode {
     @Test
     public void testCodeGeneration() {
         String[] rules = {"Get value of xValue", "Get Class.method", "Get value of Example.x and store in y",
-                            "Get Class.method with arguments: `Hello world`, 10 and -0.89f, xValue"};
+                            "Get Class.method2 with arguments: `Hello world`, 10 + -0.89f is equal to 90f * 0.5f / 2, 100000.01f"};
 
         String[] expectedStrings = {"int xValue1 = xValue;", "int methodValue = Class.method();", "int xValue2 = Example.x;",
-                                    "int methodValue1 = Class.method(\"Hello world\", 10, -0.89f, xValue);"};
+                                    "int method2Value = Class.method2(\"Hello world\", ((10 + -0.89f) == (90f * (0.5f / 2))), 100000.01f);"};
 
         for(int i = 0; i < rules.length; i++) {
             node = new GetValueNode();

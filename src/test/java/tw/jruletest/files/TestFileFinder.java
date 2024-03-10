@@ -31,16 +31,25 @@ public class TestFileFinder {
         String testTop = "test\\java\\tw\\jruletest";
         String[] expectedPackages = {mainTop + "\\analyzers", mainTop + "\\exceptions", mainTop + "\\expectations",
                                     mainTop + "\\files", mainTop + "\\files\\source", mainTop + "\\files\\test", mainTop + "\\generators",
-                                    mainTop + "\\loggers", mainTop + "\\parse", mainTop + "\\parse\\ruletree\\argumentnodes", mainTop + "\\parse\\ruletree\\expressionnodes",
-                                    mainTop + "\\parse\\ruletree\\rulenodes", mainTop + "\\parse\\ruletree", mainTop,
-                                    mainTop + "\\variables", mainTop + "\\virtualmachine", testTop + "\\analyzers",
-                                    testTop + "\\examples\\sourceclasses", testTop + "\\examples\\sourceclasses\\programs",
-                                    testTop + "\\examples\\sourceclasses\\subpackage1", testTop + "\\examples\\sourceclasses\\subpackage2", testTop + "\\examples\\testclasses",
-                                    testTop + "\\expectations", testTop + "\\files\\source", testTop + "\\files\\test", testTop + "\\files",
-                                    testTop + "\\generators", testTop + "\\parse\\parser", testTop + "\\parse\\ruletree\\argumentnodes",
-                                    testTop + "\\parse\\ruletree\\rulenodes", testTop + "\\variables"};
+                                    mainTop + "\\loggers", mainTop + "\\parse", mainTop + "\\parse\\ruletree\\innernodes\\argumentnodes",
+                                    mainTop + "\\parse\\ruletree\\innernodes", mainTop + "\\parse\\ruletree\\innernodes\\expressionnodes\\booleannodes",
+                                    mainTop + "\\parse\\ruletree\\innernodes\\expressionnodes\\mathematicalnodes",
+                                    mainTop + "\\parse\\ruletree\\innernodes\\valuenodes", mainTop + "\\parse\\ruletree\\rootnodes",
+                                    mainTop + "\\parse\\ruletree", mainTop, mainTop + "\\variables", mainTop + "\\virtualmachine",
+                                    testTop + "\\analyzers", testTop + "\\examples\\sourceclasses", testTop + "\\examples\\sourceclasses\\programs",
+                                    testTop + "\\examples\\sourceclasses\\subpackage1", testTop + "\\examples\\sourceclasses\\subpackage2",
+                                    testTop + "\\examples\\testclasses", testTop + "\\expectations", testTop + "\\files\\source",
+                                    testTop + "\\files\\test", testTop + "\\files", testTop + "\\generators",
+                                    testTop + "\\parse\\parser", testTop + "\\parse\\ruletree\\innernodes\\argumentnodes",
+                                    testTop + "\\parse\\ruletree\\innernodes\\expressionnodes\\booleannodes",
+                                    testTop + "\\parse\\ruletree\\innernodes\\expressionnodes\\mathematicalnodes",
+                                    testTop + "\\parse\\ruletree\\innernodes", testTop + "\\parse\\ruletree\\innernodes\\valuenodes",
+                                    testTop + "\\parse\\ruletree\\rootnodes", testTop + "\\variables"};
 
         List<String> packages = FileFinder.getDistinctPackageNames();
+        for(String packageName: packages) {
+            System.out.println(packageName);
+        }
 
         Assert.assertEquals(expectedPackages.length, packages.size());
         for(int i = 0; i < expectedPackages.length; i++) {
@@ -53,9 +62,15 @@ public class TestFileFinder {
         String topPackage = "C:\\Users\\toby\\Documents\\ComputerScience\\PersonalProjects\\java-test-rule-based\\src\\";
         String mainTop = "main\\java\\tw\\jruletest";
         String testTop = "test\\java\\tw\\jruletest";
-        String[] expectedPackages = {mainTop + "\\parse", mainTop + "\\parse\\ruletree\\argumentnodes", mainTop + "\\parse\\ruletree\\expressionnodes",
-                                    mainTop + "\\parse\\ruletree\\rulenodes", mainTop + "\\parse\\ruletree", testTop + "\\parse\\parser",
-                                    testTop + "\\parse\\ruletree\\argumentnodes", testTop + "\\parse\\ruletree\\rulenodes"};
+        String[] expectedPackages = {mainTop + "\\parse", mainTop + "\\parse\\ruletree\\innernodes\\argumentnodes",
+                                        mainTop + "\\parse\\ruletree\\innernodes", mainTop + "\\parse\\ruletree\\innernodes\\expressionnodes\\booleannodes",
+                                        mainTop + "\\parse\\ruletree\\innernodes\\expressionnodes\\mathematicalnodes",
+                                        mainTop + "\\parse\\ruletree\\innernodes\\valuenodes", mainTop + "\\parse\\ruletree\\rootnodes",
+                                        mainTop + "\\parse\\ruletree", testTop + "\\parse\\parser", testTop + "\\parse\\ruletree\\innernodes\\argumentnodes",
+                                        testTop + "\\parse\\ruletree\\innernodes\\expressionnodes\\booleannodes",
+                                        testTop + "\\parse\\ruletree\\innernodes\\expressionnodes\\mathematicalnodes",
+                                        testTop + "\\parse\\ruletree\\innernodes", testTop + "\\parse\\ruletree\\innernodes\\valuenodes",
+                                        testTop + "\\parse\\ruletree\\rootnodes"};
 
         List<String> packages = FileFinder.getDistinctPackageNames("parse");
         Assert.assertEquals(expectedPackages.length, packages.size());

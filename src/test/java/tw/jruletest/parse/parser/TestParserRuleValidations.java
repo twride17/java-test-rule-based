@@ -37,7 +37,7 @@ public class TestParserRuleValidations {
         }
     }
 
-    public void testRules(String[] rules, String[][] expectedSubRules) {
+    private void testRules(String[] rules, String[][] expectedSubRules) {
         for(int i = 0; i < rules.length; i++) {
             try {
                 ArrayList<String> subRules = Parser.generateTrees(rules[i]);
@@ -55,15 +55,15 @@ public class TestParserRuleValidations {
 
     @Test
     public void testStoreValueRules() {
-        String[][] subRules = {{"Store value of Class.method with arguments: 67, `Hello world`, true and -0.5f in test"},
+        String[][] subRules = {{"Store value of Class.method2 with arguments: `Hello world`, true and -0.5f in test"},
                                {"store 10.5 in xValue", "store -10.65f in other", "store value of Class.method in variable"},
-                               {"Store true in value1", "store false in value2", "store value of Class.method: value1 and value2 in value3"},
+                               {"Store true in value1", "store false in value2", "store value of Class.isTrue: value1 is greater than value2 in value3"},
                                {"Store value of Example.x in test", "store 1 in y", "store `Hello world` in z"},
                                {"Store value of x in y", "Store value of y in z"}};
 
-        String[] rules = {"Store value of Class.method with arguments: 67, `Hello world`, true and -0.5f in test",
+        String[] rules = {"Store value of Class.method2 with arguments: `Hello world`, true and -0.5f in test",
                           "store 10.5 in xValue, store -10.65f in other then store value of Class.method in variable",
-                          "Store true in value1, store false in value2 then store value of Class.method: value1 and value2 in value3",
+                          "Store true in value1, store false in value2 then store value of Class.isTrue: value1 is greater than value2 in value3",
                           "Store value of Example.x in test then store 1 in y and store `Hello world` in z ",
                           "      Store value of x in y then Store value of y in z    "};
 
@@ -72,34 +72,34 @@ public class TestParserRuleValidations {
 
     @Test
     public void testGetValueRules() {
-        String[][] subRules = {{"Get value of Class.method with arguments: 67, `Hello world`, true and -0.5f"},
-                               {"get xValue", "get value of Class.method with arguments: -0.98f, 45, false and `New string`", "get yValue"},
-                               {"Get result of Example.x", "get Class.method with: `New string`, 56", "get Class.method"},
-                               {"Get result of Class.method with arguments: x, y and z", "get value of xValue"},
-                               {"Get x", "get y", "get value of z", "get value of Class.method: `Hello, me`, -0.98f, true and 123"}};
+        String[][] subRules = {{"Get value of Class.method2 with arguments: `Hello world`, true and -0.5f"},
+                               {"get xValue", "get value of Example.m2 with arguments: `New string`, 45, -0.98f", "get yValue"},
+                               {"Get result of Example.x", "get Example.concat with: `New string`, `Other String` + 56", "get Class.method"},
+                               {"Get result of Class.isTrue with arguments: x is equal to y and z is less than 1.5f", "get value of xValue"},
+                               {"Get x", "get y", "get value of z", "get value of Class.method2: `Hello, me`, not x is equal to 1 and -0.98f"}};
 
-        String[] rules = {"Get value of Class.method with arguments: 67, `Hello world`, true and -0.5f",
-                          "get xValue, get value of Class.method with arguments: -0.98f, 45, false and `New string` and get yValue",
-                          "Get result of Example.x and get Class.method with: `New string`, 56, get Class.method",
-                          "  Get result of Class.method with arguments: x, y and z then get value of xValue",
-                          "Get x and get y, get value of z then get value of Class.method: `Hello, me`, -0.98f, true and 123   "};
+        String[] rules = {"Get value of Class.method2 with arguments: `Hello world`, true and -0.5f",
+                          "get xValue, get value of Example.m2 with arguments: `New string`, 45, -0.98f and get yValue",
+                          "Get result of Example.x and get Example.concat with: `New string`, `Other String` + 56, get Class.method",
+                          "  Get result of Class.isTrue with arguments: x is equal to y and z is less than 1.5f then get value of xValue",
+                          "Get x and get y, get value of z then get value of Class.method2: `Hello, me`, not x is equal to 1 and -0.98f   "};
 
         testRules(rules, subRules);
     }
 
     @Test
     public void testMethodCallRules() {
-        String[][] subRules = {{"Call method Example.exampleMethod", "call method Example.exampleMethod with: 0, `Hello` and 4"},
-                               {"call method Example.exampleMethod with arguments: `Hello world, this is a cool and nice string`, 1f"},
-                               {"call Example.exampleMethod: 1, 2 and 3", "call method Example.exampleMethod", "call Class.example with: -0.89f"},
-                               {"call Example.exampleMethod", "call Class.method with: 1 and 2", "call method Example.m", "call Test.exampleMethod"},
-                               {"Call method Example.exampleMethod with arguments: 1", "call Class.method", "call Example.exampleMethod: xValue"}};
+        String[][] subRules = {{"Call method Class.example", "call method Example.exampleMethod with: 0"},
+                               {"call method Class.method2 with arguments: `Hello world, this is a cool and nice string`, true and 1f"},
+                               {"call Test.example3: true, 2f and false", "call method Class.method", "call Example.exampleMethod with: -9--34"},
+                               {"call Class.example", "call Test.setValue with: 1 + 2", "call method Example.m", "call Class.example"},
+                               {"Call method Class.method1 with arguments: 1", "call Class.method", "call Test.exampleMethod: xValue"}};
 
-        String[] rules = {"Call method Example.exampleMethod, call method Example.exampleMethod with: 0, `Hello` and 4",
-                          "  call method Example.exampleMethod with arguments: `Hello world, this is a cool and nice string`, 1f",
-                          "call Example.exampleMethod: 1, 2 and 3 then call method Example.exampleMethod and call Class.example with: -0.89f",
-                          "call Example.exampleMethod, call Class.method with: 1 and 2 and call method Example.m then call Test.exampleMethod",
-                          "Call method Example.exampleMethod with arguments: 1 then call Class.method and call Example.exampleMethod: xValue"};
+        String[] rules = {"Call method Class.example, call method Example.exampleMethod with: 0",
+                          "  call method Class.method2 with arguments: `Hello world, this is a cool and nice string`, true and 1f",
+                          "call Test.example3: true, 2f and false then call method Class.method and call Example.exampleMethod with: -9--34",
+                          "call Class.example, call Test.setValue with: 1 + 2 and call method Example.m then call Class.example",
+                          "Call method Class.method1 with arguments: 1 then call Class.method and call Test.exampleMethod: xValue"};
 
         testRules(rules, subRules);
     }
@@ -107,33 +107,33 @@ public class TestParserRuleValidations {
     @Test
     public void testExpectationRules() {
         String[][] subRules = {{"Expect 1 to equal xValue", "Expect value2 to not equal 3", "expect value of Class.method to equal -0.98f"},
-                               {"Expect x to equal 1", "expect y to not equal `Hello`", "expect result of Example.exampleMethod to equal false"},
-                               {"Expect value of Example.exampleMethod with: 56 and 0.98 to equal 3", "expect xValue to equal `New string`"},
-                               {"expect Class.method with arguments: 109, `New and cool string, this is` and -90.2f to not equal -0.9f"},
-                               {"Expect 30.5 to not equal xValue", "expect string to equal Class.method", "expect Class.method: 1 to equal 0"}};
+                               {"Expect x to equal 1", "expect y to not equal `Hello`", "expect result of Example.exampleMethod with: 10 - 7 to equal false"},
+                               {"Expect value of Example.exampleMethod with: 56 * 98 to equal 3", "expect xValue to equal `New string`"},
+                               {"expect Class.method2 with arguments: `New and cool string, this is` and xValue is equal to 10 and -90.2f to not equal -0.9f"},
+                               {"Expect 30.5 to not equal xValue", "expect string to equal Example.m", "expect Class.method1: 1 to equal 0"}};
 
         String[] rules = {"Expect 1 to equal xValue, Expect value2 to not equal 3 and expect value of Class.method to equal -0.98f",
-                          "  Expect x to equal 1, expect y to not equal `Hello` then expect result of Example.exampleMethod to equal false",
-                          "Expect value of Example.exampleMethod with: 56 and 0.98 to equal 3 and expect xValue to equal `New string`     ",
-                          "      expect Class.method with arguments: 109, `New and cool string, this is` and -90.2f to not equal -0.9f",
-                          "Expect 30.5 to not equal xValue, expect string to equal Class.method and expect Class.method: 1 to equal 0"};
+                          "  Expect x to equal 1, expect y to not equal `Hello` then expect result of Example.exampleMethod with: 10 - 7 to equal false",
+                          "Expect value of Example.exampleMethod with: 56 * 98 to equal 3 and expect xValue to equal `New string`     ",
+                          "      expect Class.method2 with arguments: `New and cool string, this is` and xValue is equal to 10 and -90.2f to not equal -0.9f",
+                          "Expect 30.5 to not equal xValue, expect string to equal Example.m and expect Class.method1: 1 to equal 0"};
 
         testRules(rules, subRules);
     }
 
     @Test
     public void testDifferentRuleCombinations() {
-        String[][] subRules = {{"Get value of Class.method: 1 and `Hello`", "store value in xValue", "expect xValue to equal 1"},
-                               {"Call method Example.exampleMethod", "store value of Example.x in xValue", "expect xValue to equal `New string`"},
-                               {"call Example.exampleMethod: -0.987f", "call Class.method", "store value of Example.exampleMethod with: true in x", "expect x to not equal `String`"},
-                               {"Store -100 in x", "store 0.5f in y", "store value of Example.exampleMethod with arguments: false and `New string`, -3.4 in test"},
-                               {"store Example.x in x", "store Example.exampleMethod with: `Hello and goodbye`, 1.5 and false in z", "expect x to equal z"}};
+        String[][] subRules = {{"Get value of Class.method3: 1 + `Hello`", "store 100 + 10 * 3 in xValue", "expect xValue to equal 1"},
+                               {"Call method Class.example", "store value of Example.x in xValue", "expect xValue to equal `New string`"},
+                               {"call Example.m3: -0.987f", "call Class.method", "store value of Class.isTrue with: true in x", "expect x to not equal `String`"},
+                               {"Store -100 in x", "store 0.5f in y", "store value of Example.m2 with arguments: `New string`, 1 and -3.4f in test"},
+                               {"store Example.x in x", "store Example.concat with: `Hello and goodbye` and `and good luck` in z", "expect x to equal z"}};
 
-        String[] rules = {"Get value of Class.method: 1 and `Hello`, store value in xValue then expect xValue to equal 1",
-                          "Call method Example.exampleMethod then store value of Example.x in xValue and expect xValue to equal `New string`",
-                          "call Example.exampleMethod: -0.987f, call Class.method then store value of Example.exampleMethod with: true in x and expect x to not equal `String`",
-                          "  Store -100 in x, store 0.5f in y, store value of Example.exampleMethod with arguments: false and `New string`, -3.4 in test",
-                          "store Example.x in x, store Example.exampleMethod with: `Hello and goodbye`, 1.5 and false in z then expect x to equal z  "};
+        String[] rules = {"Get value of Class.method3: 1 + `Hello`, store 100 + 10 * 3 in xValue then expect xValue to equal 1",
+                          "Call method Class.example then store value of Example.x in xValue and expect xValue to equal `New string`",
+                          "call Example.m3: -0.987f, call Class.method then store value of Class.isTrue with: true in x and expect x to not equal `String`",
+                          "  Store -100 in x, store 0.5f in y, store value of Example.m2 with arguments: `New string`, 1 and -3.4f in test",
+                          "store Example.x in x, store Example.concat with: `Hello and goodbye` and `and good luck` in z then expect x to equal z  "};
         testRules(rules, subRules);
     }
 

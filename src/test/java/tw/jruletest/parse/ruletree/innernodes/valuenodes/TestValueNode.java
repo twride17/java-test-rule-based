@@ -85,7 +85,7 @@ public class TestValueNode {
 
     @Test
     public void testGetValueOfMethodWithValidArguments() {
-        String rule = "Class.method with arguments: `Hello world`, 10 and -0.89f, xValue";
+        String rule = "Class.method2 with arguments: `Hello world`, 10 + -0.89f is equal to 90f * 0.5f / 2, 100000.01f";
         node = new ValueNode();
         try {
             node.validateRule(rule);
@@ -124,11 +124,11 @@ public class TestValueNode {
     /* Testing code generation for ValueNode */
     @Test
     public void testCodeGeneration() {
-        String[] rules = {"value of xValue", "Class.method", /*"Get value of Example.x and store in y",*/
-                "Class.method with arguments: `Hello world`, 10 and -0.89f, xValue"};
+        String[] rules = {"value of xValue", "Class.method", "value of Example.x and store in y",
+                        "Class.method2 with arguments: `Hello world`, 10 + -0.89f is equal to 90f * 0.5f / 2, 100000.01f"};
 
-        String[] expectedStrings = {"xValue", "Class.method()", /*"Example.x",*/
-                "Class.method(\"Hello world\", 10, -0.89f, xValue)"};
+        String[] expectedStrings = {"xValue", "Class.method()", "Example.x",
+                                    "Class.method2(\"Hello world\", ((10 + -0.89f) == (90f * (0.5f / 2))), 100000.01f)"};
 
         for(int i = 0; i < rules.length; i++) {
             node = new ValueNode();

@@ -229,23 +229,23 @@ public class TestExpectationNode {
         String[] rules = {"expect Example.x to equal 1", "xValue to equal -11.567", "expect xValue to equal -11.5f", "xValue to equal true",
                             "expect xValue to not equal `Hello World`", "expect 1 to equal x", "expect -11.567 to not equal xValue",
                             "expect -11.5f to equal xValue", "true to not equal x", "expect `Hello World` to not equal xValue",
-                            "expect Test.example2: -89.9 - 89, 5+ 6 and `String` to not equal -98f", "Expect 8765.5678 to equal value of Class.method",
-                            "Expect -4501.2345f to equal value of Class.method: 12.5f and `New string`, false and 123 and expect x to equal 2"};
+                            "expect Example.m2: `String`, 5+ 6 and -89.9f - 89 to not equal -98f", "Expect 8765.5678 to equal value of Class.method",
+                            "Expect -4501.2345f to equal value of Class.example + value of Class.method2: `Hello`, x is equal to xValue or x is greater than -1 and 50f"};
 
         String[] expectedStrings = {"Expectations.expect(Example.x).toEqual(1);", "Expectations.expect(xValue).toEqual(-11.567);",
                                     "Expectations.expect(xValue).toEqual(-11.5f);", "Expectations.expect(xValue).toEqual(true);",
                                     "Expectations.expect(xValue).toNotEqual(\"Hello World\");", "Expectations.expect(1).toEqual(x);",
                                     "Expectations.expect(-11.567).toNotEqual(xValue);", "Expectations.expect(-11.5f).toEqual(xValue);",
                                     "Expectations.expect(true).toNotEqual(x);", "Expectations.expect(\"Hello World\").toNotEqual(xValue);",
-                                    "Expectations.expect(Test.example2((-89.9 - 89), (5+ 6) and \"String\").toNotEqual(-98f);",
+                                    "Expectations.expect(Example.m2(\"String\", (5 + 6), (-89.9f - 89))).toNotEqual(-98f);",
                                     "Expectations.expect(8765.5678).toEqual(Class.method());",
-                                    "Expectations.expect(-4501.2345f).toEqual(Class.method(12.5f, \"New string\", false, 123));"};
+                                    "Expectations.expect(-4501.2345f).toEqual((Class.example() + Class.method2(\"Hello\", ((x == xValue) || (x > -1)), 50f)));"};
 
         for(int i = 0; i < rules.length; i++) {
             node = new ExpectationNode();
             try {
                 node.validateRule(rules[i]);
-                Assert.assertEquals(node.generateCode(), expectedStrings[i]);
+                Assert.assertEquals(expectedStrings[i], node.generateCode());
             } catch(InvalidRuleStructureException e) {
                 Assert.fail(rules[i] + ": failed");
             }

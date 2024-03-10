@@ -5,6 +5,7 @@ import tw.jruletest.analyzers.TypeIdentifier;
 import tw.jruletest.exceptions.InvalidRuleStructureException;
 import tw.jruletest.parse.Rule;
 import tw.jruletest.parse.ruletree.RuleNode;
+import tw.jruletest.parse.ruletree.innernodes.ChildNode;
 import tw.jruletest.parse.ruletree.innernodes.argumentnodes.ConstantNode;
 import tw.jruletest.parse.ruletree.innernodes.argumentnodes.StringNode;
 import tw.jruletest.parse.ruletree.innernodes.valuenodes.VariableNode;
@@ -25,7 +26,7 @@ import java.util.regex.Pattern;
 
 public class StoreValueNode extends RootNode implements Rule {
 
-    private RuleNode valueTree;
+    private ChildNode valueTree;
     private VariableNode variableTree;
 
     /**
@@ -102,14 +103,6 @@ public class StoreValueNode extends RootNode implements Rule {
      * */
 
     private Type getType() {
-        if(valueTree instanceof ValueNode) {
-            return ((ValueNode) valueTree).getType();
-        } else if(valueTree instanceof StringNode){
-            return ((StringNode) valueTree).getType();
-        } else if(valueTree instanceof ConstantNode){
-            return ((ConstantNode) valueTree).getType();
-        } else {
-            return ((VariableNode) valueTree).getType();
-        }
+        return valueTree.getType();
     }
 }
