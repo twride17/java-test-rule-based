@@ -4,6 +4,7 @@ import org.junit.*;
 import tw.jruletest.Runner;
 import tw.jruletest.analyzers.SourceClassAnalyzer;
 import tw.jruletest.exceptions.CompilationFailureException;
+import tw.jruletest.exceptions.ParserFailureException;
 import tw.jruletest.files.FileFinder;
 import tw.jruletest.files.source.SourceClass;
 import tw.jruletest.parse.Parser;
@@ -48,7 +49,12 @@ public class TestParserCodeGeneration {
 
         for(int i = 0; i < rules.length; i++) {
             System.out.println(rules[i]);
-            Assert.assertEquals(expectedCodeBlocks[i], Parser.parseRule(rules[i]));
+            try {
+                Assert.assertEquals(expectedCodeBlocks[i], Parser.parseRule(rules[i]));
+            } catch(ParserFailureException e) {
+                Assert.fail("Parser failed with error:\n" + e.getErrors());
+            }
+
         }
     }
 
@@ -66,7 +72,11 @@ public class TestParserCodeGeneration {
                             + "x = -100;\nfloat y = 0.5f;\nint test = Class.method2(\"New string\", false, (-3 / 0.1f));\n"
                             + "int xValue2 = xValue;\nfloat z = (Class.method2(\"Hello and goodbye\", !true, 3) * -0.5f);\nExpectations.expect(x).toEqual(z);\n";
 
-        Assert.assertEquals(expectedCode, Parser.parseRules(rules));
+        try {
+            Assert.assertEquals(expectedCode, Parser.parseRules(rules));
+        } catch(ParserFailureException e) {
+            Assert.fail("Parser failed with error(s):\n" + e.getErrors());
+        }
     }
 
     @After

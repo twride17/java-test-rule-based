@@ -1,6 +1,7 @@
 package tw.jruletest.parse;
 
 import tw.jruletest.exceptions.InvalidRuleStructureException;
+import tw.jruletest.exceptions.ParserFailureException;
 import tw.jruletest.exceptions.UnparsableRuleException;
 import tw.jruletest.parse.ruletree.RuleNode;
 import tw.jruletest.parse.ruletree.rootnodes.*;
@@ -32,10 +33,19 @@ public class Parser {
      * @return the code generated from the list of rules.
      * */
 
-    public static String parseRules(String[] rules) {
+    public static String parseRules(String[] rules) throws ParserFailureException{
         String generatedCode = "";
+        List<UnparsableRuleException> caughtErrors = new ArrayList<>();
         for(String rule: rules) {
-            generatedCode += parseRule(rule);
+            try {
+                generatedCode += parseRule(rule);
+            } catch(ParserFailureException e) {
+                caughtErrors.addAll(e.getErrors());
+            }
+        }
+
+        if(!caughtErrors.isEmpty()) {
+            throw new ParserFailureException(caughtErrors);
         }
         return generatedCode;
     }
@@ -48,19 +58,24 @@ public class Parser {
      * @return the code generated from the given rule.
      * */
 
-    public static String parseRule(String rule) {
+    public static String parseRule(String rule) throws ParserFailureException {
         String[] subRules = rule.split("\\.\\s");
         String codeBlock = "";
+        List<UnparsableRuleException> caughtErrors = new ArrayList<>();
         for(String subRule: subRules) {
             try {
                 generateTrees(subRule);
                 for (RuleNode ruleNode : rules) {
-                    codeBlock += ((Rule)ruleNode).generateCode() + "\n";
+                    codeBlock += ((Rule) ruleNode).generateCode() + "\n";
                 }
-            } catch(UnparsableRuleException e) {
-                e.printError();
+            } catch (UnparsableRuleException e) {
+                caughtErrors.add(e);
             }
             rules = new LinkedList<>();
+        }
+
+        if(!caughtErrors.isEmpty()) {
+            throw new ParserFailureException(caughtErrors);
         }
         return codeBlock;
     }

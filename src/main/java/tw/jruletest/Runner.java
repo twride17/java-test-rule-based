@@ -4,6 +4,7 @@ import tw.jruletest.analyzers.ImportCollector;
 import tw.jruletest.analyzers.RuleExtractor;
 import tw.jruletest.analyzers.TestClassAnalyzer;
 import tw.jruletest.exceptions.CompilationFailureException;
+import tw.jruletest.exceptions.ParserFailureException;
 import tw.jruletest.files.FileFinder;
 import tw.jruletest.generators.TestSuiteGenerator;
 import tw.jruletest.loggers.CompilationLogger;
@@ -71,7 +72,11 @@ public class Runner {
                 Map<String, String> rules = ruleSets.get(className);
                 for (String methodName : rules.keySet()) {
                     currentMethod = methodName;
-                    rules.replace(methodName, Parser.parseRules(rules.get(methodName).split("\n")));
+                    try {
+                        rules.replace(methodName, Parser.parseRules(rules.get(methodName).split("\n")));
+                    } catch(ParserFailureException e) {
+                        rules.replace(methodName, "Expectations.failed(\"Parser failed to parse rules:\n" + e.getErrorMessage() + "\")");
+                    }
                 }
                 TestSuiteGenerator.writeSuiteToFile(rules, className);
                 VariableStore.reset();
