@@ -4,7 +4,7 @@ import tw.jruletest.analyzers.ImportCollector;
 import tw.jruletest.analyzers.RuleExtractor;
 import tw.jruletest.analyzers.TestClassAnalyzer;
 import tw.jruletest.exceptions.CompilationFailureException;
-import tw.jruletest.exceptions.ParserFailureException;
+import tw.jruletest.exceptions.parsing.ParserFailureException;
 import tw.jruletest.files.FileFinder;
 import tw.jruletest.generators.TestSuiteGenerator;
 import tw.jruletest.loggers.CompilationLogger;

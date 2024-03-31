@@ -1,7 +1,7 @@
 package tw.jruletest.parse.ruletree.innernodes.expressionnodes.booleannodes;
 
-import tw.jruletest.analyzers.TypeIdentifier;
-import tw.jruletest.exceptions.InvalidRuleStructureException;
+import tw.jruletest.exceptions.parsing.ChildNodeSelectionException;
+import tw.jruletest.exceptions.parsing.InvalidRuleStructureException;
 import tw.jruletest.parse.Rule;
 import tw.jruletest.parse.ruletree.RuleNode;
 import tw.jruletest.parse.ruletree.innernodes.ChildNode;
@@ -43,18 +43,33 @@ public class BinaryExpressionNode extends ChildNode implements Rule {
         try {
             connective = CONNECTIVES[bestConnectiveIndex];
         } catch(ArrayIndexOutOfBoundsException e) {
-            throw new InvalidRuleStructureException(ruleContent, "Binary Boolean Expression Node");
+            throw new InvalidRuleStructureException("Binary Boolean Expression Node", "Failed to find one of the valid connectives 'and', 'or'");
         }
 
-        firstPredicateTree = RuleNode.getChildNode(ruleContent.substring(0, closestIndex), RuleNode.BOOLEAN_EXPRESSION_NODE);
-        if(firstPredicateTree.getEndIndex() != closestIndex) {
-            throw new InvalidRuleStructureException(ruleContent, "Binary Boolean Expression Node");
+        String firstPredicateRule = ruleContent.substring(0, closestIndex);
+        try {
+            firstPredicateTree = RuleNode.getChildNode(firstPredicateRule, RuleNode.BOOLEAN_EXPRESSION_NODE);
+            if (firstPredicateTree.getEndIndex() != closestIndex) {
+                throw new InvalidRuleStructureException("Binary Boolean Expression Node", "Extra characters found after validation of '"
+                                                            + firstPredicateRule + "'");
+            }
+        } catch(ChildNodeSelectionException e) {
+            throw new InvalidRuleStructureException("Binary Boolean Expression Node", "Could not find valid child node for '"
+                                                        + firstPredicateRule + "'. Caused by: ", e);
         }
-        secondPredicateTree = RuleNode.getChildNode(ruleContent.substring(closestIndex + connective.length()), RuleNode.BOOLEAN_EXPRESSION_NODE);
-        if((firstPredicateTree.getType() == boolean.class) && (secondPredicateTree.getType() == boolean.class)) {
-            endIndex += firstPredicateTree.getEndIndex() + connective.length() + secondPredicateTree.getEndIndex();
-        } else {
-            throw new InvalidRuleStructureException(ruleContent, "Binary Boolean Expression Node");
+
+        String secondPredicateRule = ruleContent.substring(closestIndex + connective.length());
+        try {
+            secondPredicateTree = RuleNode.getChildNode(secondPredicateRule, RuleNode.BOOLEAN_EXPRESSION_NODE);
+            if ((firstPredicateTree.getType() == boolean.class) && (secondPredicateTree.getType() == boolean.class)) {
+                endIndex += firstPredicateTree.getEndIndex() + connective.length() + secondPredicateTree.getEndIndex();
+            } else {
+                throw new InvalidRuleStructureException("Binary Boolean Expression Node", "One or both of the arguments " +
+                                                        "found are not of boolean types");
+            }
+        } catch(ChildNodeSelectionException e) {
+            throw new InvalidRuleStructureException("Binary Boolean Expression Node", "Could not find valid child node for '"
+                                                        + secondPredicateRule + "'. Caused by: ", e);
         }
     }
 

@@ -1,4 +1,4 @@
-package tw.jruletest.exceptions;
+package tw.jruletest.exceptions.classanalysis;
 
 /**
  * Exception class for if a field or method cannot be distinguished when defined multiple times
@@ -6,7 +6,7 @@ package tw.jruletest.exceptions;
  * @author Toby Wride
  * */
 
-public class AmbiguousClassException extends Exception {
+public class AmbiguousClassException extends ClassAnalysisException {
 
     /**
      * Instance field for the name of the problem field or method
@@ -28,7 +28,7 @@ public class AmbiguousClassException extends Exception {
      * Prints out the error showing the field that cannot be distinguished
      * */
 
-    public void printError() {
-        System.out.println("Indistinguishable field: " + fieldName);
+    public String getErrorMessage() {
+        return "Indistinguishable field: " + fieldName;
     }
 }

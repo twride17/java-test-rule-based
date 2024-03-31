@@ -1,7 +1,7 @@
 package tw.jruletest.files.source;
 
-import tw.jruletest.exceptions.AmbiguousClassException;
-import tw.jruletest.exceptions.UnidentifiedCallException;
+import tw.jruletest.exceptions.classanalysis.AmbiguousClassException;
+import tw.jruletest.exceptions.classanalysis.UnidentifiedCallException;
 import tw.jruletest.virtualmachine.JavaClassLoader;
 
 import java.lang.reflect.Field;

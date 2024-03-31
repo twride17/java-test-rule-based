@@ -4,10 +4,9 @@ import org.junit.*;
 import tw.jruletest.Runner;
 import tw.jruletest.analyzers.SourceClassAnalyzer;
 import tw.jruletest.exceptions.CompilationFailureException;
-import tw.jruletest.exceptions.InvalidRuleStructureException;
+import tw.jruletest.exceptions.parsing.InvalidRuleStructureException;
 import tw.jruletest.files.FileFinder;
 import tw.jruletest.files.source.SourceClass;
-import tw.jruletest.parse.ruletree.rootnodes.CallMethodNode;
 import tw.jruletest.variables.VariableStore;
 import tw.jruletest.virtualmachine.JavaClassLoader;
 
@@ -39,38 +38,27 @@ public class TestCallMethodNode {
     }
 
     @Test
-    public void testCallMethodRuleWithKeyword() {
-        String rule = "Call method Class.method2 with arguments: `Hello`, true and -0.78f";
+    public void testValidCallMethodRule() {
+        String rule = "method Class.method2 with arguments: `Hello`, true and -0.78f";
         node = new CallMethodNode();
         try {
             node.validateRule(rule);
             Assert.assertEquals(rule.length(), node.getEndIndex());
         } catch(InvalidRuleStructureException e) {
-            System.out.println(rule);
+            System.out.println(e.getErrorMessage());
             Assert.fail("Failed");
         }
     }
 
     @Test
-    public void testCallMethodRuleWithNoKeyword() {
-        String rule = "Class.method1: 0";
-        node = new CallMethodNode();
-        try {
-            node.validateRule(rule);
-            Assert.assertEquals(rule.length(), node.getEndIndex());
-            Assert.fail(rule + ": passed when should fail");
-        } catch(InvalidRuleStructureException e) { }
-    }
-
-    @Test
     public void testValidCallMethodRuleWithExtraRule() {
-        String rule = "Call method Class.method2 with arguments: `Hello`, true and -0.78f and expect x to equal 0";
+        String rule = "method Class.method2 with arguments: `Hello`, true and -0.78f and expect x to equal 0";
         node = new CallMethodNode();
         try {
             node.validateRule(rule);
-            Assert.assertEquals(66, node.getEndIndex());
+            Assert.assertEquals(61, node.getEndIndex());
         } catch(InvalidRuleStructureException e) {
-            System.out.println(rule);
+            System.out.println(e.getErrorMessage());
             Assert.fail("Failed");
         }
     }
@@ -79,13 +67,13 @@ public class TestCallMethodNode {
     @Test
     public void testCodeGeneration() {
 
-        String[] rules = {"call method Class.method", "call method Class.method3: `Hello world`", "call method Example.m3 with arguments: 101.971f",
-                            "Call Class.method3 with: `Hello ` + -24", "call Class.method3: `Hello ` + xValue", "Call Example.m3: -90.45f",
-                            "call method Class.method2: `Hello, world and his wife`, xValue is equal to 1 and -90.5f",
-                            "call method Class.method2: `Hello world`, Class.isTrue: 90 is greater than xValue, -67.5f",
-                            "call Class.method2 with: `Hello` + `World` and value of Class.isTrue with: false or xValue is equal to 1 and 101.971f * 7",
-                            "call Class.method2: Example.m + `hello, it's me`, true and -0.987f + 9 and store value in y", "call Class.method, store",
-                            "Call Class.method3: `1` in dummy", "Call method Class.method and call method Example.exampleMethod with arguments: `Hello` and `World`"};
+        String[] rules = {"method Class.method", "method Class.method3: `Hello world`", "method Example.m3 with arguments: 101.971f",
+                            "Class.method3 with: `Hello ` + -24", "Class.method3: `Hello ` + xValue", "Example.m3: -90.45f",
+                            "method Class.method2: `Hello, world and his wife`, xValue is equal to 1 and -90.5f",
+                            "method Class.method2: `Hello world`, Class.isTrue: 90 is greater than xValue, -67.5f",
+                            "Class.method2 with: `Hello` + `World` and value of Class.isTrue with: false or xValue is equal to 1 and 101.971f * 7",
+                            "Class.method2: Example.m + `hello, it's me`, true and -0.987f + 9 and store value in y", "Class.method, store",
+                            "Class.method3: `1` in dummy", "method Class.method and call method Example.exampleMethod with arguments: `Hello` and `World`"};
 
         String[] expectedStrings = {"Class.method();", "Class.method3(\"Hello world\");", "Example.m3(101.971f);",
                                     "Class.method3((\"Hello \" + -24));", "Class.method3((\"Hello \" + xValue));", "Example.m3(-90.45f);",
@@ -102,6 +90,7 @@ public class TestCallMethodNode {
                 Assert.assertEquals(expectedStrings[i], node.generateCode());
             } catch(InvalidRuleStructureException e) {
                 Assert.fail(rules[i] + ": failed");
+                System.out.println(e.getErrorMessage());
             }
         }
     }

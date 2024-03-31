@@ -2,14 +2,12 @@ package tw.jruletest.parse.ruletree.rootnodes;
 
 import tw.jruletest.Runner;
 import tw.jruletest.analyzers.TypeIdentifier;
-import tw.jruletest.exceptions.InvalidRuleStructureException;
+import tw.jruletest.exceptions.parsing.ChildNodeSelectionException;
+import tw.jruletest.exceptions.parsing.InvalidRuleStructureException;
 import tw.jruletest.parse.Rule;
 import tw.jruletest.parse.ruletree.RuleNode;
 import tw.jruletest.parse.ruletree.innernodes.ChildNode;
-import tw.jruletest.parse.ruletree.innernodes.argumentnodes.ConstantNode;
-import tw.jruletest.parse.ruletree.innernodes.argumentnodes.StringNode;
 import tw.jruletest.parse.ruletree.innernodes.valuenodes.VariableNode;
-import tw.jruletest.parse.ruletree.innernodes.valuenodes.ValueNode;
 import tw.jruletest.variables.Variable;
 import tw.jruletest.variables.VariableStore;
 
@@ -63,44 +61,33 @@ public class StoreValueNode extends RootNode implements Rule {
 
     @Override
     public void validateRule(String ruleContent) throws InvalidRuleStructureException {
-        Matcher matcher = Pattern.compile("^(((S|s)tore\\s)?(.+))\\s(in)\\s([a-z][a-zA-Z0-9]*)").matcher(ruleContent);
-        if(matcher.find()) {
-            String requiredSegment;
-            int endIndex;
-            if(ruleContent.toLowerCase().startsWith("store")) {
-                endIndex = 6;
-            } else {
-                endIndex = 0;
-            }
+        if(ruleContent.isEmpty()) {
+            throw new InvalidRuleStructureException("Store Value Node", "Rule must not be empty after Store keyword");
+        }
 
-            requiredSegment = ruleContent.substring(endIndex);
-            if(requiredSegment.isEmpty()) {
-                throw new InvalidRuleStructureException(ruleContent, "Store Value Node");
-            }
+        try {
+            valueTree = RuleNode.getChildNode(ruleContent, RuleNode.CHILD_NODE);
+        } catch(ChildNodeSelectionException e) {
+            throw new InvalidRuleStructureException("Store Value Node", "Caused by:", e);
+        }
+        endIndex += valueTree.getEndIndex();
 
-            valueTree = RuleNode.getChildNode(requiredSegment, RuleNode.CHILD_NODE);
-            endIndex += valueTree.getEndIndex();
+        String requiredSegment = ruleContent.substring(endIndex);
+        if(!(requiredSegment.startsWith(" in") && !requiredSegment.trim().equals("in"))) {
+            throw new InvalidRuleStructureException("Store Value Node", "Expected the keyword 'in' after the first argument");
+        }
+        requiredSegment = requiredSegment.substring(4);
+        endIndex += 4;
 
-            requiredSegment = ruleContent.substring(endIndex);
-            if(requiredSegment.startsWith(" in") && !requiredSegment.trim().equals("in")) {
-                requiredSegment = requiredSegment.substring(4);
-                endIndex += 4;
-            }
-
-            variableTree = new VariableNode();
+        variableTree = new VariableNode();
+        try {
             variableTree.validateRule(requiredSegment);
             variableTree.getVariable().setType(getType());
-            this.endIndex = endIndex + variableTree.getEndIndex();
-        } else {
-            throw new InvalidRuleStructureException(ruleContent, "Store Value Node");
+            endIndex += variableTree.getEndIndex();
+        } catch(InvalidRuleStructureException e) {
+            throw new InvalidRuleStructureException("Store Value Node", "Caused by:", e);
         }
     }
-
-    /**
-     * Gets the type from the child node
-     *
-     * @return the type of the field, method or variable represented by the child node.
-     * */
 
     private Type getType() {
         return valueTree.getType();

@@ -1,8 +1,8 @@
-package tw.jruletest.exceptions;
+package tw.jruletest.exceptions.parsing;
 
 import java.util.List;
 
-public class ParserFailureException extends Exception {
+public class ParserFailureException extends Exception implements RuleParsingError{
 
     private List<UnparsableRuleException> errors;
 

@@ -1,12 +1,16 @@
 package tw.jruletest.parse.ruletree;
 
-import tw.jruletest.exceptions.InvalidRuleStructureException;
+import tw.jruletest.exceptions.parsing.ChildNodeSelectionException;
+import tw.jruletest.exceptions.parsing.InvalidRuleStructureException;
 import tw.jruletest.parse.Rule;
 import tw.jruletest.parse.ruletree.innernodes.ChildNode;
 import tw.jruletest.parse.ruletree.innernodes.expressionnodes.booleannodes.*;
 import tw.jruletest.parse.ruletree.innernodes.expressionnodes.mathematicalnodes.MathematicalExpressionNode;
 import tw.jruletest.parse.ruletree.innernodes.valuenodes.*;
 import tw.jruletest.parse.ruletree.innernodes.argumentnodes.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Interface for the expected implementation of nodes to be added to a tree in order to validate rules and generate the required code.
@@ -33,7 +37,7 @@ public abstract class RuleNode {
         return endIndex;
     }
 
-    public static ChildNode getChildNode(String ruleContent, int possibleNodeIndex) throws InvalidRuleStructureException {
+    public static ChildNode getChildNode(String ruleContent, int possibleNodeIndex) throws ChildNodeSelectionException {
         ChildNode[] possibleNodes = {};
         switch(possibleNodeIndex) {
             case CHILD_NODE:
@@ -53,12 +57,16 @@ public abstract class RuleNode {
                 break;
         }
 
+
+        List<InvalidRuleStructureException> invalidStructureExceptions = new ArrayList<>();
         for(ChildNode possibleNode: possibleNodes) {
             try {
                 ((Rule)possibleNode).validateRule(ruleContent);
                 return possibleNode;
-            } catch(InvalidRuleStructureException e) { }
+            } catch(InvalidRuleStructureException e) {
+                invalidStructureExceptions.add(e);
+            }
         }
-        throw new InvalidRuleStructureException(ruleContent, "Child Node Selector");
+        throw new ChildNodeSelectionException(invalidStructureExceptions, ruleContent);
     }
 }

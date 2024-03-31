@@ -1,8 +1,7 @@
 package tw.jruletest.parse.ruletree.innernodes.argumentnodes;
 
 import org.junit.*;
-import tw.jruletest.exceptions.InvalidRuleStructureException;
-import tw.jruletest.parse.ruletree.innernodes.argumentnodes.StringNode;
+import tw.jruletest.exceptions.parsing.InvalidRuleStructureException;
 
 public class TestStringNode {
 

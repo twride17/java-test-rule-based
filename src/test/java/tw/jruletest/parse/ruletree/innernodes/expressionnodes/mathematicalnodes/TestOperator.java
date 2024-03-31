@@ -3,7 +3,7 @@ package tw.jruletest.parse.ruletree.innernodes.expressionnodes.mathematicalnodes
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import tw.jruletest.exceptions.InvalidRuleStructureException;
+import tw.jruletest.exceptions.parsing.InvalidRuleStructureException;
 import tw.jruletest.parse.ruletree.innernodes.ChildNode;
 import tw.jruletest.parse.ruletree.innernodes.argumentnodes.ConstantNode;
 import tw.jruletest.parse.ruletree.innernodes.argumentnodes.StringNode;

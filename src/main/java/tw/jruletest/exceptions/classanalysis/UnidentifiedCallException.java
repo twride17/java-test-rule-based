@@ -1,4 +1,4 @@
-package tw.jruletest.exceptions;
+package tw.jruletest.exceptions.classanalysis;
 
 /**
  * Exception to be thrown when a specific class's member cannot be found
@@ -6,7 +6,7 @@ package tw.jruletest.exceptions;
  * @author Toby Wride
  * */
 
-public class UnidentifiedCallException extends Exception {
+public class UnidentifiedCallException extends ClassAnalysisException {
 
     /**
      * Instance field for the name of the member that could not be idnetified
@@ -30,7 +30,7 @@ public class UnidentifiedCallException extends Exception {
      * @return a message stating the member does not exist
      * */
 
-    public String getUnidentifiedCall() {
+    public String getErrorMessage() {
         return "No such field or method: " + call;
     }
 

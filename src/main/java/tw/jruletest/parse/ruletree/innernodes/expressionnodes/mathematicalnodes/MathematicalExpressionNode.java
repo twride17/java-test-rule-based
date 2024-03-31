@@ -1,6 +1,7 @@
 package tw.jruletest.parse.ruletree.innernodes.expressionnodes.mathematicalnodes;
 
-import tw.jruletest.exceptions.InvalidRuleStructureException;
+import tw.jruletest.exceptions.parsing.ChildNodeSelectionException;
+import tw.jruletest.exceptions.parsing.InvalidRuleStructureException;
 import tw.jruletest.parse.Rule;
 import tw.jruletest.parse.ruletree.RuleNode;
 import tw.jruletest.parse.ruletree.innernodes.ChildNode;
@@ -49,24 +50,31 @@ public class MathematicalExpressionNode extends ChildNode implements Rule {
             bestOperator = OPERATORS[bestOperatorIndex];
             operator = new Operator(bestOperator);
         } catch(ArrayIndexOutOfBoundsException e) {
-            throw new InvalidRuleStructureException(ruleContent, "Mathematical Expression Node");
+            throw new InvalidRuleStructureException("Mathematical Expression Node", "Could not find one of the valid operators: +, -, *, /, %");
         }
 
         String firstValue = ruleContent.substring(0, closestIndex);
         if(firstValue.isBlank()) {
-            throw new InvalidRuleStructureException(ruleContent, "Mathematical Expression Node");
+            throw new InvalidRuleStructureException("Mathematical Expression Node", "Expressions cannot start with an operator");
         }
 
         endIndex += firstValue.length() - firstValue.trim().length();
 
-        firstValueNode = RuleNode.getChildNode(firstValue.trim(), RuleNode.OPERABLE_NODE);
+        try {
+            firstValueNode = RuleNode.getChildNode(firstValue.trim(), RuleNode.OPERABLE_NODE);
+        } catch(ChildNodeSelectionException e) {
+            throw new InvalidRuleStructureException("Mathematical Expression Node", "Failed to find child node for '" +
+                                                    firstValue.trim() + "'. Caused by: ", e);
+
+        }
         if(firstValueNode.getEndIndex() != closestIndex - endIndex) {
-            throw new InvalidRuleStructureException(ruleContent, "Mathematical Expression Node");
+            throw new InvalidRuleStructureException("Mathematical Expression Node", "Extra characters found after validation of '"
+                                                    + firstValue.trim() + "'");
         }
 
         String secondValue = ruleContent.substring(closestIndex + 1);
         if(secondValue.isBlank()) {
-            throw new InvalidRuleStructureException(ruleContent, "Mathematical Expression Node");
+            throw new InvalidRuleStructureException("Mathematical Expression Node", "Expressions cannot end with an operator");
         }
 
         if(secondValue.charAt(0) == ' ') {
@@ -74,7 +82,12 @@ public class MathematicalExpressionNode extends ChildNode implements Rule {
             endIndex += 1;
         }
         endIndex += secondValue.length() - secondValue.trim().length();
-        secondValueNode = RuleNode.getChildNode(secondValue.trim(), RuleNode.OPERABLE_NODE);
+        try {
+            secondValueNode = RuleNode.getChildNode(secondValue.trim(), RuleNode.OPERABLE_NODE);
+        } catch(ChildNodeSelectionException e) {
+            throw new InvalidRuleStructureException("Mathematical Expression Node", "Failed to find child node for '" +
+                                                    secondValue.trim() + "'. Caused by: ", e);
+        }
 
         endIndex += firstValueNode.getEndIndex() + 1 + secondValueNode.getEndIndex();
     }

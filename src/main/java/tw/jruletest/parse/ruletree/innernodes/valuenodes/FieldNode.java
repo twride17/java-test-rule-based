@@ -2,13 +2,13 @@ package tw.jruletest.parse.ruletree.innernodes.valuenodes;
 
 import tw.jruletest.analyzers.ImportCollector;
 import tw.jruletest.analyzers.SourceClassAnalyzer;
-import tw.jruletest.exceptions.AmbiguousClassException;
-import tw.jruletest.exceptions.InvalidRuleStructureException;
-import tw.jruletest.exceptions.UnknownClassException;
+import tw.jruletest.exceptions.classanalysis.AmbiguousClassException;
+import tw.jruletest.exceptions.classanalysis.ClassAnalysisException;
+import tw.jruletest.exceptions.parsing.InvalidRuleStructureException;
+import tw.jruletest.exceptions.classanalysis.UnknownClassException;
 import tw.jruletest.files.source.SourceClass;
 import tw.jruletest.files.source.SourceField;
 import tw.jruletest.parse.Rule;
-import tw.jruletest.parse.ruletree.RuleNode;
 import tw.jruletest.parse.ruletree.innernodes.ChildNode;
 
 import java.lang.reflect.Type;
@@ -39,8 +39,6 @@ public class FieldNode extends ChildNode implements Rule {
         return className + "." + field.getName();
     }
 
-
-
     @Override
     public void validateRule(String ruleContent) throws InvalidRuleStructureException {
         String fieldCall = ruleContent;
@@ -54,13 +52,15 @@ public class FieldNode extends ChildNode implements Rule {
             if(fieldCall.charAt(fieldCall.length()-1) == ',') {
                 matcher = Pattern.compile("([A-Z][a-z0-9A-z]*)\\.([a-z][A-Z0-9a-z]*)").matcher(fieldCall.substring(0, fieldCall.length()-1));
                 if(!matcher.matches()) {
-                    throw new InvalidRuleStructureException(fieldCall, "Field Node");
+                    throw new InvalidRuleStructureException("Field Node", "Field call must comply with structure of " +
+                                                            "<class name (capital letter at start)>.<field name (lower case letter at start)>" +
+                                                            " with an optional comma at the end");
                 } else {
                     fieldCall = fieldCall.substring(0, fieldCall.length()-1);
                     nextSpaceIndex -= 1;
                 }
             } else {
-                throw new InvalidRuleStructureException(fieldCall, "Field Node");
+                throw new InvalidRuleStructureException("Field Node", "Unexpected extra characters at the end of the field name");
             }
         }
 
@@ -72,10 +72,11 @@ public class FieldNode extends ChildNode implements Rule {
             if(field != null) {
                 this.field = field;
             } else {
-                throw new InvalidRuleStructureException(fieldCall, "Field Node");
+                throw new InvalidRuleStructureException("Field Node", "Unable to find field '" + fieldCall.split("\\.")[1] +
+                                                                        "' in class: " + className);
             }
-        } catch(AmbiguousClassException | UnknownClassException e) {
-            throw new InvalidRuleStructureException(fieldCall, "Field Node");
+        } catch(ClassAnalysisException e) {
+            throw new InvalidRuleStructureException("Field Node", "Unable to identify source class. Cause: " + e.getErrorMessage());
         }
 
         if(nextSpaceIndex == -1) {

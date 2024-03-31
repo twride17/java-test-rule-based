@@ -2,9 +2,8 @@ package tw.jruletest.parse.ruletree.rootnodes;
 
 import tw.jruletest.Runner;
 import tw.jruletest.analyzers.TypeIdentifier;
-import tw.jruletest.exceptions.InvalidRuleStructureException;
+import tw.jruletest.exceptions.parsing.InvalidRuleStructureException;
 import tw.jruletest.parse.Rule;
-import tw.jruletest.parse.ruletree.RuleNode;
 import tw.jruletest.parse.ruletree.innernodes.valuenodes.ValueNode;
 import tw.jruletest.variables.VariableStore;
 
@@ -57,14 +56,12 @@ public class GetValueNode extends RootNode implements Rule {
 
     @Override
     public void validateRule(String ruleContent) throws InvalidRuleStructureException {
-        if(ruleContent.split(" ")[0].equalsIgnoreCase("get")) {
-            if(ruleContent.length() > 4) {
-                valueNode = new ValueNode();
-                valueNode.validateRule(ruleContent.substring(4));
-                endIndex = 4 + valueNode.getEndIndex();
-                return;
-            }
+        try {
+            valueNode = new ValueNode();
+            valueNode.validateRule(ruleContent);
+            endIndex = valueNode.getEndIndex();
+        } catch(InvalidRuleStructureException e) {
+            throw new InvalidRuleStructureException("Get Value Node", "Caused by:", e);
         }
-        throw new InvalidRuleStructureException(ruleContent, "Get Value Node");
     }
 }

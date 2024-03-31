@@ -1,6 +1,7 @@
 package tw.jruletest.parse.ruletree.innernodes;
 
-import tw.jruletest.exceptions.InvalidRuleStructureException;
+import tw.jruletest.exceptions.parsing.ChildNodeSelectionException;
+import tw.jruletest.exceptions.parsing.InvalidRuleStructureException;
 import tw.jruletest.parse.Parser;
 import tw.jruletest.parse.Rule;
 import tw.jruletest.parse.ruletree.RuleNode;
@@ -53,12 +54,18 @@ public class MethodArgumentNode extends RuleNode implements Rule {
 
         do {
             if(remainingRule.isEmpty()) {
-                throw new InvalidRuleStructureException(ruleContent, "Method Argument Node");
+                throw new InvalidRuleStructureException("Method Argument Node", "Found empty rule after validation of arguments in '" +ruleContent + "'");
             } else if(remainingRule.equals("and") || remainingRule.equals(",") || remainingRule.equals("and ") || remainingRule.equals(", ")) {
-                throw new InvalidRuleStructureException(ruleContent, "Method Argument Node");
+                throw new InvalidRuleStructureException("Method Argument Node", "Remaining rule after argument validation of '"
+                                                        + ruleContent.substring(0, currentEnd+1) + "' contains a connective when not expected to");
             }
 
-            ChildNode argumentNode = RuleNode.getChildNode(remainingRule, RuleNode.CHILD_NODE);
+            ChildNode argumentNode;
+            try {
+                argumentNode = RuleNode.getChildNode(remainingRule, RuleNode.CHILD_NODE);
+            } catch(ChildNodeSelectionException e) {
+                throw new InvalidRuleStructureException("Method Argument Node: ", "'" + remainingRule + "' failed because of: ", e);
+            }
             int argumentEndIndex = argumentNode.getEndIndex();
             currentEnd += argumentEndIndex;
             arguments.add(argumentNode);
@@ -77,12 +84,13 @@ public class MethodArgumentNode extends RuleNode implements Rule {
                     endIndex = currentEnd;
                     return;
                 } else {
-                    throw new InvalidRuleStructureException(ruleContent, "Method Argument Node");
+                    throw new InvalidRuleStructureException("Method Argument Node", "No valid argument connective (',' or 'and') " +
+                                                            "or valid rule connective ('in' or 'then') found after argument in: '" + remainingRule + "'");
                 }
 
-                if(remainingRule.length() == connective.length()) {
-                    throw new InvalidRuleStructureException(ruleContent, "Method Argument Node");
-                }
+//                if(remainingRule.length() == connective.length()) {
+//                    throw new InvalidRuleStructureException("Method Argument Node", "");
+//                }
 
                 remainingRule = remainingRule.substring(connective.length());
 
@@ -103,10 +111,11 @@ public class MethodArgumentNode extends RuleNode implements Rule {
                             remainingRule = remainingRule.substring(1);
                         }
                     } else {
-                        throw new InvalidRuleStructureException(ruleContent, "Method Argument Node");
+                        throw new InvalidRuleStructureException("Method Argument Node", "Expected a space after connective in: " + remainingRule + "'");
                     }
                 } catch(IndexOutOfBoundsException e) {
-                    throw new InvalidRuleStructureException(ruleContent, "Method Argument Node");
+                    throw new InvalidRuleStructureException("Method Argument Node", "Rule content after '" + ruleContent.substring(0 ,currentEnd)
+                                                                                        + "' was empty when not expected to be");
                 }
             }
         } while(!valid);

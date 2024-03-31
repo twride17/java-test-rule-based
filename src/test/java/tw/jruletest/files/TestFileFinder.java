@@ -29,8 +29,9 @@ public class TestFileFinder {
         String topPackage = "C:\\Users\\toby\\Documents\\ComputerScience\\PersonalProjects\\java-test-rule-based\\src\\";
         String mainTop = "main\\java\\tw\\jruletest";
         String testTop = "test\\java\\tw\\jruletest";
-        String[] expectedPackages = {mainTop + "\\analyzers", mainTop + "\\exceptions", mainTop + "\\expectations",
-                                    mainTop + "\\files", mainTop + "\\files\\source", mainTop + "\\files\\test", mainTop + "\\generators",
+        String[] expectedPackages = {mainTop + "\\analyzers", mainTop + "\\exceptions\\classanalysis", mainTop + "\\exceptions",
+                                    mainTop + "\\exceptions\\parsing", mainTop + "\\expectations", mainTop + "\\files",
+                                    mainTop + "\\files\\source", mainTop + "\\files\\test", mainTop + "\\generators",
                                     mainTop + "\\loggers", mainTop + "\\parse", mainTop + "\\parse\\ruletree\\innernodes\\argumentnodes",
                                     mainTop + "\\parse\\ruletree\\innernodes", mainTop + "\\parse\\ruletree\\innernodes\\expressionnodes\\booleannodes",
                                     mainTop + "\\parse\\ruletree\\innernodes\\expressionnodes\\mathematicalnodes",

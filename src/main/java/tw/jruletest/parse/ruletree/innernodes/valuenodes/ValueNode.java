@@ -1,6 +1,7 @@
 package tw.jruletest.parse.ruletree.innernodes.valuenodes;
 
-import tw.jruletest.exceptions.InvalidRuleStructureException;
+import tw.jruletest.exceptions.parsing.ChildNodeSelectionException;
+import tw.jruletest.exceptions.parsing.InvalidRuleStructureException;
 import tw.jruletest.parse.Rule;
 import tw.jruletest.parse.ruletree.RuleNode;
 import tw.jruletest.parse.ruletree.innernodes.ChildNode;
@@ -48,29 +49,51 @@ public class ValueNode extends ChildNode implements Rule {
 
     @Override
     public void validateRule(String ruleContent) throws InvalidRuleStructureException {
+        // REMOVE???
         Pattern regex = Pattern.compile("^((value|result)\\sof\\s)?(.+)");
         Matcher matcher = regex.matcher(ruleContent);
 
         int currentEnd = 0;
         String nextSegment = ruleContent;
-        if(matcher.find()) {
-            if(nextSegment.startsWith("of ") || (nextSegment.equals("of"))) {
-                throw new InvalidRuleStructureException(ruleContent, "Value Node");
-            } else if(nextSegment.startsWith("value ") || nextSegment.startsWith("result ")) {
+//        if(matcher.find()) {
+//            if(nextSegment.startsWith("of ") || (nextSegment.equals("of"))) {
+//                throw new InvalidRuleStructureException(ruleContent, "Value Node");
+//            } else if(nextSegment.startsWith("value ") || nextSegment.startsWith("result ")) {
+//                currentEnd += nextSegment.indexOf(' ') + 1;
+//                nextSegment = nextSegment.substring(nextSegment.indexOf(' ') + 1);
+//                if(!nextSegment.startsWith("of ")) {
+//                    throw new InvalidRuleStructureException(ruleContent, "Value Node");
+//                } else {
+//                    currentEnd += nextSegment.indexOf(' ') + 1;
+//                    nextSegment = nextSegment.substring(nextSegment.indexOf(' ') + 1);
+//                }
+//            } else if(nextSegment.equals("value") || nextSegment.equals("result")) {
+//                throw new InvalidRuleStructureException(ruleContent, "Value Node");
+//            }
+//        }
+
+        if(nextSegment.startsWith("of ") || (nextSegment.equals("of"))) {
+            throw new InvalidRuleStructureException("Value Node", "Keyword 'of' found at start of rule. If using phrase " +
+                                                                    "'value/result of', all of the phrase is expected");
+        } else if(nextSegment.startsWith("value ") || nextSegment.startsWith("result ")) {
+            currentEnd += nextSegment.indexOf(' ') + 1;
+            nextSegment = nextSegment.substring(nextSegment.indexOf(' ') + 1);
+            if(!nextSegment.startsWith("of ")) {
+                throw new InvalidRuleStructureException("Value Node", "Keyword 'of' expected after 'value' or 'result' but not found. " +
+                                                        "If using phrase 'value/result of', all of the phrase is expected");
+            } else {
                 currentEnd += nextSegment.indexOf(' ') + 1;
                 nextSegment = nextSegment.substring(nextSegment.indexOf(' ') + 1);
-                if(!nextSegment.startsWith("of ")) {
-                    throw new InvalidRuleStructureException(ruleContent, "Value Node");
-                } else {
-                    currentEnd += nextSegment.indexOf(' ') + 1;
-                    nextSegment = nextSegment.substring(nextSegment.indexOf(' ') + 1);
-                }
-            } else if(nextSegment.equals("value") || nextSegment.equals("result")) {
-                throw new InvalidRuleStructureException(ruleContent, "Value Node");
             }
+        } else if(nextSegment.equals("value") || nextSegment.equals("result")) {
+            throw new InvalidRuleStructureException("Value Node", "Only the keyword 'value' or 'result' was found in the remaining rule");
         }
 
-        valueSourceNode = RuleNode.getChildNode(nextSegment, RuleNode.VALUE_RETRIEVAL_NODE);
+        try {
+            valueSourceNode = RuleNode.getChildNode(nextSegment, RuleNode.VALUE_RETRIEVAL_NODE);
+        } catch(ChildNodeSelectionException e) {
+            throw new InvalidRuleStructureException("Value Node", "Failed to find valid node for rule: '" + nextSegment + "':", e);
+        }
         endIndex = currentEnd + valueSourceNode.getEndIndex();
     }
 

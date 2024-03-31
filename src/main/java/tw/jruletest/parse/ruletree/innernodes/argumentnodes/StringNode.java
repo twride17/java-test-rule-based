@@ -1,8 +1,7 @@
 package tw.jruletest.parse.ruletree.innernodes.argumentnodes;
 
-import tw.jruletest.exceptions.InvalidRuleStructureException;
+import tw.jruletest.exceptions.parsing.InvalidRuleStructureException;
 import tw.jruletest.parse.Rule;
-import tw.jruletest.parse.ruletree.RuleNode;
 import tw.jruletest.parse.ruletree.innernodes.ChildNode;
 
 import java.lang.reflect.Type;
@@ -50,12 +49,18 @@ public class StringNode extends ChildNode implements Rule {
                     stringValue = rule.substring(0, nextQuoteIndex + 1);
                     if(!stringValue.contains("\"")) {
                         endIndex = nextQuoteIndex + 1;
-                        return;
+                    } else {
+                        throw new InvalidRuleStructureException("String Node", "Rules for strings cannot contain '\"' characters");
                     }
+                } else {
+                    throw new InvalidRuleStructureException("String Node", "Rules for strings must end with a '`' character");
                 }
-            } catch(StringIndexOutOfBoundsException e) { }
+            } catch(StringIndexOutOfBoundsException e) {
+                throw new InvalidRuleStructureException("String Node", "Rules for strings must be at least two characters long");
+            }
+        } else {
+            throw new InvalidRuleStructureException("String Node", "Rules with strings must start with a '`' character");
         }
-        throw new InvalidRuleStructureException(rule, "String Node");
     }
 
     /**

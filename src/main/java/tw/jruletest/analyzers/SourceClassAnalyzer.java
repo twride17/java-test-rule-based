@@ -1,8 +1,7 @@
 package tw.jruletest.analyzers;
 
-import tw.jruletest.exceptions.AmbiguousClassException;
-import tw.jruletest.exceptions.UnidentifiedCallException;
-import tw.jruletest.exceptions.UnknownClassException;
+import tw.jruletest.exceptions.classanalysis.AmbiguousClassException;
+import tw.jruletest.exceptions.classanalysis.UnknownClassException;
 import tw.jruletest.files.source.SourceClass;
 
 import java.util.HashMap;

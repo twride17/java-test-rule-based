@@ -4,10 +4,9 @@ import org.junit.*;
 import tw.jruletest.Runner;
 import tw.jruletest.analyzers.SourceClassAnalyzer;
 import tw.jruletest.exceptions.CompilationFailureException;
-import tw.jruletest.exceptions.InvalidRuleStructureException;
+import tw.jruletest.exceptions.parsing.InvalidRuleStructureException;
 import tw.jruletest.files.FileFinder;
 import tw.jruletest.files.source.SourceClass;
-import tw.jruletest.parse.ruletree.rootnodes.GetValueNode;
 import tw.jruletest.variables.VariableStore;
 import tw.jruletest.virtualmachine.JavaClassLoader;
 
@@ -40,7 +39,7 @@ public class TestGetValueNode {
 
     @Test
     public void testGetValueRuleWithKeyword() {
-        String rule = "Get value of xValue";
+        String rule = "value of xValue";
         node = new GetValueNode();
         try {
             node.validateRule(rule);
@@ -52,22 +51,12 @@ public class TestGetValueNode {
     }
 
     @Test
-    public void testGetValueRuleWithNoKeyword() {
-        String rule = "value of xValue";
-        node = new GetValueNode();
-        try {
-            node.validateRule(rule);
-            Assert.fail(rule + ": passed when should fail");
-        } catch(InvalidRuleStructureException e) { }
-    }
-
-    @Test
     public void testValidGetValueRuleWithExtraRule() {
-        String rule = "Get value of Class.method and get value of y";
+        String rule = "value of Class.method and get value of y";
         node = new GetValueNode();
         try {
             node.validateRule(rule);
-            Assert.assertEquals(25, node.getEndIndex());
+            Assert.assertEquals(21, node.getEndIndex());
         } catch(InvalidRuleStructureException e) {
             System.out.println(rule);
             Assert.fail("Failed");
@@ -77,8 +66,8 @@ public class TestGetValueNode {
     /* Testing code generation for Get Value node */
     @Test
     public void testCodeGeneration() {
-        String[] rules = {"Get value of xValue", "Get Class.method", "Get value of Example.x and store in y",
-                            "Get Class.method2 with arguments: `Hello world`, 10 + -0.89f is equal to 90f * 0.5f / 2, 100000.01f"};
+        String[] rules = {"value of xValue", "Class.method", "value of Example.x and store in y",
+                            "Class.method2 with arguments: `Hello world`, 10 + -0.89f is equal to 90f * 0.5f / 2, 100000.01f"};
 
         String[] expectedStrings = {"int xValue1 = xValue;", "int methodValue = Class.method();", "int xValue2 = Example.x;",
                                     "int method2Value = Class.method2(\"Hello world\", ((10 + -0.89f) == (90f * (0.5f / 2))), 100000.01f);"};

@@ -4,10 +4,9 @@ import org.junit.*;
 import tw.jruletest.Runner;
 import tw.jruletest.analyzers.SourceClassAnalyzer;
 import tw.jruletest.exceptions.CompilationFailureException;
-import tw.jruletest.exceptions.InvalidRuleStructureException;
+import tw.jruletest.exceptions.parsing.InvalidRuleStructureException;
 import tw.jruletest.files.FileFinder;
 import tw.jruletest.files.source.SourceClass;
-import tw.jruletest.parse.ruletree.rootnodes.StoreValueNode;
 import tw.jruletest.variables.VariableStore;
 import tw.jruletest.virtualmachine.JavaClassLoader;
 
@@ -42,10 +41,10 @@ public class TestStoreValueNode {
 
     @Test
     public void testStoreMethodResultInVariable() {
-        String[] rules = {"Store value of Class.method in xValue", "store value of Class.isTrue: false in xValue1",
-                            "result of Class.method2 with: `Hello`, true and 0.5f in value", "store result of Class.isTrue with arguments: not false in test"};
-        node = new StoreValueNode();
+        String[] rules = {"value of Class.method in xValue", "value of Class.isTrue: false in xValue1",
+                            "result of Class.method2 with: `Hello`, true and 0.5f in value", "result of Class.isTrue with arguments: not false in test"};
         for(String rule: rules) {
+            node = new StoreValueNode();
             try {
                 node.validateRule(rule);
                 Assert.assertEquals(rule.length(), node.getEndIndex());
@@ -57,9 +56,9 @@ public class TestStoreValueNode {
 
     @Test
     public void testStoreConstantInVariable() {
-        String[] rules = {"store 109.5f in test", "0.5f in test", "Store `Hello` in test", "true in test"};
-        node = new StoreValueNode();
+        String[] rules = {"109.5f in test", "0.5f in test", "`Hello` in test", "true in test"};
         for(String rule: rules) {
+            node = new StoreValueNode();
             try {
                 node.validateRule(rule);
                 Assert.assertEquals(rule.length(), node.getEndIndex());
@@ -71,9 +70,9 @@ public class TestStoreValueNode {
 
     @Test
     public void testStoreVariableValueInVariable() {
-        String[] rules = {"store value of xValue in test", "store xValue in testValue", "store x in y", "x in xValue"};
-        node = new StoreValueNode();
+        String[] rules = {"value of xValue in test", "xValue in testValue", "x in y", "x in xValue"};
         for(String rule: rules) {
+            node = new StoreValueNode();
             try {
                 node.validateRule(rule);
                 Assert.assertEquals(rule.length(), node.getEndIndex());
@@ -85,9 +84,9 @@ public class TestStoreValueNode {
 
     @Test
     public void testStoreValueInConstantResult() {
-        String[] rules = {"store x in 1", "`hello` in 123f", "store 1 in true", "Store true in false", "test in 100"};
-        node = new StoreValueNode();
+        String[] rules = {"x in 1", "`hello` in 123f", "1 in true", "true in false", "test in 100"};
         for(String rule: rules) {
+            node = new StoreValueNode();
             try {
                 node.validateRule(rule);
                 Assert.fail("Failed: '" + rule + "' passed but should have failed");
@@ -97,9 +96,9 @@ public class TestStoreValueNode {
 
     @Test
     public void testStoreValueInMethodResult() {
-        String[] rules = {"store x in Class.method", "`hello` in Class.method with: x", "store Class.method in Class.method2"};
-        node = new StoreValueNode();
+        String[] rules = {"x in Class.method", "`hello` in Class.method with: x", "Class.method in Class.method2"};
         for(String rule: rules) {
+            node = new StoreValueNode();
             try {
                 node.validateRule(rule);
                 Assert.fail("Failed: '" + rule + "' passed but should have failed");
@@ -109,11 +108,11 @@ public class TestStoreValueNode {
 
     @Test
     public void testStoreValueRulesPlusExtraEnding() {
-        String[] rules = {"Store 1 in x and expect", "store Class.method in test, expect", "Class.isTrue: true in dummy and expect",
-                            "store `New string` in xValue and store", "Class.method2 with arguments: `1`, 2 is equal to 3 and 3.5f in test and expect"};
-        int[] indices = {12, 26, 27, 28, 67};
-        node = new StoreValueNode();
+        String[] rules = {"1 in x and expect", "Class.method in test, expect", "Class.isTrue: true in dummy and expect",
+                            "`New string` in xValue and store", "Class.method2 with arguments: `1`, 2 is equal to 3 and 3.5f in test and expect"};
+        int[] indices = {6, 20, 27, 22, 67};
         for(int i = 0; i < 5; i++) {
+            node = new StoreValueNode();
             try {
                 node.validateRule(rules[i]);
                 Assert.assertEquals(indices[i], node.getEndIndex());
@@ -125,10 +124,11 @@ public class TestStoreValueNode {
 
     @Test
     public void testInvalidRuleStructures() {
-        String[] rules = {"store", " store", "store x", "store in x", "in test", "test", "store value of Class.method:",
-                            "store `hello in y", "store .67f in y", "store hello' in z", "store `hello` in 1value"};
-        node = new StoreValueNode();
+        String[] rules = {"store", "x", "store in x", "in test", "test", "store value of Class.method in z",
+                            "`hello in y", ".67f in y", "hello' in z", "`hello` in 1value"};
         for(String rule: rules) {
+            node = new StoreValueNode();
+            System.out.println(rule);
             try {
                 node.validateRule(rule);
                 Assert.fail("Failed: '" + rule + "' passed but should have failed");
@@ -139,10 +139,10 @@ public class TestStoreValueNode {
     /* Testing code generation for Store Value node */
     @Test
     public void testCodeGeneration() {
-        String[] rules = {"Store value of Class.method in xValue", "result of Example.concat with: `Hello` and `World` in value",
-                            "store result of Class.isTrue with arguments: not false in test", "store 109.5f in test1", "Store `Hello` in test2",
-                            "true in test", "store value of xValue in test3", "store z in y", "store Class.method in test, expect",
-                            "Class.method2 with arguments: `1`, 2 is equal to 3 and 3.5f in test and expect", "Store 1 in x and expect"};
+        String[] rules = {"value of Class.method in xValue", "result of Example.concat with: `Hello` and `World` in value",
+                            "result of Class.isTrue with arguments: not false in test", "109.5f in test1", "`Hello` in test2",
+                            "true in test", "value of xValue in test3", "z in y", "Class.method in test, expect",
+                            "Class.method2 with arguments: `1`, 2 is equal to 3 and 3.5f in test and expect", "1 in x and expect"};
 
         String[] expectedStrings = {"xValue = Class.method();", "String value = Example.concat(\"Hello\", \"World\");", "boolean test = Class.isTrue(!false);",
                                     "float test1 = 109.5f;", "String test2 = \"Hello\";", "test = true;", "int test3 = xValue;",

@@ -1,7 +1,8 @@
 package tw.jruletest.parse.ruletree.rootnodes;
 
 import tw.jruletest.analyzers.ImportCollector;
-import tw.jruletest.exceptions.InvalidRuleStructureException;
+import tw.jruletest.exceptions.parsing.ChildNodeSelectionException;
+import tw.jruletest.exceptions.parsing.InvalidRuleStructureException;
 import tw.jruletest.parse.Rule;
 import tw.jruletest.parse.ruletree.RuleNode;
 
@@ -14,15 +15,13 @@ import tw.jruletest.parse.ruletree.RuleNode;
 
 public class ExpectationNode extends RootNode implements Rule {
 
-    private int keywordLength = 0;
+    private static final String[] POSSIBLE_COMPARATORS = {" equal "};
 
     private RuleNode expectedValueTree;
     private RuleNode actualValueTree;
     private String comparator;
 
     private boolean negated = false;
-
-    private static final String[] POSSIBLE_COMPARATORS = {" equal "};
 
     /**
      * Implementation of code generation from TreeNode interface.
@@ -60,18 +59,11 @@ public class ExpectationNode extends RootNode implements Rule {
 
     @Override
     public void validateRule(String ruleContent) throws InvalidRuleStructureException  {
-        String remainingRule = ruleContent;
-        // Throw exception if not???
-        if(ruleContent.toLowerCase().startsWith("expect ")) {
-            keywordLength = 7;
-        }
-        remainingRule = remainingRule.substring(keywordLength);
-
-        int bestComparatorIndex = ruleContent.length();
+        int bestComparatorIndex = 0;
         String comparatorPhrase = "";
         int comparingPhraseIndex = -1;
         for(String comparator: POSSIBLE_COMPARATORS) {
-            String ruleEnding = remainingRule;
+            String ruleEnding = ruleContent;
             boolean finishedSearch = false;
             while(!finishedSearch) {
                 int currentIndex = ruleEnding.indexOf(comparator);
@@ -87,35 +79,48 @@ public class ExpectationNode extends RootNode implements Rule {
                     }
                     currentComparatorPhrase += comparator;
 
-                    comparingPhraseIndex = remainingRule.indexOf(currentComparatorPhrase);
+                    comparingPhraseIndex = ruleEnding.indexOf(currentComparatorPhrase);
                     if (comparingPhraseIndex != -1) {
                         this.comparator = comparator;
                         comparatorPhrase = currentComparatorPhrase;
-                        bestComparatorIndex = comparingPhraseIndex + currentComparatorPhrase.length();
+                        bestComparatorIndex += comparingPhraseIndex;
                         finishedSearch = true;
                     } else {
                         ruleEnding = ruleEnding.substring(currentIndex + comparator.length());
+                        bestComparatorIndex += currentIndex + comparator.length();
+                        String x = ruleContent.substring(0, bestComparatorIndex);
+                        System.out.println(x);
                     }
                 }
             }
         }
 
+        int firstArgumentIndex;
         try {
-            String expectedSegment = remainingRule.substring(0, comparingPhraseIndex);
-            String actualSegment = remainingRule.substring(comparingPhraseIndex + comparatorPhrase.length());
-
+            System.out.println(bestComparatorIndex);
+            String expectedSegment = ruleContent.substring(0, bestComparatorIndex);
             expectedValueTree = RuleNode.getChildNode(expectedSegment, RuleNode.CHILD_NODE);
-            actualValueTree = RuleNode.getChildNode(actualSegment, RuleNode.CHILD_NODE);
-            int firstArgumentIndex = expectedValueTree.getEndIndex();
-            int secondArgumentIndex = actualValueTree.getEndIndex();
-
-            if (firstArgumentIndex != comparingPhraseIndex) {
-                throw new InvalidRuleStructureException(remainingRule, "Expectation Node");
-            } else {
-                endIndex = keywordLength + bestComparatorIndex + secondArgumentIndex;
+            firstArgumentIndex = expectedValueTree.getEndIndex();
+            if (firstArgumentIndex != bestComparatorIndex) {
+                throw new InvalidRuleStructureException("Expectation Node",
+                                                        "Length of validated first argument doesn't match location of " +
+                                                                "found comparator. Check rule for unexpected extra characters");
             }
+        } catch(ChildNodeSelectionException e) {
+            throw new InvalidRuleStructureException("Expectation Node - Expected Argument", "Caused by:", e);
         } catch(StringIndexOutOfBoundsException e) {
-            throw new InvalidRuleStructureException(ruleContent, "Expectation Node");
+            throw new InvalidRuleStructureException("Expectation Node - Expected Argument",
+                                                    "Could not find any of the valid comparators: equal");
         }
+
+        int secondArgumentIndex;
+        try {
+            String actualSegment = ruleContent.substring(bestComparatorIndex + comparatorPhrase.length());
+            actualValueTree = RuleNode.getChildNode(actualSegment, RuleNode.CHILD_NODE);
+            secondArgumentIndex = actualValueTree.getEndIndex();
+        } catch(ChildNodeSelectionException e) {
+            throw new InvalidRuleStructureException("Expectation Node - Actual Argument", "Caused by:", e);
+        }
+        endIndex = bestComparatorIndex + comparatorPhrase.length() + secondArgumentIndex;
     }
 }

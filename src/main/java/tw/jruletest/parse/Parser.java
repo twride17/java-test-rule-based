@@ -1,8 +1,8 @@
 package tw.jruletest.parse;
 
-import tw.jruletest.exceptions.InvalidRuleStructureException;
-import tw.jruletest.exceptions.ParserFailureException;
-import tw.jruletest.exceptions.UnparsableRuleException;
+import tw.jruletest.exceptions.parsing.InvalidRuleStructureException;
+import tw.jruletest.exceptions.parsing.ParserFailureException;
+import tw.jruletest.exceptions.parsing.UnparsableRuleException;
 import tw.jruletest.parse.ruletree.RuleNode;
 import tw.jruletest.parse.ruletree.rootnodes.*;
 
@@ -81,7 +81,8 @@ public class Parser {
     }
 
     /**
-     * Breaks up the provided rule into separate rules and generates the rule tree required to validate the rule and generate the corresponding code.
+     * Breaks up the provided rule into separate rules and generates the rule tree required to validate the rule and
+     * generate the corresponding code.
      *
      * @param rule the rule to segment and generate the rule tree for
      *
@@ -111,10 +112,12 @@ public class Parser {
                 remainingRule = remainingRule.substring(connective.length()).trim();
 
                 if(remainingRule.isEmpty()) {
-                    throw new UnparsableRuleException(remainingRule);
+                    throw new UnparsableRuleException(rule,
+                            new InvalidRuleStructureException("Parser", "Rules cannot end with a connective"));
                 }
             } else if(!remainingRule.isEmpty()) {
-                throw new UnparsableRuleException(remainingRule);
+                throw new UnparsableRuleException(rule,
+                        new InvalidRuleStructureException("Parser", "Rules must have a connective between rules"));
             }
         } while(!remainingRule.isEmpty());
 
@@ -138,14 +141,15 @@ public class Parser {
                     node = new CallMethodNode();
                     break;
                 default:
-                    throw new UnparsableRuleException(rule);
+                    throw new UnparsableRuleException(rule,
+                            new InvalidRuleStructureException("Parser",
+                                    "Rule did not start with a valid keyword: Call, Get, Store, Expect"));
             }
-            ((Rule)node).validateRule(rule);
+            ((Rule) node).validateRule(rule.substring(startCommand.length()).trim());
             rules.add(node);
-            return node.getEndIndex();
+            return startCommand.length() + 1 + node.getEndIndex();
         } catch(InvalidRuleStructureException e) {
-            e.printError();
-            throw new UnparsableRuleException(rule);
+            throw new UnparsableRuleException(rule, e);
         }
     }
 }

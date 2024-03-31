@@ -1,9 +1,8 @@
 package tw.jruletest.parse.ruletree.innernodes.valuenodes;
 
 import tw.jruletest.Runner;
-import tw.jruletest.exceptions.InvalidRuleStructureException;
+import tw.jruletest.exceptions.parsing.InvalidRuleStructureException;
 import tw.jruletest.parse.Rule;
-import tw.jruletest.parse.ruletree.RuleNode;
 import tw.jruletest.parse.ruletree.innernodes.ChildNode;
 import tw.jruletest.variables.Variable;
 import tw.jruletest.variables.VariableStore;
@@ -69,13 +68,15 @@ public class VariableNode extends ChildNode implements Rule {
     public int validateStructure(String rule) throws InvalidRuleStructureException {
         Matcher matcher = Pattern.compile("^([a-z][A-Z0-9a-z]*)").matcher(rule);
         if(matcher.find()) {
-            if(!((matcher.end() != rule.length()) && (rule.charAt(matcher.end()) != ' ') && (rule.charAt(matcher.end()) != ','))) {
+            if((matcher.end() == rule.length()) || (rule.charAt(matcher.end()) == ' ') || (rule.charAt(matcher.end()) == ',')) {
                 if(!matcher.group().equals("true") && !matcher.group().equals("false")) {
                     return matcher.end();
                 }
+                throw new InvalidRuleStructureException("Variable Node", "Boolean values cannot be used as variables");
             }
+            throw new InvalidRuleStructureException("Variable Node", "Expected remaining rule after variable name to be empty or start with a space or comma");
         }
-        throw new InvalidRuleStructureException(rule, "Variable Node");
+        throw new InvalidRuleStructureException("Variable Node", "Variable names must start with a lower case letter and then only contain alphanumeric characters");
     }
 
     /**

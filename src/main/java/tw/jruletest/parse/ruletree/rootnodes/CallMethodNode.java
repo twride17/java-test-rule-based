@@ -1,8 +1,7 @@
 package tw.jruletest.parse.ruletree.rootnodes;
 
-import tw.jruletest.exceptions.InvalidRuleStructureException;
+import tw.jruletest.exceptions.parsing.InvalidRuleStructureException;
 import tw.jruletest.parse.Rule;
-import tw.jruletest.parse.ruletree.RuleNode;
 import tw.jruletest.parse.ruletree.innernodes.valuenodes.MethodNode;
 
 /**
@@ -41,12 +40,12 @@ public class CallMethodNode extends RootNode implements Rule {
 
     @Override
     public void validateRule(String ruleContent) throws InvalidRuleStructureException {
-        if(ruleContent.toLowerCase().startsWith("call ")) {
+        try {
             methodNode = new MethodNode();
-            methodNode.validateRule(ruleContent.substring(5));
-            endIndex = 5 + methodNode.getEndIndex();
-        } else {
-            throw new InvalidRuleStructureException(ruleContent, "Method Call Node");
+            methodNode.validateRule(ruleContent);
+            endIndex = methodNode.getEndIndex();
+        } catch(InvalidRuleStructureException e) {
+            throw new InvalidRuleStructureException("Call Method Node", "Caused by:", e);
         }
     }
 }

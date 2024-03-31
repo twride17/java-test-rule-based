@@ -1,4 +1,4 @@
-package tw.jruletest.exceptions;
+package tw.jruletest.exceptions.classanalysis;
 
 /**
  * Exception to be thrown when a specific class's member cannot be found
@@ -6,7 +6,7 @@ package tw.jruletest.exceptions;
  * @author Toby Wride
  * */
 
-public class UnknownClassException extends Exception {
+public class UnknownClassException extends ClassAnalysisException {
 
     /**
      * Instance field for the name of the member that could not be idnetified
@@ -35,10 +35,10 @@ public class UnknownClassException extends Exception {
     }
 
     /**
-     * Prints out an error message stating that the field or method is not known
+     * Returns an error message stating that the field or method is not known
      */
 
-    public void printError() {
-        System.out.println("Unknown class: " + cls);
+    public String getErrorMessage() {
+        return "Unknown class: " + cls;
     }
 }

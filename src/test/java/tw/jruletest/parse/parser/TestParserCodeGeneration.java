@@ -4,7 +4,7 @@ import org.junit.*;
 import tw.jruletest.Runner;
 import tw.jruletest.analyzers.SourceClassAnalyzer;
 import tw.jruletest.exceptions.CompilationFailureException;
-import tw.jruletest.exceptions.ParserFailureException;
+import tw.jruletest.exceptions.parsing.ParserFailureException;
 import tw.jruletest.files.FileFinder;
 import tw.jruletest.files.source.SourceClass;
 import tw.jruletest.parse.Parser;

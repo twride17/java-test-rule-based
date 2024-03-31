@@ -1,8 +1,7 @@
 package tw.jruletest.parse.ruletree.innernodes.argumentnodes;
 
-import tw.jruletest.exceptions.InvalidRuleStructureException;
+import tw.jruletest.exceptions.parsing.InvalidRuleStructureException;
 import tw.jruletest.parse.Rule;
-import tw.jruletest.parse.ruletree.RuleNode;
 import tw.jruletest.parse.ruletree.innernodes.ChildNode;
 
 import java.lang.reflect.Type;
@@ -51,11 +50,11 @@ public class ConstantNode extends ChildNode implements Rule {
         Matcher matcher = Pattern.compile("^((-?)([0-9]+)((\\.[0-9]+)?)(f?))").matcher(rule);
         int endIndex;
         if(matcher.find()) {
-            if(!(!matcher.group().equals(rule) && (rule.charAt(matcher.end()) != ' ') && (rule.charAt(matcher.end()) != ','))) {
+            if(matcher.group().equals(rule) || (rule.charAt(matcher.end()) == ' ') || (rule.charAt(matcher.end()) == ',')) {
                 constantString = matcher.group();
                 endIndex = matcher.end();
             } else {
-                throw new InvalidRuleStructureException(rule, "Constant Node");
+                throw new InvalidRuleStructureException("Constant Node", "'" + matcher.group() + "' should contain a space or comma at the end");
             }
         } else if(rule.startsWith("true") & !((rule.length() > 4) && (rule.charAt(4) != ' ') && (rule.charAt(4) != ','))) {
             constantString = "true";
@@ -64,14 +63,15 @@ public class ConstantNode extends ChildNode implements Rule {
             constantString = "false";
             endIndex = 5;
         } else {
-            throw new InvalidRuleStructureException(rule, "Constant Node");
+            throw new InvalidRuleStructureException("Constant Node", "Could not identify constant value. Expected constants " +
+                                                                        "are integers, doubles, floats, chars or booleans");
         }
 
         type = findType();
         if(type != null) {
             this.endIndex = endIndex;
         } else {
-            throw new InvalidRuleStructureException(rule, "Constant Node");
+            throw new InvalidRuleStructureException("Constant Node", "Failed to identify type of '" + constantString + "'");
         }
     }
 

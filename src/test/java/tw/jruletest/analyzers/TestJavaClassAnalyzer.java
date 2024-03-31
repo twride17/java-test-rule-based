@@ -2,10 +2,9 @@ package tw.jruletest.analyzers;
 
 import org.junit.*;
 import tw.jruletest.Runner;
-import tw.jruletest.exceptions.AmbiguousClassException;
+import tw.jruletest.exceptions.classanalysis.AmbiguousClassException;
 import tw.jruletest.exceptions.CompilationFailureException;
-import tw.jruletest.exceptions.UnidentifiedCallException;
-import tw.jruletest.exceptions.UnknownClassException;
+import tw.jruletest.exceptions.classanalysis.UnknownClassException;
 import tw.jruletest.files.FileFinder;
 import tw.jruletest.files.source.SourceClass;
 import tw.jruletest.virtualmachine.JavaClassLoader;

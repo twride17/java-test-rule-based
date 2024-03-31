@@ -1,6 +1,6 @@
 package tw.jruletest.parse;
 
-import tw.jruletest.exceptions.InvalidRuleStructureException;
+import tw.jruletest.exceptions.parsing.InvalidRuleStructureException;
 
 public interface Rule {
 

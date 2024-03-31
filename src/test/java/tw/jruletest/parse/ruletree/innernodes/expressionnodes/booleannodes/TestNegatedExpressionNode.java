@@ -2,7 +2,7 @@ package tw.jruletest.parse.ruletree.innernodes.expressionnodes.booleannodes;
 
 import org.junit.Assert;
 import org.junit.Test;
-import tw.jruletest.exceptions.InvalidRuleStructureException;
+import tw.jruletest.exceptions.parsing.InvalidRuleStructureException;
 
 public class TestNegatedExpressionNode {
 

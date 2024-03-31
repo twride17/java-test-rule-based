@@ -4,10 +4,9 @@ import org.junit.*;
 import tw.jruletest.Runner;
 import tw.jruletest.analyzers.SourceClassAnalyzer;
 import tw.jruletest.exceptions.CompilationFailureException;
-import tw.jruletest.exceptions.InvalidRuleStructureException;
+import tw.jruletest.exceptions.parsing.InvalidRuleStructureException;
 import tw.jruletest.files.FileFinder;
 import tw.jruletest.files.source.SourceClass;
-import tw.jruletest.parse.ruletree.rootnodes.ExpectationNode;
 import tw.jruletest.variables.VariableStore;
 import tw.jruletest.virtualmachine.JavaClassLoader;
 
@@ -43,13 +42,13 @@ public class TestExpectationNode {
 
     @Test
     public void testIntegerValueAsActual() {
-        String rule = "expect x to equal 1";
+        String rule = "x to equal 1";
         node = new ExpectationNode();
         try {
             node.validateRule(rule);
             Assert.assertEquals(rule.length(), node.getEndIndex());
         } catch(InvalidRuleStructureException e) {
-            System.out.println(rule);
+            System.out.println(e.getErrorMessage());
             Assert.fail("Failed");
         }
     }
@@ -62,20 +61,20 @@ public class TestExpectationNode {
             node.validateRule(rule);
             Assert.assertEquals(rule.length(), node.getEndIndex());
         } catch(InvalidRuleStructureException e) {
-            System.out.println(rule);
+            System.out.println(e.getErrorMessage());
             Assert.fail("Failed");
         }
     }
 
     @Test
     public void testFloatValueAsActual() {
-        String rule = "expect xValue to equal -11.5f";
+        String rule = "xValue to equal -11.5f";
         node = new ExpectationNode();
         try {
             node.validateRule(rule);
             Assert.assertEquals(rule.length(), node.getEndIndex());
         } catch(InvalidRuleStructureException e) {
-            System.out.println(rule);
+            System.out.println(e.getErrorMessage());
             Assert.fail("Failed");
         }
     }
@@ -88,59 +87,59 @@ public class TestExpectationNode {
             node.validateRule(rule);
             Assert.assertEquals(rule.length(), node.getEndIndex());
         } catch(InvalidRuleStructureException e) {
-            System.out.println(rule);
+            System.out.println(e.getErrorMessage());
             Assert.fail("Failed");
         }
     }
 
     @Test
     public void testStringValueAsActual() {
-        String rule = "expect x to not equal `Hello World`";
+        String rule = "x to not equal `Hello World`";
         node = new ExpectationNode();
         try {
             node.validateRule(rule);
             Assert.assertEquals(rule.length(), node.getEndIndex());
         } catch(InvalidRuleStructureException e) {
-            System.out.println(rule);
+            System.out.println(e.getErrorMessage());
             Assert.fail("Failed");
         }
     }
 
     @Test
     public void testIntegerValueAsExpected() {
-        String rule = "expect 1 to equal x";
+        String rule = "1 to equal x";
         node = new ExpectationNode();
         try {
             node.validateRule(rule);
             Assert.assertEquals(rule.length(), node.getEndIndex());
         } catch(InvalidRuleStructureException e) {
-            System.out.println(rule);
+            System.out.println(e.getErrorMessage());
             Assert.fail("Failed");
         }
     }
 
     @Test
     public void testDoubleValueAsExpected() {
-        String rule = "expect -11.567 to not equal xValue";
+        String rule = "-11.567 to not equal xValue";
         node = new ExpectationNode();
         try {
             node.validateRule(rule);
             Assert.assertEquals(rule.length(), node.getEndIndex());
         } catch(InvalidRuleStructureException e) {
-            System.out.println(rule);
+            System.out.println(e.getErrorMessage());
             Assert.fail("Failed");
         }
     }
 
     @Test
     public void testFloatValueAsExpected() {
-        String rule = "expect -11.5f to equal xValue";
+        String rule = "-11.5f to equal xValue";
         node = new ExpectationNode();
         try {
             node.validateRule(rule);
             Assert.assertEquals(rule.length(), node.getEndIndex());
         } catch(InvalidRuleStructureException e) {
-            System.out.println(rule);
+            System.out.println(e.getErrorMessage());
             Assert.fail("Failed");
         }
     }
@@ -153,66 +152,66 @@ public class TestExpectationNode {
             node.validateRule(rule);
             Assert.assertEquals(rule.length(), node.getEndIndex());
         } catch(InvalidRuleStructureException e) {
-            System.out.println(rule);
+            System.out.println(e.getErrorMessage());
             Assert.fail("Failed");
         }
     }
 
     @Test
     public void testStringValueAsExpected() {
-        String rule = "expect `Hello World` to not equal xValue";
+        String rule = "`Hello World` to not equal xValue";
         node = new ExpectationNode();
         try {
             node.validateRule(rule);
             Assert.assertEquals(rule.length(), node.getEndIndex());
         } catch(InvalidRuleStructureException e) {
-            System.out.println(rule);
+            System.out.println(e.getErrorMessage());
             Assert.fail("Failed");
         }
     }
 
     @Test
     public void testMethodReturnValueAsExpected() {
-        String rule = "expect Class.method2: `String`, Class.method is less than or equal to 12 and -0.9f to not equal -98f";
+        String rule = "Class.method2: `String`, Class.method is less than or equal to 12 and -0.9f to not equal -98f";
         node = new ExpectationNode();
         try {
             node.validateRule(rule);
             Assert.assertEquals(rule.length(), node.getEndIndex());
         } catch(InvalidRuleStructureException e) {
-            System.out.println(rule);
+            System.out.println(e.getErrorMessage());
             Assert.fail("Failed");
         }
     }
 
     @Test
     public void testMethodReturnValueAsActual() {
-        String rule = "Expect 8765.5678 to equal value of Class.method";
+        String rule = "8765.5678 to equal value of Class.method";
         node = new ExpectationNode();
         try {
             node.validateRule(rule);
             Assert.assertEquals(rule.length(), node.getEndIndex());
         } catch(InvalidRuleStructureException e) {
-            System.out.println(rule);
+            System.out.println(e.getErrorMessage());
             Assert.fail("Failed");
         }
     }
 
     @Test
     public void testValidExpectationPlusExtraEndRule() {
-        String rule = "Expect Example.x to equal value of Class.method and expect...";
+        String rule = "Example.x to equal value of Class.method and expect...";
         node = new ExpectationNode();
         try {
             node.validateRule(rule);
-            Assert.assertEquals(47, node.getEndIndex());
+            Assert.assertEquals(40, node.getEndIndex());
         } catch(InvalidRuleStructureException e) {
-            System.out.println(rule);
+            System.out.println(e.getErrorMessage());
             Assert.fail("Failed");
         }
     }
 
     @Test
     public void testInvalidRules() {
-        String[] rules = {"expect value", "expect value equals 0", "expect value to 4", "expect class.method: to equal 6",
+        String[] rules = {"expect value", "value equals 0", "value to 4", "class.method: to equal 6",
                             "value of Class.method with arguments: `Hello World` to equal .5f", "expect Class.method: 5, and to equal 5"};
         node = new ExpectationNode();
         for(String rule: rules) {
@@ -226,11 +225,11 @@ public class TestExpectationNode {
     /* Testing code generation for Expectation node */
     @Test
     public void testCodeGeneration() {
-        String[] rules = {"expect Example.x to equal 1", "xValue to equal -11.567", "expect xValue to equal -11.5f", "xValue to equal true",
-                            "expect xValue to not equal `Hello World`", "expect 1 to equal x", "expect -11.567 to not equal xValue",
-                            "expect -11.5f to equal xValue", "true to not equal x", "expect `Hello World` to not equal xValue",
-                            "expect Example.m2: `String`, 5+ 6 and -89.9f - 89 to not equal -98f", "Expect 8765.5678 to equal value of Class.method",
-                            "Expect -4501.2345f to equal value of Class.example + value of Class.method2: `Hello`, x is equal to xValue or x is greater than -1 and 50f"};
+        String[] rules = {"Example.x to equal 1", "xValue to equal -11.567", "xValue to equal -11.5f", "xValue to equal true",
+                            "xValue to not equal `Hello World`", "1 to equal x", "-11.567 to not equal xValue",
+                            "-11.5f to equal xValue", "true to not equal x", "`Hello World` to not equal xValue",
+                            "Example.m2: `String`, 5+ 6 and -89.9f - 89 to not equal -98f", "8765.5678 to equal value of Class.method",
+                            "-4501.2345f to equal value of Class.example + value of Class.method2: `Hello`, x is equal to xValue or x is greater than -1 and 50f"};
 
         String[] expectedStrings = {"Expectations.expect(Example.x).toEqual(1);", "Expectations.expect(xValue).toEqual(-11.567);",
                                     "Expectations.expect(xValue).toEqual(-11.5f);", "Expectations.expect(xValue).toEqual(true);",

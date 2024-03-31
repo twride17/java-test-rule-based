@@ -2,9 +2,11 @@ package tw.jruletest.parse.ruletree.innernodes.valuenodes;
 
 import tw.jruletest.analyzers.ImportCollector;
 import tw.jruletest.analyzers.SourceClassAnalyzer;
-import tw.jruletest.exceptions.AmbiguousClassException;
-import tw.jruletest.exceptions.InvalidRuleStructureException;
-import tw.jruletest.exceptions.UnknownClassException;
+import tw.jruletest.analyzers.TypeIdentifier;
+import tw.jruletest.exceptions.classanalysis.AmbiguousClassException;
+import tw.jruletest.exceptions.classanalysis.ClassAnalysisException;
+import tw.jruletest.exceptions.parsing.InvalidRuleStructureException;
+import tw.jruletest.exceptions.classanalysis.UnknownClassException;
 import tw.jruletest.files.source.SourceClass;
 import tw.jruletest.files.source.SourceMethod;
 import tw.jruletest.parse.Rule;
@@ -90,19 +92,17 @@ public class MethodNode extends ChildNode implements Rule {
 
         Matcher matcher = Pattern.compile("([A-Z][a-z0-9A-z]*)\\.([a-z][A-Z0-9a-z]*)").matcher(methodCall);
         if (!matcher.matches()) {
-            throw new InvalidRuleStructureException(methodCall, "Method Node");
+            throw new InvalidRuleStructureException("Method Node", "Method call does not have correct structure for method call");
         } else {
             methodName = methodCall;
         }
-
-        String[] argumentList = {};
 
         if (colonIndex == -1) {
             int currentEnd = methodCallStart + methodCall.length();
             if (currentEnd != ruleContent.length()) {
                 String remainingRule = ruleContent.substring(currentEnd);
                 if (!remainingRule.startsWith(" and ") && !remainingRule.startsWith(" in ") && !remainingRule.startsWith(", ") && !remainingRule.startsWith(" then ")) {
-                    throw new InvalidRuleStructureException(ruleContent, "Method Node");
+                    throw new InvalidRuleStructureException("Method Node", "Expected connective after call if no arguments given (ie: colon missing)");
                 }
             }
             endIndex = methodCallStart + methodCall.length();
@@ -111,38 +111,39 @@ public class MethodNode extends ChildNode implements Rule {
             String middleWords = ruleContent.substring(methodCallStart + methodCall.length(), colonIndex);
             if (!middleWords.isEmpty()) {
                 if (middleWords.trim().isEmpty()) {
-                    throw new InvalidRuleStructureException(ruleContent, "Method Node");
+                    throw new InvalidRuleStructureException("Method Node", "Superfluous space(s) after colon and before first argument");
                 } else {
                     String firstWord = middleWords.trim().split(" ")[0];
                     if (firstWord.equals(",") || firstWord.equals("and") || firstWord.equals("in") || firstWord.equals("then")) {
                         endIndex = methodCallStart + methodCall.length();
                         colonForDifferentMethod = true;
                     } else if (!(middleWords.equals(" with arguments") || middleWords.equals(" with"))) {
-                        throw new InvalidRuleStructureException(ruleContent, "Method Node");
+                        throw new InvalidRuleStructureException("Method Node", "Expected phrase 'with arguments' or 'with' " +
+                                                                "between colon and first argument, not '" + middleWords + "'");
                     }
                 }
             }
 
             if (!colonForDifferentMethod) {
                 if (colonIndex == ruleContent.length() - 1) {
-                    throw new InvalidRuleStructureException(ruleContent, "Method Node");
+                    throw new InvalidRuleStructureException("Method Node", "Expected at least one argument after colon");
                 }
 
-                String remainingRule = ruleContent.substring(colonIndex + 2);
                 arguments = new MethodArgumentNode();
-                arguments.validateRule(remainingRule);
-
+                try {
+                    arguments.validateRule(ruleContent.substring(colonIndex + 2));
+                } catch(InvalidRuleStructureException e) {
+                    throw new InvalidRuleStructureException("Method Node", "Failed to get method arguments. Cause: ", e);
+                }
                 endIndex = arguments.getEndIndex() + colonIndex + 2;
-                argumentList = remainingRule.substring(0, arguments.getEndIndex()).split("((\\s(and))|,)\\s");
             }
         }
 
-        // Test method call exists with correct name and parameters
         SourceClass cls;
         try {
             cls = SourceClassAnalyzer.identifySourceClass(methodCall.split("\\.")[0]);
-        } catch (AmbiguousClassException | UnknownClassException e) {
-            throw new InvalidRuleStructureException(methodCall, "Method Node");
+        } catch(ClassAnalysisException e) {
+            throw new InvalidRuleStructureException("Method Node", "Unable to identify source class. Cause: " + e.getErrorMessage());
         }
 
         int numArguments = 0;
@@ -179,8 +180,20 @@ public class MethodNode extends ChildNode implements Rule {
             }
         }
 
-        if ((method == null) || ((numArguments == 0) && (!argumentNodes.isEmpty()))) {
-            throw new InvalidRuleStructureException(ruleContent, "Method Node");
+        if (method == null) {
+            String parameterTypes;
+            if(argumentNodes.isEmpty()) {
+                parameterTypes = "Empty List";
+            } else {
+                parameterTypes = TypeIdentifier.getType(argumentNodes.get(0).getType());
+                for(int i = 1; i < argumentNodes.size(); i++) {
+                    parameterTypes += ", " + TypeIdentifier.getType(argumentNodes.get(i).getType());
+                }
+            }
+            throw new InvalidRuleStructureException("Method Node", "Could not find a method with name '" + methodCall +
+                                                    "' and arguments matching a subset of the expected parameter types: " + parameterTypes);
+        } else if ((numArguments == 0) && (!argumentNodes.isEmpty())) {
+            throw new InvalidRuleStructureException("Method Node", "Found a method with no arguments but expected at least one argument");
         } else if (!currentArguments.isEmpty()) {
             endIndex = colonIndex + 2;
             for (int i = 0; i < numArguments; i++) {
