@@ -145,7 +145,11 @@ public class Parser {
                             new InvalidRuleStructureException("Parser",
                                     "Rule did not start with a valid keyword: Call, Get, Store, Expect"));
             }
-            ((Rule) node).validateRule(rule.substring(startCommand.length()).trim());
+            String nextRule = rule.substring(startCommand.length()).trim();
+            if(nextRule.isEmpty()) {
+                throw new InvalidRuleStructureException("Parser", "Empty rule found after '" + startCommand + "'");
+            }
+            ((Rule) node).validateRule(nextRule);
             rules.add(node);
             return startCommand.length() + 1 + node.getEndIndex();
         } catch(InvalidRuleStructureException e) {

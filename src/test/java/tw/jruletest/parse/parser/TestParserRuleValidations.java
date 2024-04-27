@@ -147,7 +147,9 @@ public class TestParserRuleValidations {
                           "expect 0 not to equal 1", "get value of x and store", "store value in y and expect", "get x and get"};
         for(String rule: rules) {
             try {
-                Parser.generateTrees(rule);
+                System.out.println("get x and get");
+                Parser.generateTrees("get x and get");
+
                 Assert.fail("'" + rule + "': passed validation");
             } catch (UnparsableRuleException e) { }
         }

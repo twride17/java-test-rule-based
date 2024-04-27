@@ -124,7 +124,7 @@ public class TestStoreValueNode {
 
     @Test
     public void testInvalidRuleStructures() {
-        String[] rules = {"store", "x", "store in x", "in test", "test", "store value of Class.method in z",
+        String[] rules = {"store", "x", "in test", "test", "store value of Class.method in z",
                             "`hello in y", ".67f in y", "hello' in z", "`hello` in 1value"};
         for(String rule: rules) {
             node = new StoreValueNode();

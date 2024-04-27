@@ -97,7 +97,6 @@ public class ExpectationNode extends RootNode implements Rule {
 
         int firstArgumentIndex;
         try {
-            System.out.println(bestComparatorIndex);
             String expectedSegment = ruleContent.substring(0, bestComparatorIndex);
             expectedValueTree = RuleNode.getChildNode(expectedSegment, RuleNode.CHILD_NODE);
             firstArgumentIndex = expectedValueTree.getEndIndex();
