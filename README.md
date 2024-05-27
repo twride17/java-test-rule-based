@@ -10,14 +10,16 @@ A controller class reads rules from a test suite class and assembles the require
 - Parsable rules include:
   - Static public fields or method calls
   - Storage of field values and method return values in self-defined or auto-generated variables with primitive and String types able to be declared.
-  - Variables can also be assigned constant values such as primitive constants or user defined strings
-  - Expectations for primitive and String values
+  - Variables can also be assigned constant values such as primitive constants or user defined strings or logical and mathematical expressions.
+  - Method arguments are checked for parameter type matching and allow strings, primitives and complex logical and mathematical expressions as arguments. NB: The ordering of logical and mathematical expressions is inferred from left to right. This will be improved in a later prototype.
+  - Expectations for primitive and String values along with complex mathematical and logical expressions.
+  - Errors encountered while parsing rules are outputted with causes nested to simplify the process of identifying issues.
 - Controller reads rules and constructs test suites, then executes the generated test suites
 - Test results and compilation errors are recorded in dedicated log files.
 
 ## Installation
 
-Current release is only a Basic Prototype so there is currently no JAR available.
+Current release is only a Basic Prototype so <b>there is currently no JAR available</b>.
 
 To install:
 1. Download JAR file from this repository or clone it
