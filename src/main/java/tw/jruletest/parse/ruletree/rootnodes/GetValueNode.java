@@ -20,6 +20,8 @@ public class GetValueNode extends RootNode implements Rule {
 
     private ValueNode valueNode;
 
+    private String newVariableName;
+
     /**
      * Implementation of code generation from TreeNode interface.
      * Generation of code involves determining the required type and selecting a new variable to use along with the code
@@ -30,15 +32,7 @@ public class GetValueNode extends RootNode implements Rule {
 
     @Override
     public String generateCode() {
-        Type type = valueNode.getType();
-        String valueCall = valueNode.getCallName();
-
-        if (!(valueCall.endsWith("Value") || valueCall.endsWith("value"))) {
-            valueCall += "Value";
-        }
-
-        return TypeIdentifier.getType(type) + " " + VariableStore.getNextUnusedVariableName(Runner.getCurrentMethod(), valueCall, type) +
-                                                " = " + valueNode.generateCode() + ";";
+        return TypeIdentifier.getType(valueNode.getType()) + " " + newVariableName + " = " + valueNode.generateCode() + ";";
     }
 
     /**
@@ -60,8 +54,19 @@ public class GetValueNode extends RootNode implements Rule {
             valueNode = new ValueNode();
             valueNode.validateRule(ruleContent);
             endIndex = valueNode.getEndIndex();
+            setNewVariable();
         } catch(InvalidRuleStructureException e) {
             throw new InvalidRuleStructureException("Get Value Node", "Caused by:", e);
         }
+    }
+
+    private void setNewVariable() {
+        Type type = valueNode.getType();
+        String valueCall = valueNode.getCallName();
+
+        if (!(valueCall.endsWith("Value") || valueCall.endsWith("value"))) {
+            valueCall += "Value";
+        }
+        newVariableName = VariableStore.getNextUnusedVariableName(Runner.getCurrentMethod(), valueCall, type);
     }
 }

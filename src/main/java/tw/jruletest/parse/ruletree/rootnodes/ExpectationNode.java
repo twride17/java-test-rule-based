@@ -1,10 +1,13 @@
 package tw.jruletest.parse.ruletree.rootnodes;
 
+import tw.jruletest.Runner;
 import tw.jruletest.analyzers.ImportCollector;
 import tw.jruletest.exceptions.parsing.ChildNodeSelectionException;
 import tw.jruletest.exceptions.parsing.InvalidRuleStructureException;
 import tw.jruletest.parse.Rule;
 import tw.jruletest.parse.ruletree.RuleNode;
+import tw.jruletest.parse.ruletree.innernodes.valuenodes.VariableNode;
+import tw.jruletest.variables.VariableStore;
 
 /**
  * Rule node that deals with creating expectation objects.
@@ -88,8 +91,6 @@ public class ExpectationNode extends RootNode implements Rule {
                     } else {
                         ruleEnding = ruleEnding.substring(currentIndex + comparator.length());
                         bestComparatorIndex += currentIndex + comparator.length();
-                        String x = ruleContent.substring(0, bestComparatorIndex);
-                        System.out.println(x);
                     }
                 }
             }
@@ -98,7 +99,14 @@ public class ExpectationNode extends RootNode implements Rule {
         int firstArgumentIndex;
         try {
             String expectedSegment = ruleContent.substring(0, bestComparatorIndex);
-            expectedValueTree = RuleNode.getChildNode(expectedSegment, RuleNode.CHILD_NODE);
+            if(expectedSegment.equals("it")) {
+                VariableNode variableNode = new VariableNode();
+                variableNode.setVariable(VariableStore.getLastVariable(Runner.getCurrentMethod()));
+                variableNode.setEndIndex(2);
+                expectedValueTree = variableNode;
+            } else {
+                expectedValueTree = RuleNode.getChildNode(expectedSegment, RuleNode.CHILD_NODE);
+            }
             firstArgumentIndex = expectedValueTree.getEndIndex();
             if (firstArgumentIndex != bestComparatorIndex) {
                 throw new InvalidRuleStructureException("Expectation Node",

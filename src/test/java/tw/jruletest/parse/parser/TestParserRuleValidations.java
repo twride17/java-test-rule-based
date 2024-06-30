@@ -59,13 +59,13 @@ public class TestParserRuleValidations {
                                {"store 10.5 in xValue", "store -10.65f in other", "store value of Class.method in variable"},
                                {"Store true in value1", "store false in value2", "store value of Class.isTrue: value1 is greater than value2 in value3"},
                                {"Store value of Example.x in test", "store 1 in y", "store `Hello world` in z"},
-                               {"Store value of x in y", "Store value of y in z"}};
+                               {"Store value of x in y", "Store value of y in z"}, {"store it in newVar"}};
 
         String[] rules = {"Store value of Class.method2 with arguments: `Hello world`, true and -0.5f in test",
                           "store 10.5 in xValue, store -10.65f in other then store value of Class.method in variable",
                           "Store true in value1, store false in value2 then store value of Class.isTrue: value1 is greater than value2 in value3",
                           "Store value of Example.x in test then store 1 in y and store `Hello world` in z ",
-                          "      Store value of x in y then Store value of y in z    "};
+                          "      Store value of x in y then Store value of y in z    ", "store it in newVar"};
 
         testRules(rules, subRules);
     }
@@ -110,13 +110,13 @@ public class TestParserRuleValidations {
                                {"Expect x to equal 1", "expect y to not equal `Hello`", "expect result of Example.exampleMethod with: 10 - 7 to equal false"},
                                {"Expect value of Example.exampleMethod with: 56 * 98 to equal 3", "expect xValue to equal `New string`"},
                                {"expect Class.method2 with arguments: `New and cool string, this is` and xValue is equal to 10 and -90.2f to not equal -0.9f"},
-                               {"Expect 30.5 to not equal xValue", "expect string to equal Example.m", "expect Class.method1: 1 to equal 0"}};
+                               {"Expect 30.5 to not equal xValue", "expect string to equal Example.m", "expect Class.method1: 1 to equal 0"}, {"expect it to equal 10"}};
 
         String[] rules = {"Expect 1 to equal xValue, Expect value2 to not equal 3 and expect value of Class.method to equal -0.98f",
                           "  Expect x to equal 1, expect y to not equal `Hello` then expect result of Example.exampleMethod with: 10 - 7 to equal false",
                           "Expect value of Example.exampleMethod with: 56 * 98 to equal 3 and expect xValue to equal `New string`     ",
                           "      expect Class.method2 with arguments: `New and cool string, this is` and xValue is equal to 10 and -90.2f to not equal -0.9f",
-                          "Expect 30.5 to not equal xValue, expect string to equal Example.m and expect Class.method1: 1 to equal 0"};
+                          "Expect 30.5 to not equal xValue, expect string to equal Example.m and expect Class.method1: 1 to equal 0", "expect it to equal 10"};
 
         testRules(rules, subRules);
     }
@@ -127,13 +127,15 @@ public class TestParserRuleValidations {
                                {"Call method Class.example", "store value of Example.x in xValue", "expect xValue to equal `New string`"},
                                {"call Example.m3: -0.987f", "call Class.method", "store value of Class.isTrue with: true in x", "expect x to not equal `String`"},
                                {"Store -100 in x", "store 0.5f in y", "store value of Example.m2 with arguments: `New string`, 1 and -3.4f in test"},
-                               {"store Example.x in x", "store Example.concat with: `Hello and goodbye` and `and good luck` in z", "expect x to equal z"}};
+                               {"store Example.x in x", "store Example.concat with: `Hello and goodbye` and `and good luck` in z", "expect x to equal z"},
+                               {"get value of example", "store it in otherExample"}, {"get value of example", "expect it to equal 10"}};
 
         String[] rules = {"Get value of Class.method3: 1 + `Hello`, store 100 + 10 * 3 in xValue then expect xValue to equal 1",
                           "Call method Class.example then store value of Example.x in xValue and expect xValue to equal `New string`",
                           "call Example.m3: -0.987f, call Class.method then store value of Class.isTrue with: true in x and expect x to not equal `String`",
                           "  Store -100 in x, store 0.5f in y, store value of Example.m2 with arguments: `New string`, 1 and -3.4f in test",
-                          "store Example.x in x, store Example.concat with: `Hello and goodbye` and `and good luck` in z then expect x to equal z  "};
+                          "store Example.x in x, store Example.concat with: `Hello and goodbye` and `and good luck` in z then expect x to equal z  ",
+                          "get value of example and store it in otherExample", "get value of example and expect it to equal 10"};
         testRules(rules, subRules);
     }
 
@@ -144,12 +146,12 @@ public class TestParserRuleValidations {
                           "Call method x", "Store value and expect value to equal 0", "get result of Class.method and expect 0",
                           "expect x  to equal 0", "call x", "call 0.5f", "store value of `hello` in z", "get value of 100",
                           "tore x", "cal", "except 0 to equal 1", "x", "before calling x", "get x store in y",
-                          "expect 0 not to equal 1", "get value of x and store", "store value in y and expect", "get x and get"};
+                          "expect 0 not to equal 1", "get value of x and store", "store value in y and expect", "get x and get",
+                          "store 10 in it", "get value of it", "call method it and store", "get value of a and store 10 in it"};
+
         for(String rule: rules) {
             try {
-                System.out.println("get x and get");
                 Parser.generateTrees("get x and get");
-
                 Assert.fail("'" + rule + "': passed validation");
             } catch (UnparsableRuleException e) { }
         }

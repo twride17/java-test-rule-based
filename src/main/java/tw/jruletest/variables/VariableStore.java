@@ -93,6 +93,19 @@ public class VariableStore {
     }
 
     /**
+     * Finds the name of the last variable defined in the required method.
+     *
+     * @param method the name of the method to find the variable for
+     *
+     * @return the name of the last method defined in the provided method
+     * */
+
+    public static Variable getLastVariable(String method) {
+        List<Variable> methodVariables = variables.get(method);
+        return methodVariables.get(methodVariables.size()-1);
+    }
+
+    /**
      * Finds the Variable object representing the provided method's variable identified by the given variable name.
      *
      * @param method the name of the method in which the variable was defined.

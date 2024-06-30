@@ -65,12 +65,19 @@ public class StoreValueNode extends RootNode implements Rule {
             throw new InvalidRuleStructureException("Store Value Node", "Rule must not be empty after Store keyword");
         }
 
-        try {
-            valueTree = RuleNode.getChildNode(ruleContent, RuleNode.CHILD_NODE);
-        } catch(ChildNodeSelectionException e) {
-            throw new InvalidRuleStructureException("Store Value Node", "Caused by:", e);
+        if(ruleContent.startsWith("it ")) {
+            VariableNode variableNode = new VariableNode();
+            variableNode.setVariable(VariableStore.getLastVariable(Runner.getCurrentMethod()));
+            variableNode.setEndIndex(2);
+            valueTree = variableNode;
+        } else {
+            try {
+                valueTree = RuleNode.getChildNode(ruleContent, RuleNode.CHILD_NODE);
+            } catch (ChildNodeSelectionException e) {
+                throw new InvalidRuleStructureException("Store Value Node", "Caused by:", e);
+            }
         }
-        endIndex += valueTree.getEndIndex();
+        endIndex = valueTree.getEndIndex();
 
         String requiredSegment = ruleContent.substring(endIndex);
         if(!(requiredSegment.startsWith(" in") && !requiredSegment.trim().equals("in"))) {

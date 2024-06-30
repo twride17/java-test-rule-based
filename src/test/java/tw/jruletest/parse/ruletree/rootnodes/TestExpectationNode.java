@@ -197,6 +197,19 @@ public class TestExpectationNode {
     }
 
     @Test
+    public void testBackReferencedVariableAsExpected() {
+        String rule = "it to equal value of Class.method";
+        node = new ExpectationNode();
+        try {
+            node.validateRule(rule);
+            Assert.assertEquals(rule.length(), node.getEndIndex());
+        } catch(InvalidRuleStructureException e) {
+            System.out.println(e.getErrorMessage());
+            Assert.fail("Failed");
+        }
+    }
+
+    @Test
     public void testValidExpectationPlusExtraEndRule() {
         String rule = "Example.x to equal value of Class.method and expect...";
         node = new ExpectationNode();

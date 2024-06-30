@@ -83,6 +83,20 @@ public class TestStoreValueNode {
     }
 
     @Test
+    public void testStoreValueRuleBackReferencing() {
+        String[] rules = {"it in newVar", "it in anotherVar"};
+        for(String rule: rules) {
+            node = new StoreValueNode();
+            try {
+                node.validateRule(rule);
+                Assert.assertEquals(rule.length(), node.getEndIndex());
+            } catch (InvalidRuleStructureException e) {
+                Assert.fail("'" + rule + "': failed");
+            }
+        }
+    }
+
+    @Test
     public void testStoreValueInConstantResult() {
         String[] rules = {"x in 1", "`hello` in 123f", "1 in true", "true in false", "test in 100"};
         for(String rule: rules) {

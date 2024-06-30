@@ -55,23 +55,6 @@ public class ValueNode extends ChildNode implements Rule {
 
         int currentEnd = 0;
         String nextSegment = ruleContent;
-//        if(matcher.find()) {
-//            if(nextSegment.startsWith("of ") || (nextSegment.equals("of"))) {
-//                throw new InvalidRuleStructureException(ruleContent, "Value Node");
-//            } else if(nextSegment.startsWith("value ") || nextSegment.startsWith("result ")) {
-//                currentEnd += nextSegment.indexOf(' ') + 1;
-//                nextSegment = nextSegment.substring(nextSegment.indexOf(' ') + 1);
-//                if(!nextSegment.startsWith("of ")) {
-//                    throw new InvalidRuleStructureException(ruleContent, "Value Node");
-//                } else {
-//                    currentEnd += nextSegment.indexOf(' ') + 1;
-//                    nextSegment = nextSegment.substring(nextSegment.indexOf(' ') + 1);
-//                }
-//            } else if(nextSegment.equals("value") || nextSegment.equals("result")) {
-//                throw new InvalidRuleStructureException(ruleContent, "Value Node");
-//            }
-//        }
-
         if(nextSegment.startsWith("of ") || (nextSegment.equals("of"))) {
             throw new InvalidRuleStructureException("Value Node", "Keyword 'of' found at start of rule. If using phrase " +
                                                                     "'value/result of', all of the phrase is expected");

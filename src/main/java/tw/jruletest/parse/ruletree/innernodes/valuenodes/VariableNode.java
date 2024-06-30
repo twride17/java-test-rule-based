@@ -95,6 +95,14 @@ public class VariableNode extends ChildNode implements Rule {
      * @return the name of the variable stored by this object
      * */
 
+    public void setVariable(Variable variable) {
+        this.variable = variable;
+    }
+
+    public void setEndIndex(int newEndIndex) {
+        endIndex = newEndIndex;
+    }
+
     public String getArgument() {
         return variable.getName();
     }
